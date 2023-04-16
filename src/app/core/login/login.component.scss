@@ -1,0 +1,35 @@
+.login-card {
+  padding: 50px 15px 15px 15px;
+  max-width: 380px;
+  justify-content: center;
+}
+
+.card {
+  border-color: var(--color-primary-light);
+}
+
+a {
+  margin-left: 8px;
+  color: var(--color-primary);
+  &:hover {
+    color: var(--color-primary-lighter);
+  }
+}
+
+.card-header {
+  background-color: var(--color-primary);
+  color: var(--color-primary-constrast);
+  margin: 0 -1px;
+  .card-title {
+    margin: 0;
+  }
+}
+
+.btn {
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-constrast) !important;
+  &:hover {
+    background-color: var(--color-secondary-lighter);
+    color: white;
+  }
+}

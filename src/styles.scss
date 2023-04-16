@@ -1,1 +1,71 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "theme/fonts.scss";
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
+
+// Centre le texte sur le bouton de déconnexion de la sidenav
+.btn .mat-list-item-content {
+  justify-content: center;
+}
+
+// mat-icon-stepper selected color change
+.mat-step-header .mat-step-icon-selected,
+.mat-step-header .mat-step-icon-state-done,
+.mat-step-header .mat-step-icon-state-edit {
+  background-color: var(--color-primary) !important;
+}
+
+// input outline color
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: var(--color-primary) !important;
+}
+
+// mat-input focused color
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: var(--color-primary) !important;
+}
+
+// mat-input error outline color
+.mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid
+  .mat-form-field-outline-thick {
+  color: var(--color-primary) !important;
+  opacity: 0.8 !important;
+}
+
+// mat-input caret color
+.mat-input-element {
+  caret-color: var(--color-primary) !important;
+}
+
+// mat-input error caret color
+.mat-form-field-invalid .mat-input-element,
+.mat-warn .mat-input-element {
+  caret-color: var(--color-primary) !important;
+}
+
+// mat-label normal state style
+.mat-form-field-label {
+  color: var(--color-secondary) !important;
+}
+
+// mat-label focused style
+.mat-form-field.mat-focused .mat-form-field-label {
+  color: var(--color-primary) !important;
+}
+
+// mat-label error style
+.mat-form-field.mat-form-field-invalid .mat-form-field-label {
+  color: var(--color-primary) !important;
+}

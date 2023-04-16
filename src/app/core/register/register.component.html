@@ -1,0 +1,50 @@
+<div class="mx-auto register-card">
+    <div class="card">
+      <div class="card-header text-center">
+        <h2 class="card-title">S'enregistrer</h2>
+      </div>
+      <mat-card>
+        <mat-card-content>
+          <form (ngSubmit)="register()">
+            <div class="mb-3">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label for="email" class="form-label">Email</mat-label>
+                <input matInput name="email" [(ngModel)]="email" type="email" class="form-control" id="email">
+                <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
+              </mat-form-field>
+            </div>
+            <div class="mb-3">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label for="password" class="form-label">Mot de passe</mat-label>
+                <input matInput name="password" [(ngModel)]="password" [type]="hidePassword ? 'password' : 'text'"
+                  class="form-control" id="password">
+                <mat-icon matPrefix class="icon-color">lock</mat-icon>
+                <mat-icon matSuffix (click)="hidePassword = !hidePassword">
+                  {{hidePassword ? 'visibility_off' : 'visibility'}}
+                </mat-icon>
+              </mat-form-field>
+            </div>
+            <div class="mb-3">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label for="passwordRepeat" class="form-label">Répétez le Mot de passe</mat-label>
+                <input matInput name="passwordRepeat" [(ngModel)]="passwordRepeat"
+                  [type]="hideRepeatPassword ? 'password' : 'text'" class="form-control" id="passwordRepeat">
+                <mat-icon matPrefix class="icon-color">lock</mat-icon>
+                <mat-icon matSuffix (click)="hideRepeatPassword = !hideRepeatPassword">
+                  {{hideRepeatPassword ? 'visibility_off' : 'visibility'}}
+                </mat-icon>
+              </mat-form-field>
+              <p class="text-danger" *ngIf="password !== passwordRepeat">Les mots de passe ne correspondent pas</p>
+            </div>
+            <button type="submit" class="btn" [disabled]="password !== passwordRepeat">S'enregistrer</button>
+          </form>
+        </mat-card-content>
+        <mat-card-actions>
+          <a routerLink="/login" class="card-link">Vous avez déjà un compte ? Connectez vous !</a>
+        </mat-card-actions>
+        <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+      </mat-card>
+  
+    </div>
+  </div>
+  
