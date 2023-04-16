@@ -8,6 +8,12 @@ img {
   width: 150px;
   height: 40px;
   margin: 0 10px;
+
+}
+
+::ng-deep .mdc-button__label {
+  display: flex !important;
+  align-items: center !important;
 }
 
 .btn-facebook {

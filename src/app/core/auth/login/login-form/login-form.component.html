@@ -1,32 +1,30 @@
 <div id="form" class="body-form-connect">
-    <form class="connexion-form" fxLayout="column" [formGroup]="formConnect" (ngSubmit)="submitFormulaireConnexion()">
-      <div fxLayout="column" fxLayoutAlign="none center">
-        <mat-form-field appearance="outline">
-            <mat-label>E-mail</mat-label>
-            <input matInput formControlName="username" type="email" class="form-control"
-            [ngClass]="{ 'is-invalid': formConnect.errors }">
-          <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline">
-            <mat-label>Mot de passe</mat-label>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" type="password" class="form-control"
-            [ngClass]="{ 'is-invalid': formConnect.errors }">
-          <mat-icon matPrefix class="icon-color">lock</mat-icon>
-          <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
-          </mat-icon>
-        </mat-form-field>
-      </div>
-      <!-- TODO : Initialiser la checkbox Se souvenir de moi -->
-      <!-- <mat-checkbox>Se souvenir de moi</mat-checkbox> -->
-      <div fxLayout="column" fxLayoutAlign="none center">
-        <button mat-stroked-button type="submit" class="btn">
-            <span>Se connecter</span>
-          </button>
-      </div>
-    </form>
-    <div fxLayout="column">
-  
+  <form class="connexion-form" fxLayout="column" [formGroup]="formConnect" (ngSubmit)="submitFormulaireConnexion()">
+    <div fxLayout="column" fxLayoutAlign="none center">
+      <mat-form-field appearance="outline">
+        <mat-label>E-mail</mat-label>
+        <input matInput formControlName="username" type="email" class="form-control"
+          [ngClass]="{ 'is-invalid': formConnect.errors }">
+        <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" type="password"
+          class="form-control" [ngClass]="{ 'is-invalid': formConnect.errors }">
+        <mat-icon matPrefix class="icon-color">lock</mat-icon>
+        <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
+        </mat-icon>
+      </mat-form-field>
     </div>
+    <mat-checkbox>Se souvenir de moi</mat-checkbox>
+    <div fxLayout="column" fxLayoutAlign="none center">
+      <button mat-stroked-button type="submit" class="btn">
+        <span>Se connecter</span>
+      </button>
+    </div>
+  </form>
+  <div fxLayout="column">
+
   </div>
-  
+</div>

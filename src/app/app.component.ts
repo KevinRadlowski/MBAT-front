@@ -1,12 +1,34 @@
-import { Component } from '@angular/core';
-
+import { MediaMatcher } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
+import { TokenStorageService } from './core/auth/services/token-storage.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   title = 'MBAT';
+  info: any;
+  mobileQuery: MediaQueryList;
+  isDesktopFormat: boolean = false;
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+  isExpanded = true;
+  showSubmenu: boolean = false;
+  isShowing = false;
+  showSubSubMenu: boolean = false;
+  isLogged = false;
+
+  constructor(
+    changeDetectorRef: ChangeDetectorRef,
+    media: MediaMatcher,
+    private token: TokenStorageService
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 600px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+    this.isDesktopFormat = media.matchMedia('(max-width: 600px)') ? true : false;
+  }
 
   onActivate(event: Event) {
     window.scroll({
@@ -15,4 +37,39 @@ export class AppComponent {
       behavior: 'smooth'
     });
   }
+
+  private _mobileQueryListener: () => void;
+
+
+  ngOnDestroy(): void {
+    this.mobileQuery.removeListener(this._mobileQueryListener);
+  }
+
+
+  ngOnInit(): void {
+    this.checkIfUserIsLogged();
+  }
+
+  ngDoCheck() {
+    this.checkIfUserIsLogged();
+  }
+
+  checkIfUserIsLogged() {
+    setTimeout(() => {
+      return this.token.isAuthenticatedUser();
+    }, 100);
+  }
+
+  mouseenter() {
+    if (!this.isExpanded) {
+      this.isShowing = true;
+    }
+  }
+
+  mouseleave() {
+    if (!this.isExpanded) {
+      this.isShowing = false;
+    }
+  }
+
 }

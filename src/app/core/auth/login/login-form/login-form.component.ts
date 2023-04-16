@@ -53,10 +53,9 @@ export class LoginFormComponent implements OnInit {
   submitFormulaireConnexion() {
     this.loginInfo = this.formConnect.value;
     this.loading = true;
-    this.authService.login(this.loginInfo).subscribe({
+    this.authService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
       next: (data) => {
-        this.tokenStorage.saveToken(data.accessToken);
-        this.tokenStorage.saveUser(data.username);
+        this.tokenStorage.saveAll(data);
         this.isLoginFailed.emit(false);
       },
       error: (error) => {
