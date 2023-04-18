@@ -9,15 +9,15 @@
           <p class="text-danger" *ngIf="hasError">{{errorMessage}}</p>
           <div class="mb-3">
             <mat-form-field class="col-12" appearance="outline">
-              <mat-label for="email" class="form-label">Email</mat-label>
-              <input matInput name="email" [(ngModel)]="email" type="email" class="form-control" id="email">
+              <mat-label for="username" class="form-label">Email</mat-label>
+              <input required matInput name="username" [(ngModel)]="form.username" type="email" class="form-control" id="username">
               <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
             </mat-form-field>
           </div>
           <div class="mb-3">
             <mat-form-field class="col-12" appearance="outline">
               <mat-label for="password">Mot de passe</mat-label>
-              <input matInput [type]="hidePassword ? 'password' : 'text'" name="password" [(ngModel)]="password"
+              <input matInput required [type]="hidePassword ? 'password' : 'text'" name="password" [(ngModel)]="form.password"
                 class="form-control" id="password">
               <mat-icon matPrefix class="icon-color">lock</mat-icon>
               <mat-icon matSuffix (click)="hidePassword = !hidePassword">
