@@ -1,28 +1,40 @@
 :root {
-
   /** primary **/
-  --color-primary: #3d8af7;
-  --color-primary-contrast: #ffffff;
-  --color-primary-shade: #4D3DF7;
-  --color-primary-filter: invert(43%) sepia(100%) saturate(1718%) hue-rotate(198deg) brightness(101%) contrast(94%);
-  
+  --color-primary: #007461;
+  --color-primary-constrast: #fff;
+  --color-primary-lighter: #088F78;
+  --color-primary-light: #299986;
+  --color-primary-darker: #00473B;
+  --color-primary-dark: #002C23;
+  --color-primary-filter: invert(29%) sepia(99%) saturate(763%) hue-rotate(133deg) brightness(89%) contrast(101%);
+  --color-primary-filter-contrast: invert(100%) sepia(2%) saturate(7500%) hue-rotate(310deg) brightness(113%) contrast(101%);
+
   /** secondary **/
-  --color-secondary: #f74d3d;
-  --color-secondary-filter: invert(58%) sepia(59%) saturate(7095%) hue-rotate(339deg) brightness(101%) contrast(94%);
-  --color-secondary-opacity: #f74d3d98;
-  
+  --color-secondary: #004652;
+  --color-secondary-constrast: #fff;
+  --color-secondary-lighter: #005C6D;
+  --color-secondary-light: #007389;
+  --color-secondary-darker: #002C34;
+  --color-secondary-dark: #000809;
+  --color-secondary-filter: invert(18%) sepia(77%) saturate(1174%) hue-rotate(155deg) brightness(95%) contrast(101%);
+
   /** tertiary **/
-  --color-tertiary: #AA3DF7;
-  --color-tertiary-filter: invert(27%) sepia(98%) saturate(2309%) hue-rotate(261deg) brightness(98%) contrast(97%);
+  --color-tertiary: #209A00;
+  --color-tertiary-contrast: #000;
+  --color-tertiary-lighter: #30BE0B;
+  --color-tertiary-light: #55CC36;
+  --color-tertiary-darker: #1A7D00;
+  --color-tertiary-dark: #135900;
+  --color-tertiary-filter: invert(61%) sepia(14%) saturate(588%) hue-rotate(29deg) brightness(91%) contrast(87%);
 
   /** success **/
   --color-success: #4eb76e;
   --color-success-contrast: #ffffff;
-  --color-success-shade: #0ec254;
   --color-success-tint: #28e070;
+  --color-success-shade: #0ec254;
 
   /** warning **/
-  --color-warning: #F4984F;
+  --color-warning: #F4984F; // #ffce00;
   --color-warning-contrast: #ffffff;
   --color-warning-shade: #e0b500;
   --color-warning-tint: #ffd31a;
