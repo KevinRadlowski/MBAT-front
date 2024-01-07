@@ -1,0 +1,70 @@
+@media screen and (max-width: 640px) {
+  .form-connexion {
+    width: 350px;
+  }
+}
+
+@media screen and (min-width: 640px) {
+  .form-connexion {
+    width: 450px;
+  }
+}
+
+.form-connexion {
+  padding: 30px;
+  margin: 30px;
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+}
+
+.register-card {
+  padding: 30px 10px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+
+  p {
+    text-align: center;
+  }
+}
+
+h3 {
+  font-weight: 500;
+}
+
+.register-button {
+  p {
+    line-height: 20px;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.reset-password:hover {
+  color: var(--color-secondary);
+}
+
+.btn {
+  margin: 40px;
+  background-color: var(--color-secondary);
+  width: 250px;
+  height: 140px;
+  color: var(--color-primary-contrast);
+}
+
+.btn:hover {
+  background-color: var(--color-primary);
+}
+
+.social-divider {
+  width: 100%;
+  margin: 20px;
+  font-size: 0.9em;
+  color: var(--color-medium-shade);
+}
+
+.line-divider {
+  height: 2px;
+  width: 25%;
+  background-color: black
+}

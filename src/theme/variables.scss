@@ -1,0 +1,56 @@
+:root {
+
+  /** primary **/
+  --color-primary: #3d8af7;
+  --color-primary-contrast: #ffffff;
+  --color-primary-shade: #4D3DF7;
+  --color-primary-filter: invert(43%) sepia(100%) saturate(1718%) hue-rotate(198deg) brightness(101%) contrast(94%);
+  
+  /** secondary **/
+  --color-secondary: #f74d3d;
+  --color-secondary-filter: invert(58%) sepia(59%) saturate(7095%) hue-rotate(339deg) brightness(101%) contrast(94%);
+  --color-secondary-opacity: #f74d3d98;
+  
+  /** tertiary **/
+  --color-tertiary: #AA3DF7;
+  --color-tertiary-filter: invert(27%) sepia(98%) saturate(2309%) hue-rotate(261deg) brightness(98%) contrast(97%);
+
+  /** success **/
+  --color-success: #4eb76e;
+  --color-success-contrast: #ffffff;
+  --color-success-shade: #0ec254;
+  --color-success-tint: #28e070;
+
+  /** warning **/
+  --color-warning: #F4984F;
+  --color-warning-contrast: #ffffff;
+  --color-warning-shade: #e0b500;
+  --color-warning-tint: #ffd31a;
+
+  /** danger **/
+  --color-danger: #f04141;
+  --color-danger-contrast: #ffffff;
+  --color-danger-shade: #d33939;
+  --color-danger-tint: #f25454;
+
+  /** dark **/
+  --color-dark: #252427;
+  --color-dark-contrast: #ffffff;
+  --color-dark-shade: #1e2023;
+  --color-dark-tint: #383a3e;
+
+  /** medium **/
+  --color-medium: #989aa2;
+  --color-medium-contrast: #ffffff;
+  --color-medium-shade: #86888f;
+  --color-medium-tint: #a2a4ab;
+
+  /** light **/
+  --color-light: #c0c9ff;
+  --color-light-contrast: #000000;
+  --color-light-shade: #d7d8da;
+  --color-light-tint: #f5f6f9;
+
+  --box-shadow: 0 3px 7px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --box-shadow-hover: 2px 5px 10px rgba(247, 77, 61, 0.275), 2px 8px 8px rgba(0, 0, 0, 0.23);
+}

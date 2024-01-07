@@ -1,0 +1,48 @@
+<div class="register-card">
+  <form class="register-form" fxLayout="column" [formGroup]="userRegisterForm"
+    (ngSubmit)="submitFormulaireInscription()">
+    <div class="form-header-title" fxLayoutAlign="center center">
+      <h1>Identifiants</h1>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="username" type="email" class="form-control" id="username" email>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Confirmation de l'Email</mat-label>
+      <input matInput formControlName="confirmation_username" type="email" class="form-control"
+        id="confirmation_username" email>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Mot de passe</mat-label>
+      <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" type="password"
+        class="form-control" id="motDePasse">
+      <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
+      </mat-icon>
+      <mat-hint>Doit contenir au minimum 6 caractères, dont 1 minuscule et 1 majuscule.</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Confirmation du mot de passe</mat-label>
+      <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmation_password"
+        type="password" class="form-control" id="confirmation_password"
+        [ngClass]="{ 'is-invalid': submitted && f['confirmation_password'].errors }">
+      <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
+      </mat-icon>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="checkCgu" class="form-control">Je certifie avoir lu les <a routerLink="">Conditions
+        Générales d'Utilisation</a> du site et m'y conformer.*</mat-checkbox>
+
+    <div class="column" fxLayout="column" fxLayoutAlign="none center">
+      <button mat-flat-button type="submit" class="btn">S'inscrire</button>
+    </div>
+  </form>
+  <div fxLayout="column">
+
+  </div>
+
+</div>

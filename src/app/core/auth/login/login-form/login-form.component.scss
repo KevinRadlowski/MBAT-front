@@ -1,0 +1,19 @@
+.btn {
+    margin: 20px;
+    background-color: var(--color-secondary);
+    width: 150px;
+    height: 40px;
+    color: var(--color-primary-contrast);
+  }
+  
+  .btn:hover {
+    background-color: var(--color-primary);
+  }
+
+  .icon-color {
+      color: var(--color-primary);
+  }
+  
+  mat-form-field {
+      width: 100%;
+  }

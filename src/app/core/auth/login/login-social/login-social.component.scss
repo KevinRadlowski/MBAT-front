@@ -1,0 +1,31 @@
+img {
+  width: 22px;
+  max-height: 22px;
+  margin-right: 10px;
+}
+
+.btn {
+  width: 150px;
+  height: 40px;
+  margin: 0 10px;
+}
+
+.btn-facebook {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-facebook:hover {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.btn-google {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.btn-google:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-primary-contrast);
+}

@@ -1,0 +1,23 @@
+<app-alert></app-alert>
+<div class="page-connexion" fxLayout="column" fxLayoutAlign="center center">
+  <div class="form-connexion" fxLayout="column" fxLayoutAlign="center center">
+    <h3>Connectez-vous à votre compte</h3>
+    <app-login-form (isLoginFailed)="alert()" style="width: 100%;"></app-login-form>
+    <a class="reset-password" routerLink="/reset-password">Mot de passe oublié ?</a>
+
+    <div class="social-divider" fxLayout="row" fxLayoutAlign="space-between center">
+      <div class="line-divider"></div>
+      <span>Ou connectez-vous avec</span>
+      <div class="line-divider"></div>
+    </div>
+    <app-login-social></app-login-social>
+  </div>
+  <div class="register-card" fxLayout="column" fxLayoutAlign="center center">
+    <h3>Vous n'avez pas de compte ?</h3>
+    <div class="register-button" fxLayout.gt-md="row" fxLayout.lt-md="column">
+      <button mat-stroked-button class="btn" routerLink="/register">
+        <p>Inscrivez vous !</p>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,111 @@
+/* Supprime l'effet de barre qui remonte en version tablette portrait */
+@media screen and (min-width: 600px) and (max-width: 959px) {
+  ::ng-deep .mat-form-field-infix {
+    border-top: 0;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  ::ng-deep .mat-form-field-underline {
+    display: none;
+  }
+}
+
+/* Partie Navbar Desktop */
+
+.navbar-container {
+  margin-bottom: 65px;
+}
+
+.navbar-desktop {
+  background-color: var(--color-primary);
+  position: fixed;
+  top: 0;
+  box-shadow: var(--box-shadow);
+  z-index: 2;
+}
+
+.navlink {
+  text-decoration: none;
+  color: black;
+  margin: 30px;
+}
+
+.navlink-mobile {
+  text-decoration: none;
+  color: black;
+}
+
+.auth-button {
+  margin: 5px;
+  height: 40px;
+  font-size: 20px;
+  color: var(--color-primary-contrast);
+  border-color: var(--color-secondary);
+
+  .material-icons {
+    font-size: 38px;
+    height: 38px;
+    width: 38px;
+    color: var(--color-secondary);
+    margin-right: 6px;
+  }
+
+}
+
+.auth-button:hover {
+  color: var(--color-primary-contrast);
+  border-color: var(--color-secondary);
+  background-color: var(--color-secondary);
+
+
+  .material-icons {
+    color: var(--color-primary-contrast);
+  }
+}
+
+
+.toolbarWidth {
+  width: 100%;
+  padding: 0;
+}
+
+/* Partie Sidenav Mobile */
+.toolbarXs {
+  position: fixed;
+  height: 64px;
+  top: 0;
+  z-index: 2;
+  background-color: var(--color-primary);
+  box-shadow: var(--box-shadow);
+}
+
+.sidenav-container {
+  background-color: var(--color-primary);
+}
+
+.ButtonAuthRowXs {
+  margin: 15px;
+}
+
+.authButtonXs {
+  width: 130px;
+  height: 45px;
+  font-size: 16px;
+}
+
+.toolbarWidthXs {
+  width: 100%;
+  margin-top: 10px;
+  padding: 0;
+}
+
+/* CSS commun aux versions desktop et responsive */
+.navlink:hover {
+  color: var(--color-secondary);
+  border-bottom: 2px solid var(--color-secondary);
+}
+
+.router-link-active {
+  color: var(--color-primary-contrast);
+}
