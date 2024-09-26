@@ -1,59 +1,58 @@
 mat-form-field {
-    width: 100%;
-    margin-top: 20px;
+  max-width: 100%;
+  margin: 20px 20px 00px 20px;
+}
+
+.form-header-title {
+  color: var(--color-primary);
+  font-weight: 500;
+  padding-top: 30px;
+}
+
+.invalid-password {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.btn {
+  margin: 20px;
+  background-color: var(--color-secondary);
+  width: 150px;
+  height: 40px;
+  color: var(--color-primary-contrast);
+}
+
+.btn:hover {
+  background-color: var(--color-primary);
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  background-color: var(--color-light-shade);
+  border-radius: 5px;
+}
+
+.invalid-text {
+  color: red;
+  margin-top: -5px;
+}
+
+.form-field-width {
+  width: 100%;
+}
+
+::ng-deep .mat-checkbox-layout {
+  white-space: normal !important;
+  max-width: 800px;
+  margin-top: 15px;
+}
+
+.input-file {
+  width: 100%;
+  border: 1px solid rgb(190, 190, 190);
+  background-color: var(--color-light-shade);
+  border-radius: 7px;
+
+  &:hover {
+    border-color: 5px solid var(--color-dark);
   }
-  
-  .form-header-title {
-    color: var(--color-primary);
-    font-weight: 500;
-    padding-top: 30px;
-  }
-  
-  .invalid-password {
-    margin-top: 20px;
-    margin-bottom: 15px;
-  }
-  
-  .btn {
-    margin: 20px;
-    background-color: var(--color-secondary);
-    width: 150px;
-    height: 40px;
-    color: var(--color-primary-contrast);
-  }
-  
-  .btn:hover {
-    background-color: var(--color-primary);
-  }
-  
-  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
-    background-color: var(--color-light-shade);
-    border-radius: 5px;
-  }
-  
-  .invalid-text {
-    color: red;
-    margin-top: -5px;
-  }
-  
-  .form-field-width {
-    width: 100%;
-  }
-  
-  ::ng-deep .mat-checkbox-layout {
-    white-space: normal !important;
-    max-width: 800px;
-    margin-top: 15px;
-  }
-  
-  .input-file {
-    width: 100%;
-    border: 1px solid rgb(190, 190, 190);
-    background-color: var(--color-light-shade);
-    border-radius: 7px;
-  
-    &:hover {
-      border-color: 5px solid var(--color-dark);
-    }
-  }
-  
+}

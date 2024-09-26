@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthLoginInfo } from '../../helpers/login-info';
 import { AuthService } from '../../services/auth.service';
 import { TokenStorageService } from '../../services/token-storage.service';
+import { UserService } from '../../signup/signup.service';
 
 @Component({
   selector: 'app-login-form',
@@ -24,7 +25,8 @@ export class LoginFormComponent implements OnInit {
     private authService: AuthService,
     private tokenStorage: TokenStorageService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private userService: UserService
   ) {
     this.formConnect = this.connectForm();
   }
@@ -53,7 +55,7 @@ export class LoginFormComponent implements OnInit {
   submitFormulaireConnexion() {
     this.loginInfo = this.formConnect.value;
     this.loading = true;
-    this.authService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
+    this.userService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
       next: (data) => {
         this.tokenStorage.saveAll(data);
         this.isLoginFailed.emit(false);

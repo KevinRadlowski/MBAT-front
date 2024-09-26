@@ -13,7 +13,7 @@ import { tap } from 'rxjs';
   styleUrls: ['./signup-form.component.scss']
 })
 export class SignupFormComponent implements OnInit {
-  public userRegisterForm: FormGroup;
+  userRegisterForm: FormGroup;
   hidePassword = true;
   submitted = false;
   loading = false;
@@ -38,15 +38,15 @@ export class SignupFormComponent implements OnInit {
     return this.fb.group(
       {
         checkCgu: [
-          null,
-          [Validators.required]
+          false,
+          [Validators.requiredTrue]
         ],
         username: [
-          null,
+          '',
           [Validators.email, Validators.required]
         ],
         password: [
-          null,
+          '',
           [Validators.required,
           // Vérifie si le mot-de-passe entré contient un nombre
           CustomValidators.patternValidator(/\d/, {
@@ -63,9 +63,9 @@ export class SignupFormComponent implements OnInit {
           Validators.minLength(6)]
 
         ],
-        confirmation_password: [null, [Validators.required]],
+        confirmation_password: ['', [Validators.required]],
         confirmation_username: [
-          null,
+          '',
           [Validators.email, Validators.required]
         ]
       },

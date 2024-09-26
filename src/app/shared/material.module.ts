@@ -39,6 +39,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 @NgModule({
   exports: [
@@ -85,6 +86,8 @@ import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
     MatTreeModule,
     MatRippleModule,
     MatNativeDateModule
-  ]
+  ],
+  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }]
+
 })
 export class MaterialModule { }

@@ -44,11 +44,14 @@ h3 {
   color: var(--color-secondary);
 }
 
+.no-account-h3 {
+  margin-top: 20px;
+}
+
 .btn {
-  margin: 40px;
   background-color: var(--color-secondary);
   width: 250px;
-  height: 140px;
+  height: 40px;
   color: var(--color-primary-contrast);
 }
 
