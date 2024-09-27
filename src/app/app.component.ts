@@ -73,6 +73,7 @@ export class AppComponent implements OnDestroy {
 
   logout() {
     this.token.signOut();
+    window.location.reload(); // Recharge la page après la déconnexion
   }
 
 }

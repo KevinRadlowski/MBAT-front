@@ -5,9 +5,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from './material.module';
 import { AlertComponent } from './alert/alert.component';
+import { LoaderComponent } from './loader/loader.component';
 
 @NgModule({ declarations: [
         AlertComponent,
+        LoaderComponent
     ],
     exports: [
         CommonModule,
@@ -16,6 +18,7 @@ import { AlertComponent } from './alert/alert.component';
         ReactiveFormsModule,
         AlertComponent,
         RouterModule,
+        LoaderComponent
     ], imports: [CommonModule,
         MaterialModule,
         FormsModule,

@@ -3,26 +3,26 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, catchError, throwError } from 'rxjs';
 
 const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-  };
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+};
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class UserService {
 
-    private baseUrl = 'http://192.168.56.101:8080/api/user';
+  private baseUrl = 'http://192.168.56.101:8080/api/user';
 
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-      /**
-   * Envoie une requête HTTP POST à l'API pour authentifier un utilisateur avec un nom d'utilisateur et un mot de passe.
-   * @param {string} username - Le nom d'utilisateur de l'utilisateur qui tente de se connecter.
-   * @param {string} password - Le mot de passe de l'utilisateur qui tente de se connecter.
-   * @returns {Observable<any>} - Un observable qui émet une réponse HTTP de l'API lorsqu'elle est disponible.
-   */
+  /**
+* Envoie une requête HTTP POST à l'API pour authentifier un utilisateur avec un nom d'utilisateur et un mot de passe.
+* @param {string} username - Le nom d'utilisateur de l'utilisateur qui tente de se connecter.
+* @param {string} password - Le mot de passe de l'utilisateur qui tente de se connecter.
+* @returns {Observable<any>} - Un observable qui émet une réponse HTTP de l'API lorsqu'elle est disponible.
+*/
   login(username: string, password: string): Observable<any> {
     return this.http.post(
-        `${this.baseUrl}` + `/signin`,
+      `${this.baseUrl}` + `/signin`,
       {
         username,
         password,
@@ -32,41 +32,59 @@ export class UserService {
       );
   }
 
-    getUser(username: String): Observable<Object> {
-        return this.http.get(`${this.baseUrl}/get-one/${username}`).pipe(
-            catchError(this.handleError)
-          );
-    }
+  getUser(username: String): Observable<Object> {
+    return this.http.get(`${this.baseUrl}/get-one/${username}`).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-    createUser(customer: Object): Observable<Object> {
-        return this.http.post(`${this.baseUrl}` + `/signup`, customer).pipe(
-            catchError(this.handleError)
-          );
-    }
+  createUser(customer: Object): Observable<Object> {
+    return this.http.post(`${this.baseUrl}` + `/signup`, customer).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-    updateUser(id: Number, value: any): Observable<Object> {
-        return this.http.put(`${this.baseUrl}/${id}`, value).pipe(
-            catchError(this.handleError)
-          );
-    }
+  updateUser(id: Number, value: any): Observable<Object> {
+    return this.http.put(`${this.baseUrl}/${id}`, value).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-    updateUserPassword(id: Number, value: any): Observable<Object> {
-        return this.http.put(`${this.baseUrl}/update-password/${id}`, value).pipe(
-            catchError(this.handleError)
-          );
-    }
+  updateUserPassword(id: Number, value: any): Observable<Object> {
+    return this.http.put(`${this.baseUrl}/update-password/${id}`, value).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-    deleteUser(username: String): Observable<any> {
-        return this.http.delete(`${this.baseUrl}/delete-user/${username}`).pipe(
-            catchError(this.handleError)
-          );
-    }
+  deleteUser(username: String): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/delete-user/${username}`).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-    /**
-   * Gère les erreurs provenant de l'API et génère un message d'erreur approprié.
-   * @param {HttpErrorResponse} error - L'objet d'erreur provenant de l'API.
-   * @returns {Observable<Error>} - Un observable contenant un message d'erreur.
-   */
+  // Méthode pour demander la réinitialisation du mot de passe
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/forgot-password`, { email }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(
+      `${this.baseUrl}/reset-password`,
+      { token, newPassword },
+      httpOptions // Pas besoin de spécifier responseType ici si on attend une réponse JSON
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+  
+
+  /**
+ * Gère les erreurs provenant de l'API et génère un message d'erreur approprié.
+ * @param {HttpErrorResponse} error - L'objet d'erreur provenant de l'API.
+ * @returns {Observable<Error>} - Un observable contenant un message d'erreur.
+ */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred!';
     if (error.error instanceof ErrorEvent) {

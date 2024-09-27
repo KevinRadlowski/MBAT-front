@@ -1,39 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
-import { Alert, AlertOptions, AlertType } from '../alert/alert.model';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlertService {
-  private subject = new Subject<any>();
+  private subject = new BehaviorSubject<any>(null); // Utilisation de BehaviorSubject pour garder le dernier message
   private keepAfterNavigationChange = false;
 
   constructor(private router: Router) {
-    // Clear alert message on route change
+    // Gère les changements de route pour conserver ou supprimer le message
     router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         if (this.keepAfterNavigationChange) {
-          // only keep for a single location change
           this.keepAfterNavigationChange = false;
         } else {
-          // clear alert
-          setTimeout(() => {
-            this.clear();
-          }, 5000);
+          this.clear();
         }
       }
     });
   }
 
-  success(message: string, keepAfterNavigationChange = false) {
+  success(message: string, keepAfterNavigationChange = false, timeout: number = 5000) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
     this.subject.next({ type: 'success', text: message });
     setTimeout(() => {
       this.clear();
-    }, 5000);
+    }, timeout);
   }
 
   error(message: string, keepAfterNavigationChange = false) {
@@ -41,12 +35,13 @@ export class AlertService {
     this.subject.next({ type: 'error', text: message });
   }
 
-  errorAutoClear(message: string, keepAfterNavigationChange = false) {
+  // Affiche une erreur et la supprime automatiquement après un certain délai
+  errorAutoClear(message: string, keepAfterNavigationChange = false, timeout: number = 5000) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
     this.subject.next({ type: 'error', text: message });
     setTimeout(() => {
       this.clear();
-    }, 5000);
+    }, timeout);
   }
 
   getMessage(): Observable<any> {
@@ -56,41 +51,4 @@ export class AlertService {
   clear() {
     this.subject.next(null);
   }
-
-//   private subject = new Subject<Alert>();
-//   private defaultId = 'default-alert';
-
-//   enable subscribing to alerts observable
-//   onAlert(id = this.defaultId): Observable<Alert> {
-//       return this.subject.asObservable().pipe(filter(x => x && x.id === id));
-//   }
-
-//   convenience methods
-//   success(message: string, options?: AlertOptions) {
-//       this.alert(new Alert({ ...options, type: AlertType.Success, message }));
-//   }
-
-//   error(message: string, options?: AlertOptions) {
-//       this.alert(new Alert({ ...options, type: AlertType.Error, message }));
-//   }
-
-//   info(message: string, options?: AlertOptions) {
-//       this.alert(new Alert({ ...options, type: AlertType.Info, message }));
-//   }
-
-//   warn(message: string, options?: AlertOptions) {
-//       this.alert(new Alert({ ...options, type: AlertType.Warning, message }));
-//   }
-
-//   // main alert method    
-//   alert(alert: Alert) {
-//       alert.id = alert.id || this.defaultId;
-//       this.subject.next(alert);
-//   }
-
-//   // clear alerts
-//   clear(id = this.defaultId) {
-//       this.subject.next(new Alert({ id }));
-//   }
 }
-
