@@ -2,7 +2,7 @@
     background-color: var(--color-primary-contrast);
     color: var(--color-primary);
     top: 0;
-    border-bottom: 1px solid var(--color-primary);
+    border-bottom: 1px solid var(--color-light-shade);
     z-index: 20;
 }
 
@@ -10,14 +10,39 @@
     margin: 5px;
     height: 40px;
     font-size: 16px;
-    color: var(--color-primary-contrast);
+    color: var(--color-primary-contrast) !important;
     border-color: var(--color-secondary);
+    background-color: var(--color-secondary);
 
     .material-icons {
-        font-size: 30px;
+    font-size: 30px;
         height: 30px;
         width: 30px;
         margin-right: 6px;
+    }
+
+    &:hover {
+    background-color: var(--color-primary);
+    }
+}
+
+.logout-button {
+    margin: 5px;
+    height: 40px;
+    font-size: 16px;
+    color: var(--color-primary-contrast) !important;
+    border-color: var(--color-danger);
+    background-color: var(--color-danger-shade);
+
+    .material-icons {
+    font-size: 30px;
+        height: 30px;
+        width: 30px;
+        margin-right: 6px;
+    }
+
+    &:hover {
+    background-color: var(--color-danger);
     }
 }
 
@@ -114,3 +139,9 @@ h1.app-name {
        `<body>` to be our scrolling element for mobile layouts. */
     flex: 1 0 auto;
 }
+
+
+.form-control {
+    border: 0;
+    box-shadow: none; /* You may want to include this as bootstrap applies these styles too */
+     }

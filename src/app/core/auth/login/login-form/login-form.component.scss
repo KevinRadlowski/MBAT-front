@@ -18,3 +18,9 @@ mat-form-field {
   width: 100%;
   margin: 20px 20px 00px 20px;
 }
+
+.form-control {
+  border: 0;
+  box-shadow: none;
+  /* You may want to include this as bootstrap applies these styles too */
+}

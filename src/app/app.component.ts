@@ -55,10 +55,9 @@ export class AppComponent implements OnDestroy {
   }
 
   checkIfUserIsLogged() {
-    setTimeout(() => {
-      return this.token.isAuthenticatedUser();
-    }, 100);
+    this.isLogged = this.token.isAuthenticatedUser();
   }
+  
 
   mouseenter() {
     if (!this.isExpanded) {
@@ -70,6 +69,10 @@ export class AppComponent implements OnDestroy {
     if (!this.isExpanded) {
       this.isShowing = false;
     }
+  }
+
+  logout() {
+    this.token.signOut();
   }
 
 }

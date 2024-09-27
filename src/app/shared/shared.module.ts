@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -10,7 +10,6 @@ import { AlertComponent } from './alert/alert.component';
         AlertComponent,
     ],
     exports: [
-        HttpClientModule,
         CommonModule,
         MaterialModule,
         FormsModule,
@@ -21,5 +20,14 @@ import { AlertComponent } from './alert/alert.component';
         MaterialModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        RouterModule], 
+    providers: [
+        provideHttpClient(), // Configuration recommandée
+        // provideHttpClient(withInterceptorsFromDi()), // Configuration recommandée
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: MyInterceptor, // Remplacez par vos intercepteurs
+    //   multi: true,
+    // }
+    ] })
 export class SharedModule { }

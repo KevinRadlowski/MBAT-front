@@ -2,3 +2,9 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+input {
+    border: 0;
+    box-shadow: none; /* You may want to include this as bootstrap applies these styles too */
+     }

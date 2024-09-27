@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -27,27 +27,69 @@ export class UserService {
         username,
         password,
       },
-      httpOptions);
+      httpOptions).pipe(
+        catchError(this.handleError)
+      );
   }
 
     getUser(username: String): Observable<Object> {
-        return this.http.get(`${this.baseUrl}/get-one/${username}`);
+        return this.http.get(`${this.baseUrl}/get-one/${username}`).pipe(
+            catchError(this.handleError)
+          );
     }
 
     createUser(customer: Object): Observable<Object> {
-        return this.http.post(`${this.baseUrl}` + `/signup`, customer);
+        return this.http.post(`${this.baseUrl}` + `/signup`, customer).pipe(
+            catchError(this.handleError)
+          );
     }
 
     updateUser(id: Number, value: any): Observable<Object> {
-        return this.http.put(`${this.baseUrl}/${id}`, value);
+        return this.http.put(`${this.baseUrl}/${id}`, value).pipe(
+            catchError(this.handleError)
+          );
     }
 
     updateUserPassword(id: Number, value: any): Observable<Object> {
-        return this.http.put(`${this.baseUrl}/update-password/${id}`, value);
+        return this.http.put(`${this.baseUrl}/update-password/${id}`, value).pipe(
+            catchError(this.handleError)
+          );
     }
 
     deleteUser(username: String): Observable<any> {
-        return this.http.delete(`${this.baseUrl}/delete-user/${username}`);
+        return this.http.delete(`${this.baseUrl}/delete-user/${username}`).pipe(
+            catchError(this.handleError)
+          );
     }
+
+    /**
+   * Gère les erreurs provenant de l'API et génère un message d'erreur approprié.
+   * @param {HttpErrorResponse} error - L'objet d'erreur provenant de l'API.
+   * @returns {Observable<Error>} - Un observable contenant un message d'erreur.
+   */
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      // Erreur côté client
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Erreur côté serveur
+      switch (error.status) {
+        case 401:
+          errorMessage = 'Identifiant ou mot de passe incorrect.';
+          break;
+        case 403:
+          errorMessage = 'Vous n\'avez pas la permission pour effectuer cette action.';
+          break;
+        case 404:
+          errorMessage = 'Ressource non trouvée.';
+          break;
+        default:
+          errorMessage = `Erreur serveur: ${error.message}`;
+          break;
+      }
+    }
+    return throwError(() => new Error(errorMessage));
+  }
 
 }

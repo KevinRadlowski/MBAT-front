@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
 import { AuthLoginInfo } from '../helpers/login-info';
 import { User } from 'src/app/shared/model/user.model';
 
@@ -37,7 +37,7 @@ export class AuthService {
         username,
         password,
       },
-      httpOptions);
+      httpOptions).pipe(catchError(this.handleError));
   }
 
   /**
@@ -55,8 +55,8 @@ export class AuthService {
         username,
         password,
       },
-      httpOptions
-    );
+      httpOptions).pipe(
+        catchError(this.handleError));
   }
 
   /**
@@ -65,7 +65,8 @@ export class AuthService {
    * Elle utilise la méthode clear() de la sessionStorage pour supprimer toutes les informations de session stockées dans le navigateur.
    */
   logout(): Observable<any> {
-    return this.http.post('/api/user/signout', {}, httpOptions);
+    return this.http.post('/api/user/signout', {}, httpOptions).pipe(
+      catchError(this.handleError));
   }
 
   /**
@@ -84,7 +85,33 @@ export class AuthService {
     return this.http.patch<void>('/api/user/password', {
       oldPassword,
       newPassword,
-    });
+    }).pipe(
+      catchError(this.handleError));
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Backend error
+      switch (error.status) {
+        case 401:
+          errorMessage = 'Identifiant ou mot de passe incorrect.';
+          break;
+        case 403:
+          errorMessage = 'Vous n\'avez pas la permission pour effectuer cette action.';
+          break;
+        case 404:
+          errorMessage = 'Ressource non trouvée.';
+          break;
+        default:
+          errorMessage = `Erreur serveur: ${error.message}`;
+          break;
+      }
+    }
+    return throwError(() => new Error(errorMessage));
   }
 
 }
