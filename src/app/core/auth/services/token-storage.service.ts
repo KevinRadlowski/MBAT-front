@@ -13,14 +13,15 @@ export class TokenStorageService {
 
     constructor() { }
 
-    public saveAll(data: any, rememberMe: boolean = false): void {
-        this.saveToken(data.accessToken, data.tokenType, rememberMe);
-        this.saveUser(data.username, data.id, rememberMe);
-    }
-
     signOut(): void {
         localStorage.clear();
         sessionStorage.clear();
+        this.deleteCookie('g_state'); // Supprime le cookie `g_state`
+    }
+
+    public saveAll(data: any, rememberMe: boolean = false): void {
+        this.saveToken(data.accessToken, data.tokenType, rememberMe);
+        this.saveUser(data.username, data.id, rememberMe);
     }
 
     private clearToken() {
@@ -85,5 +86,16 @@ export class TokenStorageService {
     isAuthenticatedUser(): boolean {
         const token = this.getToken();
         return token ? this.isTokenExpired(token) : false;
+    }
+
+    // Sauvegarde les informations de l'utilisateur Google/Facebook
+    public saveSocialUser(user: any): void {
+        this.clearUser(); // Efface les informations utilisateur précédentes
+        sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    }
+
+    // Méthode pour supprimer un cookie spécifique
+    private deleteCookie(name: string): void {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     }
 }

@@ -1,6 +1,7 @@
 <div fxLayout="row" fxLayoutAlign="space-evenly center"> 
-    <button mat-stroked-button (click)="socialSignIn('facebook')" class="btn btn-facebook">
+    <button mat-stroked-button (click)="signInWithFacebook()" class="btn btn-facebook">
       <img src="../../../../../assets/images/facebook-color-icon.png" alt="Facebook">FACEBOOK</button>
-    <button mat-stroked-button (click)="socialSignIn('google')" class="btn btn-google">
+    <button mat-stroked-button (click)="signInWithGoogle()" class="btn btn-google">
         <img src="../../../../../assets/images/google-color-icon.png" alt="Google">GOOGLE</button>
-    </div>
+        <div id="googleSignInButton"></div>
+      </div>
