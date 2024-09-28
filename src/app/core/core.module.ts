@@ -9,6 +9,7 @@ import { SignupSocialComponent } from './auth/signup/signup-social/signup-social
 import { SignupComponent } from './auth/signup/signup.component';
 import { SignupFormComponent } from './auth/signup/signup-form/signup-form.component';
 import { LoginFormComponent } from './auth/login/login-form/login-form.component';
+import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
 
 @NgModule({
   declarations: [
@@ -19,12 +20,16 @@ import { LoginFormComponent } from './auth/login/login-form/login-form.component
     ResetPasswordComponent,
     SignupComponent,
     SignupFormComponent,
-    SignupSocialComponent
+    SignupSocialComponent,
+    VerifyEmailComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
-],
+  ],
+  exports: [
+    VerifyEmailComponent
+  ],
   providers: []
 })
 export class CoreModule { }

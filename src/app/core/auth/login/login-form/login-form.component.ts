@@ -59,18 +59,17 @@ export class LoginFormComponent implements OnInit {
     this.loginInfo = this.formConnect.value;
     this.loading = true;
     this.errorHandled = false; // Réinitialiser l'indicateur avant chaque tentative de connexion
-
+  
     if (this.formConnect.invalid) {
       // Vérifiez si le formulaire est invalide et affichez un message d'erreur
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
       this.alertService.error(this.errorMessage, true);
       return;
     }
-
+  
     // Récupérer l'état de la checkbox "Se souvenir de moi"
     const rememberMe = this.formConnect.get('rememberMe')?.value || false;
-
-
+  
     this.userService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
       next: (data) => {
         this.tokenStorage.saveAll(data, rememberMe); // Sauvegarde des données de connexion
@@ -87,5 +86,6 @@ export class LoginFormComponent implements OnInit {
       }
     });
   }
+  
 
 }

@@ -1,0 +1,35 @@
+.verify-email-page {
+    width: 100%;
+    height: 100vh;
+    background-color: #f4f6f8;
+  }
+  
+  .verify-email-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .success-message {
+    color: #4caf50;
+    font-weight: 500;
+  }
+  
+  .error-message {
+    color: #f44336;
+    font-weight: 500;
+  }
+  
+  button {
+    margin-top: 20px;
+  }
+  

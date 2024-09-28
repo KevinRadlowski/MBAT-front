@@ -1,0 +1,19 @@
+<div class="verify-email-page" fxLayout="column" fxLayoutAlign="center center">
+    <div class="verify-email-card" fxLayout="column" fxLayoutAlign="center center">
+      <h2>Vérification de l'adresse e-mail</h2>
+      <p *ngIf="!isVerified">
+        Veuillez patienter pendant que nous vérifions votre adresse e-mail...
+      </p>
+      <p *ngIf="isVerified" class="success-message">
+        Votre adresse e-mail a été vérifiée avec succès ! Vous pouvez maintenant vous connecter.
+      </p>
+      <p *ngIf="!isVerified && errorMessage" class="error-message">
+        {{ errorMessage }}
+      </p>
+      <button mat-raised-button color="primary" *ngIf="isVerified" routerLink="/login">Se connecter</button>
+      <button mat-raised-button color="warn" *ngIf="!isVerified && !errorMessage" (click)="resendVerificationEmail()">
+        Renvoyer l'e-mail de vérification
+      </button>
+    </div>
+  </div>
+  

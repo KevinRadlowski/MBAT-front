@@ -44,6 +44,11 @@ export class ResetPasswordComponent implements OnInit {
 
   submitFormulaireReinitialisationMdp(): void {
     if (this.formReset.invalid) {
+      window.scroll({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
       this.alertService.error(this.errorMessage, true);
       return;

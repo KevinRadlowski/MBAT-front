@@ -5,7 +5,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { CustomValidators } from 'src/app/shared/services/custom-validators';
 import { UserService } from '../signup.service';
 import { User } from 'src/app/shared/model/user.model';
-import { tap } from 'rxjs';
+import { debounceTime, map, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-signup-form',
@@ -16,7 +16,8 @@ export class SignupFormComponent implements OnInit {
   userRegisterForm: FormGroup;
   hidePassword = true;
   submitted = false;
-  loading = false;
+  isLoading = false;
+  emailExists = false;
 
   constructor(
     private fb: FormBuilder,
@@ -28,6 +29,21 @@ export class SignupFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Vérification de l'email en temps réel
+    this.userRegisterForm.get('username')?.valueChanges.pipe(
+      debounceTime(1500), // Évite de trop solliciter le backend
+      switchMap(value => this.userService.checkEmailExists(value)), // Appelle le backend pour vérifier l'email
+      map((exists: boolean) => {
+        this.emailExists = exists;
+        if (exists) {
+          this.alertService.error('Cet email est déjà utilisé.'); // Affiche un message d'erreur via AlertService
+          this.userRegisterForm.get('username')?.setErrors({ emailExists: true });
+        } else {
+          this.alertService.clear(); // Supprime les messages précédents si l'email est valide
+          this.userRegisterForm.get('username')?.setErrors(null);
+        }
+      })
+    ).subscribe();
   }
 
   get f(): { [key: string]: AbstractControl } {
@@ -86,14 +102,14 @@ export class SignupFormComponent implements OnInit {
       this.alertService.errorAutoClear("Veuillez remplir les champs indiqués", true);
       return;
     }
-    this.loading = true;
+    this.isLoading = true;
     const user: User = this.userRegisterForm.value;
     this.userService.createUser(user).pipe(tap({
       next: () => {
-        this.loading = false;
+        this.isLoading = false;
         this.router.navigate(['../login']);
         this.alertService
-          .success('Votre inscription à été prise en compte. Vous venez de recevoir un mail de confirmation. Vous pouvez vous connecter.', true);
+          .success('Votre inscription à été prise en compte. Vous venez de recevoir un mail de confirmation. Confirmez votre compte avant de vous connecter.', true);
       },
       error: (error) => {
         window.scroll({
@@ -102,7 +118,7 @@ export class SignupFormComponent implements OnInit {
           behavior: 'smooth'
         });
         this.alertService.error(error.error.message, true);
-        this.loading = false;
+        this.isLoading = false;
       }
     }
 
