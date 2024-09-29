@@ -10,6 +10,8 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { SignupFormComponent } from './auth/signup/signup-form/signup-form.component';
 import { LoginFormComponent } from './auth/login/login-form/login-form.component';
 import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
+import { UnlockAccountComponent } from './auth/unlock-account/unlock-account.component';
+import { ResendUnlockEmailComponent } from './auth/resend-unlock-email/resend-unlock-email.component';
 
 @NgModule({
   declarations: [
@@ -21,14 +23,18 @@ import { VerifyEmailComponent } from './auth/verify-email/verify-email.component
     SignupComponent,
     SignupFormComponent,
     SignupSocialComponent,
-    VerifyEmailComponent
+    VerifyEmailComponent,
+    UnlockAccountComponent,
+    ResendUnlockEmailComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
   ],
   exports: [
-    VerifyEmailComponent
+    VerifyEmailComponent,
+    UnlockAccountComponent,
+    ResendUnlockEmailComponent
   ],
   providers: []
 })

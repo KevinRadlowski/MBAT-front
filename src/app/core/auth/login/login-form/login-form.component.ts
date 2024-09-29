@@ -80,9 +80,11 @@ export class LoginFormComponent implements OnInit {
       error: (error) => {
         this.errorHandled = true; // Indiquer que l'erreur est gérée
         this.errorMessage = error.message;
+        console.log('Message reçu sur la page de connexion :', error);
         this.alertService.errorAutoClear(this.errorMessage, true); // Affichage du message d'erreur
         this.isLoginFailed.emit(true);
         this.loading = false;
+
       }
     });
   }

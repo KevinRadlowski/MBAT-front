@@ -5,13 +5,15 @@ import { ResetPasswordComponent } from './core/auth/reset-password/reset-passwor
 import { LoginComponent } from './core/auth/login/login.component';
 import { AuthGuard } from './core/auth/helpers/auth.guard';
 import { VerifyEmailComponent } from './core/auth/verify-email/verify-email.component';
+import { UnlockAccountComponent } from './core/auth/unlock-account/unlock-account.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/index', pathMatch: 'full' },
   { path: 'register', component: SignupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'verify-email', component: VerifyEmailComponent }
+  { path: 'verify-email', component: VerifyEmailComponent },
+  { path: 'unlock-account', component: UnlockAccountComponent },
   // { path: 'synthesis', component: SynthesisComponent, canActivate: [AuthGuard] },
   // { path: 'tracking', component: ProjectComponent, , canActivate: [AuthGuard] },
   // { path: 'configuration', component: ProjectComponent, , canActivate: [AuthGuard] }

@@ -96,6 +96,11 @@ export class UserService {
   resendVerificationEmail(email: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/resend-verification-email`, { email }, httpOptions);
   }
+  
+// Méthode pour renvoyer un mail de déverrouillage
+resendUnlockEmail(email: string): Observable<any> {
+  return this.http.post(`${this.baseUrl}/resend-unlock-email`, { email }, httpOptions);
+}
 
 
   /**
@@ -109,6 +114,8 @@ export class UserService {
       // Erreur côté client
       errorMessage = `Error: ${error.error.message}`;
     } else {
+      console.log(error);
+      console.log(error.status);
       // Erreur côté serveur
       if (typeof error.error === 'string') {
         errorMessage = error.error; // Si la réponse est une chaîne de texte, c'est notre message d'erreur.
