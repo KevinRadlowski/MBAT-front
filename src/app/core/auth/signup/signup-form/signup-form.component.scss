@@ -4,9 +4,15 @@ mat-form-field {
 }
 
 .form-header-title {
-  color: var(--color-primary);
-  font-weight: 500;
+  h3 {
+    font-weight: 500;
+  }
+
   padding-top: 30px;
+}
+
+.icon-color {
+  color: var(--color-primary);
 }
 
 .invalid-password {
@@ -55,4 +61,8 @@ mat-form-field {
   &:hover {
     border-color: 5px solid var(--color-dark);
   }
+}
+
+.conditions {
+  font-size: smaller;
 }

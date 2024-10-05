@@ -71,3 +71,13 @@ h3 {
   width: 25%;
   background-color: black
 }
+
+.btn-resend-verification {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  margin-top: 10px;
+}
+
+.btn-resend-verification:hover {
+  background-color: var(--color-secondary);
+}

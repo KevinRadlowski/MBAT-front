@@ -22,7 +22,12 @@ export class AlertService {
     });
   }
 
-  success(message: string, keepAfterNavigationChange = false, timeout: number = 5000) {
+  success(message: string, keepAfterNavigationChange = false) {
+    this.keepAfterNavigationChange = keepAfterNavigationChange;
+    this.subject.next({ type: 'success', text: message });
+  }
+
+  successAutoClear(message: string, keepAfterNavigationChange = false, timeout: number = 5000) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
     this.subject.next({ type: 'success', text: message });
     setTimeout(() => {

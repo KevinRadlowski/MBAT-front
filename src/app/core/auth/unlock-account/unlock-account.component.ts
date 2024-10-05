@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UnlockAccountComponent implements OnInit {
   message!: string;
-  redirectIn: number = 15; // Temps avant redirection en secondes
+  redirectIn: number = 10; // Temps avant redirection en secondes
   interval: any;
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) { }
@@ -26,6 +26,7 @@ export class UnlockAccountComponent implements OnInit {
           },
           error: (error: any) => {
             this.message = 'Erreur lors du déverrouillage du compte. Veuillez réessayer plus tard.';
+            this.startRedirectCountdown();
           }
         });
     } else {

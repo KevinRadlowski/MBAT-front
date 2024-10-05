@@ -5,7 +5,7 @@
                 (click)="isExpanded = !isExpanded"><mat-icon>menu</mat-icon></button>
             <button *ngIf="!isDesktopFormat && isLogged" mat-icon-button
                 (click)="sidenav.toggle()"><mat-icon>menu</mat-icon></button>
-            <h1 class="app-name">MBAT</h1>
+            <h1 class="app-name" routerLink="/">MBAT</h1>
         </div>
         <div fxLayoutAlign="none center">
             <button *ngIf="!isLogged" class="auth-button" mat-stroked-button routerLink="/login">

@@ -3,24 +3,27 @@
   <form class="register-form" fxLayout="column" [formGroup]="userRegisterForm"
     (ngSubmit)="submitFormulaireInscription()">
     <div class="form-header-title" fxLayoutAlign="center center">
-      <h1>Identifiants</h1>
+      <h3>Créer un compte</h3>
     </div>
 
     <mat-form-field appearance="outline">
       <mat-label>Email</mat-label>
       <input matInput formControlName="username" type="email" class="form-control" id="username" email>
+      <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Confirmation de l'Email</mat-label>
       <input matInput formControlName="confirmation_username" type="email" class="form-control"
         id="confirmation_username" email>
+      <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Mot de passe</mat-label>
       <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" type="password"
         class="form-control" id="motDePasse">
+      <mat-icon matPrefix class="icon-color">lock</mat-icon>
       <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
       </mat-icon>
       <mat-hint>Doit contenir au minimum 6 caractères, dont 1 minuscule et 1 majuscule.</mat-hint>
@@ -31,19 +34,20 @@
       <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmation_password"
         type="password" class="form-control" id="confirmation_password"
         [ngClass]="{ 'is-invalid': submitted && f['confirmation_password'].errors }">
+      <mat-icon matPrefix class="icon-color">lock</mat-icon>
       <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
       </mat-icon>
     </mat-form-field>
-
-    <mat-checkbox formControlName="checkCgu" class="form-control">Je certifie avoir lu les <a routerLink="">Conditions
-        Générales d'Utilisation</a> du site et m'y conformer.*</mat-checkbox>
 
     <div class="column" fxLayout="column" fxLayoutAlign="none center">
       <button mat-flat-button type="submit" class="btn">S'inscrire</button>
     </div>
   </form>
-  <div fxLayout="column">
-
+  <div class="conditions">
+    <p>En cliquant sur S’inscrire, vous acceptez nos <a routerLink="">Conditions Générales</a>.</p>
+    <p>Découvrez comment nous recueillons, utilisons et partageons vos données en lisant notre <a
+        routerLink="">Politique de confidentialité</a><br /> et comment nous utilisons les cookies et autres
+      technologies similaires en consultant notre <a routerLink="">Politique d’utilisation des cookies</a>.</p>
   </div>
 
 </div>

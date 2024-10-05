@@ -1,5 +1,5 @@
 <div class="unlock-message">
     <p>{{ message }}</p>
-    <p *ngIf="redirectIn > 0">Redirection dans {{ redirectIn }} secondes...</p>
+    <p *ngIf="redirectIn > 0" class="redirect-timer">Redirection dans {{ redirectIn }} secondes...</p>
     <button *ngIf="redirectIn > 0" (click)="manualRedirect()">Redirection immédiate</button>
 </div>

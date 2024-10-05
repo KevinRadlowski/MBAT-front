@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../signup/signup.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { ApiError } from 'src/app/shared/model/error.model';
+import { CustomValidators } from 'src/app/shared/services/custom-validators';
 
 @Component({
   selector: 'app-reset-password',
@@ -26,7 +28,27 @@ export class ResetPasswordComponent implements OnInit {
   ) {
     this.formReset = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: [
+        '',
+        [Validators.required,
+        // Vérifie si le mot-de-passe entré contient un nombre
+        CustomValidators.patternValidator(/\d/, {
+          hasNumber: true
+        }),
+        // Vérifie si le mot-de-passe entré contient une lettre majuscule
+        CustomValidators.patternValidator(/[A-Z]/, {
+          hasCapitalCase: true
+        }),
+        // Vérifie si le mot-de-passe entré contient une lettre minuscule
+        CustomValidators.patternValidator(/[a-z]/, {
+          hasSmallCase: true
+        }),
+        Validators.minLength(6)]
+
+      ],
+      confirmPassword: ['', Validators.required] // Ajout du champ de confirmation
+    }, {
+      validator: CustomValidators.match('password', 'confirmPassword') // Validation des deux champs
     });
   }
 
@@ -38,6 +60,7 @@ export class ResetPasswordComponent implements OnInit {
         this.formReset.get('email')?.disable();
       } else {
         this.formReset.get('password')?.disable();
+        this.formReset.get('confirmPassword')?.disable();
       }
     });
   }
@@ -60,14 +83,14 @@ export class ResetPasswordComponent implements OnInit {
       this.userService.resetPassword(this.token, newPassword).subscribe({
         next: () => {
           this.isLoading = false; // Désactiver le loader
-          this.alertService.success('Mot de passe mis à jour avec succès, veuillez vous connecter.', true);
+          this.alertService.success('Mot de passe mis à jour avec succès, vous pouvez vous connecter.', true);
           setTimeout(() => {
             this.router.navigate(['/login']); // Redirige vers la page de connexion après soumission
           }, 100); // Délai court pour s'assurer que le message est bien enregistré
         },
-        error: (err) => {
+        error: (err: ApiError) => {
           this.isLoading = false; // Désactiver le loader
-          this.alertService.error('Erreur lors de la réinitialisation du mot de passe :', err);
+          this.alertService.error('Erreur lors de la réinitialisation du mot de passe : ' + err.message, true);
         }
       });
     } else {
@@ -75,14 +98,14 @@ export class ResetPasswordComponent implements OnInit {
       this.userService.requestPasswordReset(email).subscribe({
         next: () => {
           this.isLoading = false; // Désactiver le loader
-          this.alertService.success('Lien de réinitialisation envoyé, veuillez vérifier votre boîte de réception.', true, 15000);
+          this.alertService.success('Lien de réinitialisation du mot de passe envoyé, veuillez vérifier votre boîte de réception.', true);
           setTimeout(() => {
             this.router.navigate(['/login']); // Redirige vers la page de connexion après soumission
           }, 100); // Délai court pour s'assurer que le message est bien enregistré
         },
-        error: (err) => {
+        error: (err: ApiError) => {
           this.isLoading = false; // Désactiver le loader
-          this.alertService.error('Erreur lors de l\'envoi du lien de réinitialisation :', err);
+          this.alertService.error('Erreur lors de l\'envoi du lien de réinitialisation : ' + err.message, true);
         }
       });
     }

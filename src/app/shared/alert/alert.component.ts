@@ -23,24 +23,5 @@ export class AlertComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
-  
-  resendUnlockEmail(): void {
-    if (this.message && this.message.email) {
-        this.userService.resendUnlockEmail(this.message.email).subscribe({
-            next: () => {
-                this.message = {
-                    type: 'success',
-                    text: 'Un nouveau mail de déverrouillage a été envoyé à votre adresse e-mail.'
-                };
-            },
-            error: () => {
-                this.message = {
-                    type: 'error',
-                    text: 'Erreur lors de l\'envoi du mail de déverrouillage. Veuillez réessayer plus tard.'
-                };
-            }
-        });
-    }
-}
 
 }

@@ -1,5 +1,5 @@
-<div class="container alert text-center">
-    <div *ngIf="message" [ngClass]="{
+<div *ngIf="message" class="container alert text-center mt-4 p-0">
+    <div class="m-0" *ngIf="message" [ngClass]="{
              'alert': message,
              'alert-success': message.type === 'success',
              'alert-danger': message.type === 'error' }">
@@ -7,11 +7,5 @@
         <!-- Affichage du message avec des sauts de ligne -->
         <p [innerHTML]="message.text"></p>
 
-        <!-- Affichage du bouton de renvoi d'email seulement si l'email est présent -->
-        <div *ngIf="message.email">
-            <button (click)="resendUnlockEmail()" class="btn btn-primary">
-                Renvoyer un mail de déverrouillage
-            </button>
-        </div>
     </div>
 </div>

@@ -1,8 +1,26 @@
 <app-alert></app-alert>
+
+<!-- Bouton de renvoi d'email de validation -->
+<div fxLayout="column" fxLayoutAlign="none center" *ngIf="showResendVerificationButton">
+  <button mat-button (click)="resendVerificationEmail()" class="btn-resend-verification">
+    Renvoyer un email de validation
+  </button>
+</div>
+
+<!-- Affichage du bouton de renvoi d'email seulement si l'email est présent -->
+<div fxLayout="column" fxLayoutAlign="none center" *ngIf="showResendUnlockButton">
+  <button mat-button (click)="resendUnlockEmail()" class="btn-resend-verification">
+    Renvoyer un mail de déverrouillage
+  </button>
+</div>
+
+
 <div class="page-connexion" fxLayout="column" fxLayoutAlign="center center">
   <div class="form-connexion" fxLayout="column" fxLayoutAlign="center center">
     <h3>Connectez-vous à votre compte</h3>
-    <app-login-form style="width: 100%;"></app-login-form>
+    <app-login-form (emailNonValide)="onEmailNonValide($event)"
+      (showResendVerificationButton)="onShowResendValidationButton($event)"
+      (showResendUnlockButton)="onShowResendUnlockButton($event)" style="width: 100%;"></app-login-form>
     <a class="reset-password" routerLink="/reset-password">Mot de passe oublié ?</a>
 
     <!-- <div class="social-divider" fxLayout="row" fxLayoutAlign="space-between center">

@@ -15,14 +15,14 @@
     background-color: var(--color-secondary);
 
     .material-icons {
-    font-size: 30px;
+        font-size: 30px;
         height: 30px;
         width: 30px;
         margin-right: 6px;
     }
 
     &:hover {
-    background-color: var(--color-primary);
+        background-color: var(--color-primary);
     }
 }
 
@@ -35,14 +35,14 @@
     background-color: var(--color-danger-shade);
 
     .material-icons {
-    font-size: 30px;
+        font-size: 30px;
         height: 30px;
         width: 30px;
         margin-right: 6px;
     }
 
     &:hover {
-    background-color: var(--color-danger);
+        background-color: var(--color-danger);
     }
 }
 
@@ -76,7 +76,8 @@
 
 }
 
-.active span, .active mat-icon {
+.active span,
+.active mat-icon {
     color: var(--color-tertiary);
 }
 
@@ -125,6 +126,7 @@
 
 h1.app-name {
     margin: 0px;
+    cursor: pointer;
 }
 
 .sidenav-container {
@@ -143,5 +145,6 @@ h1.app-name {
 
 .form-control {
     border: 0;
-    box-shadow: none; /* You may want to include this as bootstrap applies these styles too */
-     }
+    box-shadow: none;
+    /* You may want to include this as bootstrap applies these styles too */
+}

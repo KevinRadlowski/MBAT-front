@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ApiError } from 'src/app/shared/model/error.model';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -84,6 +85,7 @@ export class UserService {
       catchError(this.handleError)
     );
   }
+
   verifyEmail(token: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/verify-email`, {
       params: { token },
@@ -96,11 +98,11 @@ export class UserService {
   resendVerificationEmail(email: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/resend-verification-email`, { email }, httpOptions);
   }
-  
-// Méthode pour renvoyer un mail de déverrouillage
-resendUnlockEmail(email: string): Observable<any> {
-  return this.http.post(`${this.baseUrl}/resend-unlock-email`, { email }, httpOptions);
-}
+
+  // Méthode pour renvoyer un mail de déverrouillage
+  resendUnlockEmail(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/resend-unlock-email`, { email }, httpOptions);
+  }
 
 
   /**
@@ -109,51 +111,128 @@ resendUnlockEmail(email: string): Observable<any> {
  * @returns {Observable<Error>} - Un observable contenant un message d'erreur.
  */
   private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An unknown error occurred!';
+    // let apiError: ApiError;
+    // let errorMessage = 'An unknown error occurred!';
+    // if (error.error instanceof ErrorEvent) {
+    //   // Erreur côté client
+    //   errorMessage = `Error: ${error.error.message}`;
+    // } else {
+    //   console.log(error);
+    //   console.log(error.status);
+    //   // Erreur côté serveur
+    //   if (typeof error.error === 'string') {
+    //     errorMessage = error.error; // Si la réponse est une chaîne de texte, c'est notre message d'erreur.
+    //   } else if (error.error instanceof Blob && error.error.type === 'text/plain') {
+    //     // Convertir Blob en texte si c'est une réponse en texte
+    //     return new Observable(observer => {
+    //       const reader = new FileReader();
+    //       reader.onload = () => {
+    //         errorMessage = reader.result as string;
+    //         observer.error(new Error(errorMessage));
+    //       };
+    //       reader.onerror = () => {
+    //         observer.error(new Error('An unknown error occurred!'));
+    //       };
+    //       reader.readAsText(error.error);
+    //     });
+    //   }
+    //   // Gestion des statuts HTTP
+    //   switch (error.status) {
+    //     case 401:
+    //       errorMessage = 'Identifiant ou mot de passe incorrect.'; // Par défaut, si le message n'est pas spécifique
+    //       if (error.error?.message) {
+    //         errorMessage = error.error.message; // Prendre le message spécifique de l'erreur si disponible
+    //       }
+    //       break;
+    //     case 403:
+    //       errorMessage = 'Vous n\'avez pas la permission pour effectuer cette action.';
+    //       break;
+    //     case 404:
+    //       errorMessage = 'Ressource non trouvée.';
+    //       break;
+    //     default:
+    //       errorMessage = `Erreur serveur: ${error.message}`;
+    //       break;
+    //   }
+    // }
+    // return throwError(() => new Error(errorMessage));
+
+
+
+    // -----------------------------------------------------
+
+    //   let errorMessage = 'Une erreur inconnue est survenue !';
+    // if (error.error instanceof ErrorEvent) {
+    //   // Erreur côté client
+    //   errorMessage = `Erreur: ${error.error.message}`;
+    // } else {
+    //   // Erreur côté serveur
+    //   if (typeof error.error === 'string') {
+    //     errorMessage = error.error; // Si la réponse est une chaîne de texte, c'est notre message d'erreur.
+    //   } else if (error.error && error.error.message) {
+    //     // Ici, nous extrayons le message d'erreur du back-end
+    //     errorMessage = error.error.message;
+    //   }
+    //   switch (error.status) {
+    //     case 401:
+    //       errorMessage = 'Identifiant ou mot de passe incorrect.';
+    //       break;
+    //     case 404:
+    //       errorMessage = 'Utilisateur non trouvé.';
+    //       break;
+    //     case 400:
+    //       errorMessage = error.error.message || 'Requête incorrecte.';
+    //       break;
+    //     default:
+    //       errorMessage = `Erreur serveur: ${error.message}`;
+    //   }
+    // }
+    // return throwError(() => new Error(errorMessage));
+
+    // ----------------------------------------------------------------------
+
+    let errorMessage = 'Une erreur inconnue est survenue !';
+    let email = ''; // Ajout pour capturer l'email s'il est fourni dans la réponse
+
     if (error.error instanceof ErrorEvent) {
       // Erreur côté client
-      errorMessage = `Error: ${error.error.message}`;
+      errorMessage = `Erreur: ${error.error.message}`;
     } else {
-      console.log(error);
-      console.log(error.status);
       // Erreur côté serveur
       if (typeof error.error === 'string') {
         errorMessage = error.error; // Si la réponse est une chaîne de texte, c'est notre message d'erreur.
-      } else if (error.error instanceof Blob && error.error.type === 'text/plain') {
-        // Convertir Blob en texte si c'est une réponse en texte
-        return new Observable(observer => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            errorMessage = reader.result as string;
-            observer.error(new Error(errorMessage));
-          };
-          reader.onerror = () => {
-            observer.error(new Error('An unknown error occurred!'));
-          };
-          reader.readAsText(error.error);
-        });
+      } else if (error.error && error.error.message) {
+        // Ici, nous extrayons le message d'erreur du back-end
+        errorMessage = error.error.message;
+        if (error.error.email) {
+          email = error.error.email; // Capture l'email s'il est renvoyé par le back-end
+        }
       }
-      // Gestion des statuts HTTP
+
       switch (error.status) {
-        case 401:
-          errorMessage = 'Identifiant ou mot de passe incorrect.'; // Par défaut, si le message n'est pas spécifique
-          if (error.error?.message) {
-            errorMessage = error.error.message; // Prendre le message spécifique de l'erreur si disponible
-          }
+        case 401: // Gérer les erreurs 401 (Unauthorized)
+          errorMessage = error.error.message || 'Identifiant ou mot de passe incorrect.';
           break;
         case 403:
           errorMessage = 'Vous n\'avez pas la permission pour effectuer cette action.';
           break;
         case 404:
-          errorMessage = 'Ressource non trouvée.';
+          errorMessage = 'Utilisateur non trouvé.';
+          break;
+        case 400:
+          errorMessage = error.error.message || 'Requête incorrecte.';
           break;
         default:
           errorMessage = `Erreur serveur: ${error.message}`;
-          break;
       }
     }
-    return throwError(() => new Error(errorMessage));
+
+    // Ajouter les informations de l'email dans l'erreur si présent
+    const errorObj = new Error(errorMessage);
+    (errorObj as any).email = email;
+    return throwError(() => errorObj);
   }
-  
+
+
 
 }
