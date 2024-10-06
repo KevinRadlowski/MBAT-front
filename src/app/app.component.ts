@@ -2,6 +2,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { TokenStorageService } from './core/auth/services/token-storage.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,12 +19,14 @@ export class AppComponent implements OnDestroy {
   isShowing = false;
   showSubSubMenu: boolean = false;
   isLogged = false;
+  hideSidenav = false; // Nouvelle variable pour gérer l'affichage de la sidenav
 
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
-    private token: TokenStorageService
-  ) {
+    private token: TokenStorageService,
+    private router: Router // Injecter le Router
+    ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -48,8 +51,19 @@ export class AppComponent implements OnDestroy {
 
   ngOnInit(): void {
     this.checkIfUserIsLogged();
+    this.router.events.subscribe(() => {
+      this.checkIfOnAccountPage(); // Appeler la méthode à chaque changement de route
+    });
   }
 
+
+   // Nouvelle méthode pour vérifier si l'utilisateur est sur la page "my-account"
+   checkIfOnAccountPage() {
+    const currentUrl = this.router.url;
+    this.hideSidenav = currentUrl.startsWith('/my-account');
+  }
+
+  
   ngDoCheck() {
     this.checkIfUserIsLogged();
   }

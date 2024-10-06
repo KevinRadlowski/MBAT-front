@@ -11,6 +11,7 @@ import { CoreModule } from './core/core.module';
 import { HomeModule } from './home/home.module';
 import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { AccountModule } from './account/account.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
     ToolboxModule,
     SharedModule,
     HomeModule,
-    SocialLoginModule
+    SocialLoginModule,
+    AccountModule
   ],
   providers: [
     {

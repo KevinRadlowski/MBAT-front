@@ -68,12 +68,29 @@ export class TokenStorageService {
         }
     }
 
-    public getUser(): any {
-        const user = localStorage.getItem(USER_KEY) || sessionStorage.getItem(USER_KEY);
-        if (user) {
-            return JSON.parse(user);
+    public saveUsername(username: any) {
+        if (localStorage.getItem(USER_KEY)) {
+            localStorage.removeItem(USER_KEY);
+            localStorage.setItem(USER_KEY, JSON.stringify(username));
+
+        } else if (sessionStorage.getItem(USER_KEY)) {
+            sessionStorage.removeItem(USER_KEY);
+            sessionStorage.setItem(USER_KEY, JSON.stringify(username));
         }
-        return {};
+    }
+
+    public getUser(): { username: string; id: number | null } | null {
+        const user = localStorage.getItem(USER_KEY) || sessionStorage.getItem(USER_KEY);
+        const userId = localStorage.getItem(USER_ID) || sessionStorage.getItem(USER_ID);
+
+        if (user) {
+            return {
+                username: JSON.parse(user),
+                id: userId ? JSON.parse(userId) : null
+            };
+        }
+
+        return null;
     }
 
     private clearUser() {

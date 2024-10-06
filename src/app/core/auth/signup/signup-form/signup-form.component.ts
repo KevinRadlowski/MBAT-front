@@ -53,10 +53,6 @@ export class SignupFormComponent implements OnInit {
   createSignupForm(): FormGroup {
     return this.fb.group(
       {
-        checkCgu: [
-          false,
-          [Validators.requiredTrue]
-        ],
         username: [
           '',
           [Validators.email, Validators.required]

@@ -1,0 +1,87 @@
+.account-container {
+    width: 100%;
+    padding: 2% 10%;
+    background-color: #fff;
+}
+
+.account-card {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+.mat-card-title {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.form-field-width {
+    width: 100%;
+}
+
+.email-display,
+.password-display {
+    font-size: 16px;
+}
+
+.email-display span,
+.password-display span {
+    font-weight: bold;
+}
+
+.delete-account-container {
+    margin-top: 30px;
+
+    button {
+        width: 250px;
+        background-color: var(--color-danger-shade);
+        color: var(--color-primary-contrast);
+    }
+
+    button:hover {
+        background-color: var(--color-danger);
+    }
+}
+
+button {
+    margin-left: 10px;
+}
+
+
+.btn-submit {
+    background-color: var(--color-secondary);
+    color: var(--color-primary-contrast);
+}
+
+.btn-submit:hover {
+    background-color: var(--color-primary);
+}
+
+.btn-modify {
+    color: var(--color-secondary);
+    border-color: var(--color-secondary);
+    &:hover {
+        color: var(--color-primary);
+        border-color: var(--color-primary);        
+    }
+}
+
+.form-input {
+    padding: 3%
+}
+
+.middle-input {
+    padding-left: 3%;
+    padding-right: 3%;
+}
+
+.verified-text {
+    padding: 0;
+    margin: 0;
+}
+
+.icon-verified {
+    color: var(--color-success);
+    margin-right: 5px;
+}

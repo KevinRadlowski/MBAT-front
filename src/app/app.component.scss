@@ -124,10 +124,11 @@
     transform: scaleY(1);
 }
 
-h1.app-name {
-    margin: 0px;
+img {
+    width: 100%;
+    max-height: 60px;
     cursor: pointer;
-}
+  }
 
 .sidenav-container {
     /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This

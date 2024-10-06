@@ -5,14 +5,14 @@
                 (click)="isExpanded = !isExpanded"><mat-icon>menu</mat-icon></button>
             <button *ngIf="!isDesktopFormat && isLogged" mat-icon-button
                 (click)="sidenav.toggle()"><mat-icon>menu</mat-icon></button>
-            <h1 class="app-name" routerLink="/">MBAT</h1>
+            <img src="/assets/images/Logo-MBAT-Transparent-Redimension.png" class="app-img" routerLink="/" alt="MBAT">
         </div>
         <div fxLayoutAlign="none center">
             <button *ngIf="!isLogged" class="auth-button" mat-stroked-button routerLink="/login">
                 <span class="material-icons">account_circle</span>
                 <span>Connexion</span>
             </button>
-            <button *ngIf="isLogged" class="auth-button" mat-stroked-button routerLink="/account">
+            <button *ngIf="isLogged" class="auth-button" mat-stroked-button routerLink="/my-account">
                 <span class="material-icons">account_circle</span>
                 <span>Mon compte</span>
             </button>
@@ -27,17 +27,17 @@
         <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" opened="true"
             [fixedInViewport]="mobileQuery.matches" fixedTopGap="56" (mouseenter)="mouseenter()"
             (mouseleave)="mouseleave()">
-            <mat-nav-list *ngIf="isLogged">
+            <mat-nav-list *ngIf="isLogged && !hideSidenav">
                 <a mat-list-item routerLink="/index" routerLinkActive="active">
                     <div class="item">
                         <mat-icon mat-list-icon>home</mat-icon>
-                        <span class="full-width" *ngIf="isExpanded || isShowing">Accueil</span>
+                        <span class="full-width p-2" *ngIf="isExpanded || isShowing">Accueil</span>
                     </div>
                 </a>
                 <mat-list-item (click)="showSubmenu = !showSubmenu" class="parent">
                     <div class="item">
                         <mat-icon mat-list-icon class="icon">account_balance</mat-icon>
-                        <span class="full-width" *ngIf="isExpanded || isShowing">Suivi</span>
+                        <span class="full-width p-1" *ngIf="isExpanded || isShowing">Suivi</span>
                         <mat-icon class="menu-button" [ngClass]="{'rotated' : showSubmenu}"
                             *ngIf="isExpanded || isShowing">expand_more</mat-icon>
                     </div>
@@ -58,6 +58,37 @@
 
                 </div>
             </mat-nav-list>
+
+            <mat-nav-list *ngIf="isLogged && hideSidenav">
+                <a mat-list-item [routerLink]="['/my-account/personal-informations']" routerLinkActive="active">
+                    <div class="item">
+                        <mat-icon mat-list-icon>person</mat-icon>
+                        <span class="full-width p-2" *ngIf="isExpanded || isShowing">Informations personnelles</span>
+                    </div>
+                </a>
+
+                <a mat-list-item [routerLink]="['/my-account/confidentiality']" routerLinkActive="active">
+                    <div class="item">
+                        <mat-icon mat-list-icon>verified_user</mat-icon>
+                        <span class="full-width p-2" *ngIf="isExpanded || isShowing">Accès et confidentialité</span>
+                    </div>
+                </a>
+
+                <a mat-list-item [routerLink]="['/my-account/subscription']" routerLinkActive="active">
+                    <div class="item">
+                        <mat-icon mat-list-icon>credit_card</mat-icon>
+                        <span class="full-width p-2" *ngIf="isExpanded || isShowing">Abonnement</span>
+                    </div>
+                </a>
+
+                <a mat-list-item [routerLink]="['/my-account/accounts']" routerLinkActive="active">
+                    <div class="item">
+                        <mat-icon mat-list-icon>account_balance</mat-icon>
+                        <span class="full-width p-2" *ngIf="isExpanded || isShowing">Comptes</span>
+                    </div>
+                </a>
+            </mat-nav-list>
+
         </mat-sidenav>
 
         <mat-sidenav-content>

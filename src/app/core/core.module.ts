@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
-import { AuthComponent } from './auth/auth.component';
 import { LoginSocialComponent } from './auth/login/login-social/login-social.component';
 import { LoginComponent } from './auth/login/login.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
@@ -15,7 +14,6 @@ import { ResendUnlockEmailComponent } from './auth/resend-unlock-email/resend-un
 
 @NgModule({
   declarations: [
-    AuthComponent,
     LoginComponent,
     LoginFormComponent,
     LoginSocialComponent,

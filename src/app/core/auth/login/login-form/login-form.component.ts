@@ -83,30 +83,6 @@ export class LoginFormComponent implements OnInit {
       },
       error: (error: ApiError) => {
         this.errorHandled = true; // Indiquer que l'erreur est gérée
-        // Vérifier si l'erreur contient un message dans error.error.message ou error.message
-        // const errorMessage = error?.error?.message || error?.message || 'Une erreur est survenue';
-
-        // console.log('Erreur reçue sur la page de connexion :', errorMessage);
-
-        // // Vérifiez si le message d'erreur contient 'compte non validé'
-        // if (errorMessage.includes(this.loginInfo.username)) {
-        //   this.showResendUnlockButton.emit(true);
-        //   this.emailNonValide.emit(this.formConnect.get('username')?.value); // Émet l'email entré par l'utilisateur
-        //   this.alertService.error(errorMessage);
-        // } else if (errorMessage.includes('compte non validé')) {
-        //   this.showResendVerificationButton.emit(true); // Afficher le bouton de renvoi d'email
-        //   this.emailNonValide.emit(this.formConnect.get('username')?.value); // Émet l'email entré par l'utilisateur
-        //   this.alertService.error('Votre compte n\'est pas encore validé. Veuillez vérifier vos emails.', true);
-        // } else {
-        //   this.showResendVerificationButton.emit(false); // Cacher le bouton si ce n'est pas le bon cas
-        //   this.alertService.error(errorMessage);
-        // }
-
-        // this.isLoginFailed.emit(true);
-        // this.loading = false;
-
-        // Accéder aux informations d'erreur dans la réponse
-        // Utilisation directe de l'objet ApiError
         const errorMessage = error.message || 'Une erreur est survenue';
         const userEmail = error.email || this.formConnect.get('username')?.value;
 
@@ -116,7 +92,7 @@ export class LoginFormComponent implements OnInit {
         if (errorMessage.includes('compte non validé')) {
           this.showResendVerificationButton.emit(true); // Afficher le bouton de renvoi d'email de validation
           this.emailNonValide.emit(userEmail); // Émettre l'email pour le renvoi de validation
-          this.alertService.error('Votre compte n\'est pas encore validé. Veuillez vérifier vos emails.', true);
+          this.alertService.error('Votre compte n\'est pas encore validé. Veuillez vérifier vos emails.', false);
         } else if (errorMessage.includes('Votre compte est actuellement verrouillé')) {
           this.showResendUnlockButton.emit(true); // Afficher le bouton de déverrouillage
           this.alertService.error(errorMessage);

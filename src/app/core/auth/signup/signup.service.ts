@@ -34,8 +34,8 @@ export class UserService {
       );
   }
 
-  getUser(username: String): Observable<Object> {
-    return this.http.get(`${this.baseUrl}/get-one/${username}`).pipe(
+  getUser(username: String): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/get-one/${username}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -63,8 +63,8 @@ export class UserService {
     );
   }
 
-  deleteUser(username: String): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/delete-user/${username}`).pipe(
+  deleteUser(id: Number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/delete-user/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -86,6 +86,15 @@ export class UserService {
     );
   }
 
+  checkOldPassword(userId: number, oldPassword: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/check-old-password`, {
+      params: {
+        userId: userId.toString(),
+        oldPassword: oldPassword
+      }
+    });
+  }
+  
   verifyEmail(token: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/verify-email`, {
       params: { token },
