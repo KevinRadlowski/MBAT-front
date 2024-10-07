@@ -114,6 +114,13 @@ export class UserService {
   }
 
 
+    // Méthode pour rafraîchir le token
+    refreshToken(token: string): Observable<any> {
+      return this.http.post(`${this.baseUrl}/refresh-token`, {
+        refreshToken: token
+      });
+    }
+
   /**
  * Gère les erreurs provenant de l'API et génère un message d'erreur approprié.
  * @param {HttpErrorResponse} error - L'objet d'erreur provenant de l'API.

@@ -5,6 +5,7 @@ const TOKEN_TYPE = 'auth-token-type';
 const USER_KEY = 'auth-user';
 const USER_ID = 'auth-user-id';
 const AUTHORITIES_KEY = 'auth-authorities';
+const REFRESH_TOKEN_KEY = 'auth-refresh-token';
 
 @Injectable({
     providedIn: 'root'
@@ -41,6 +42,14 @@ export class TokenStorageService {
             sessionStorage.setItem(TOKEN_KEY, token);
             sessionStorage.setItem(TOKEN_TYPE, tokenType);
         }
+    }
+
+    saveRefreshToken(refreshToken: string): void {
+        sessionStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+    }
+
+    getRefreshToken(): string | null {
+        return sessionStorage.getItem(REFRESH_TOKEN_KEY);
     }
 
     public getToken(): string | null {
