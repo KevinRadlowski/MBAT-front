@@ -1,19 +1,20 @@
-import { inject } from '@angular/core';
-import { Router, UrlTree } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { CanActivate, Router, UrlTree } from '@angular/router';
 import { TokenStorageService } from '../services/token-storage.service';
 
-// export const AuthGuard = () => {
-//     const tokenStorageService = inject(TokenStorageService)
-//     const router = inject(Router);
+@Injectable({ providedIn: 'root' })
+export class AuthGuard implements CanActivate {
 
-//     return tokenStorageService.isAuthenticatedUser() ? true : router.navigate(['/login']);
-// }
+  constructor(private tokenStorage: TokenStorageService, private router: Router) {}
 
+  // Guard to prevent navigation if the user is not authenticated
+  canActivate(): boolean {
+    const token = this.tokenStorage.getToken();
 
-export const AuthGuard = (): boolean | UrlTree => {
-    const tokenStorageService = inject(TokenStorageService);
-    const router = inject(Router);
-
-    // Retourne true si l'utilisateur est authentifié, sinon redirige vers la page de connexion avec un UrlTree
-    return tokenStorageService.isAuthenticatedUser() ? true : router.createUrlTree(['/login']);
-};
+    if (!token || this.tokenStorage.isTokenExpired(token)) {
+      this.router.navigate(['/login']);
+      return false;
+    }
+    return true;
+  }
+}

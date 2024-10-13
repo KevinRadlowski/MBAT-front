@@ -50,10 +50,13 @@ export class AppComponent implements OnDestroy {
 
 
   ngOnInit(): void {
-    this.checkIfUserIsLogged();
-    this.router.events.subscribe(() => {
-      this.checkIfOnAccountPage(); // Appeler la méthode à chaque changement de route
+    this.token.isAuthenticated$.subscribe(isLoggedIn => {
+      this.isLogged = isLoggedIn;
     });
+
+  this.router.events.subscribe(() => {
+      this.checkIfOnAccountPage();
+  });
   }
 
 
@@ -63,13 +66,11 @@ export class AppComponent implements OnDestroy {
     this.hideSidenav = currentUrl.startsWith('/my-account');
   }
 
-  
-  ngDoCheck() {
-    this.checkIfUserIsLogged();
-  }
-
   checkIfUserIsLogged() {
-    this.isLogged = this.token.isAuthenticatedUser();
+
+    this.token.isAuthenticated$.subscribe(isLoggedIn => {
+      this.isLogged = isLoggedIn;
+    });
   }
   
 

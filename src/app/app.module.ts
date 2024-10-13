@@ -12,6 +12,8 @@ import { HomeModule } from './home/home.module';
 import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
 import { AccountModule } from './account/account.module';
+import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { AuthInterceptor } from './core/auth/helpers/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { AccountModule } from './account/account.module';
     AccountModule
   ],
   providers: [
+    provideHttpClient(withInterceptorsFromDi()), // Remplacement de HttpClientModule
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
@@ -48,6 +51,11 @@ import { AccountModule } from './account/account.module';
           console.error(err);
         }
       } as SocialAuthServiceConfig,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,  // Enregistre ton AuthInterceptor ici
+      useClass: AuthInterceptor,
+      multi: true
     }
   ],
   bootstrap: [AppComponent]

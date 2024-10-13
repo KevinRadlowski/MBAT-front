@@ -62,48 +62,43 @@ export class LoginFormComponent implements OnInit {
   submitFormulaireConnexion() {
     this.loginInfo = this.formConnect.value;
     this.loading = true;
-    this.errorHandled = false; // Réinitialiser l'indicateur avant chaque tentative de connexion
+    this.errorHandled = false;
 
     if (this.formConnect.invalid) {
-      // Vérifiez si le formulaire est invalide et affichez un message d'erreur
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
       this.alertService.error(this.errorMessage, true);
       return;
     }
 
-    // Récupérer l'état de la checkbox "Se souvenir de moi"
     const rememberMe = this.formConnect.get('rememberMe')?.value || false;
 
     this.userService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
       next: (data) => {
-        this.tokenStorage.saveAll(data, rememberMe); // Sauvegarde des données de connexion
+        this.tokenStorage.saveAll(data, rememberMe);
+        this.tokenStorage.updateAuthStatus(); // Mise à jour immédiate de l'état        
         this.isLoginFailed.emit(false);
         this.loading = false;
         this.router.navigate(['../index']); // Redirection après connexion
       },
       error: (error: ApiError) => {
-        this.errorHandled = true; // Indiquer que l'erreur est gérée
+        this.errorHandled = true;
         const errorMessage = error.message || 'Une erreur est survenue';
         const userEmail = error.email || this.formConnect.get('username')?.value;
 
-        console.log('Erreur reçue sur la page de connexion :', errorMessage);
-        console.log('Email de l\'utilisateur :', userEmail);
-
         if (errorMessage.includes('compte non validé')) {
-          this.showResendVerificationButton.emit(true); // Afficher le bouton de renvoi d'email de validation
-          this.emailNonValide.emit(userEmail); // Émettre l'email pour le renvoi de validation
+          this.showResendVerificationButton.emit(true);
+          this.emailNonValide.emit(userEmail);
           this.alertService.error('Votre compte n\'est pas encore validé. Veuillez vérifier vos emails.', false);
         } else if (errorMessage.includes('Votre compte est actuellement verrouillé')) {
-          this.showResendUnlockButton.emit(true); // Afficher le bouton de déverrouillage
+          this.showResendUnlockButton.emit(true);
           this.alertService.error(errorMessage);
         } else {
-          this.showResendVerificationButton.emit(false); // Cacher le bouton si ce n'est pas le bon cas
+          this.showResendVerificationButton.emit(false);
           this.alertService.error(errorMessage);
         }
 
         this.isLoginFailed.emit(true);
         this.loading = false;
-
       }
     });
   }

@@ -94,7 +94,7 @@ export class UserService {
       }
     });
   }
-  
+
   verifyEmail(token: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/verify-email`, {
       params: { token },
@@ -114,12 +114,11 @@ export class UserService {
   }
 
 
-    // Méthode pour rafraîchir le token
-    refreshToken(token: string): Observable<any> {
-      return this.http.post(`${this.baseUrl}/refresh-token`, {
-        refreshToken: token
-      });
-    }
+  // Méthode pour rafraîchir le token
+  refreshToken(refreshToken: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/refresh-token`, { refreshToken });
+}
+
 
   /**
  * Gère les erreurs provenant de l'API et génère un message d'erreur approprié.

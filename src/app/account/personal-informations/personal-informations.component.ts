@@ -108,25 +108,6 @@ export class PersonalInformationsComponent {
     }
   }
 
-  // Soumission du formulaire de modification de mot de passe
-  // onPasswordSubmit(): void {
-  //   if (this.passwordForm.valid && this.userId !== null) {
-  //     const passwordData = {
-  //       oldPassword: this.passwordForm.value.oldPassword,
-  //       newPassword: this.passwordForm.value.newPassword
-  //     };
-  //     this.userService.updateUserPassword(this.userId, passwordData).subscribe({
-  //       next: () => {
-  //         this.alertService.success('Mot de passe mis à jour avec succès.');
-  //         this.togglePasswordForm();
-  //       },
-  //       error: (err) => {
-  //         this.alertService.error('Erreur lors de la mise à jour du mot de passe : ' + err.message);
-  //       }
-  //     });
-  //   }
-  // }
-
   onPasswordSubmit(): void {
     if (this.passwordForm.valid && this.userId !== null) {  // Vérification explicite que this.userId n'est pas null
       const oldPassword = this.passwordForm.value.oldPassword;
