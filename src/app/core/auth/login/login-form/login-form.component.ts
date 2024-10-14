@@ -6,6 +6,7 @@ import { TokenStorageService } from '../../services/token-storage.service';
 import { UserService } from '../../signup/signup.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { ApiError } from 'src/app/shared/model/error.model';
+import { ThemeService } from 'src/app/shared/services/theme.service';
 
 @Component({
   selector: 'app-login-form',
@@ -30,7 +31,8 @@ export class LoginFormComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private userService: UserService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private themeService: ThemeService
   ) {
     this.formConnect = this.connectForm();
   }
@@ -73,9 +75,10 @@ export class LoginFormComponent implements OnInit {
     const rememberMe = this.formConnect.get('rememberMe')?.value || false;
 
     this.userService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.tokenStorage.saveAll(data, rememberMe);
-        this.tokenStorage.updateAuthStatus(); // Mise à jour immédiate de l'état        
+        this.tokenStorage.updateAuthStatus(); // Mise à jour immédiate de l'état 
+        this.themeService.setTheme(data.theme);  
         this.isLoginFailed.emit(false);
         this.loading = false;
         this.router.navigate(['../index']); // Redirection après connexion

@@ -87,6 +87,13 @@
                         <span class="full-width p-2" *ngIf="isExpanded || isShowing">Comptes</span>
                     </div>
                 </a>
+
+                <a mat-list-item [routerLink]="['/my-account/application']" routerLinkActive="active">
+                    <div class="item">
+                        <mat-icon mat-list-icon>settings</mat-icon>
+                        <span class="full-width p-2" *ngIf="isExpanded || isShowing">Application</span>
+                    </div>
+                </a>
             </mat-nav-list>
 
         </mat-sidenav>

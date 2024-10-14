@@ -1,0 +1,92 @@
+[
+    {
+        "name": "Th\u00e8me Standard",
+        "value": "theme-default",
+        "color": "#007461"
+    },
+    {
+        "name": "Th\u00e8me Bleu Ardoise",
+        "value": "theme-bleu-ardoise",
+        "color": "#004652"
+    },
+    {
+        "name": "Th\u00e8me Gris Charbon",
+        "value": "theme-gris-charbon",
+        "color": "#252427"
+    },
+    {
+        "name": "Th\u00e8me Orange Chocolat",
+        "value": "theme-orange-chocolat",
+        "color": "#D35400"
+    },
+    {
+        "name": "Th\u00e8me Rouge Bordeaux",
+        "value": "theme-rouge-bordeaux",
+        "color": "#B03A2E"
+    },
+    {
+        "name": "Th\u00e8me Terre Cuivre",
+        "value": "theme-terre-cuivre",
+        "color": "#9C640C"
+    },
+    {
+        "name": "Th\u00e8me Fra\u00eecheur & Lumi\u00e8re",
+        "value": "theme-fraicheur-lumiere",
+        "color": "#FFC1CC"
+    },
+    {
+        "name": "Th\u00e8me Sombre & Terreux",
+        "value": "theme-sombre-terreux",
+        "color": "#7F6A55"
+    },
+    {
+        "name": "Th\u00e8me Intriguant & Dramatique",
+        "value": "theme-intriguant-dramatique",
+        "color": "#4C6A92"
+    },
+    {
+        "name": "Th\u00e8me Bleus Froids",
+        "value": "theme-bleus-froids",
+        "color": "#2E4053"
+    },
+    {
+        "name": "Th\u00e8me Plein Air & Naturel",
+        "value": "theme-plein-air-naturel",
+        "color": "#6B8E23"
+    },
+    {
+        "name": "Th\u00e8me Feuillage Ombrag\u00e9 en Bleu-Vert",
+        "value": "theme-feuillage-ombre",
+        "color": "#274E13"
+    },
+    {
+        "name": "Th\u00e8me Verts et Bleus Ludiques",
+        "value": "theme-verts-bleus-ludiques",
+        "color": "#4CAF50"
+    },
+    {
+        "name": "Th\u00e8me Automne dans le Vermont",
+        "value": "theme-automne-vermont",
+        "color": "#8B4513"
+    },
+    {
+        "name": "Th\u00e8me Bleus et Gris Glac\u00e9s",
+        "value": "theme-bleus-gris-glaces",
+        "color": "#708090"
+    },
+    {
+        "name": "Th\u00e8me Oiseaux & Baies",
+        "value": "theme-oiseaux-baies",
+        "color": "#6A5ACD"
+    },
+    {
+        "name": "Th\u00e8me Jour & Nuit",
+        "value": "theme-jour-nuit",
+        "color": "#001F3F"
+    },
+    {
+        "name": "Th\u00e8me Du Coucher du Soleil au Cr\u00e9puscule",
+        "value": "theme-coucher-soleil-crepuscule",
+        "color": "#6A0DAD"
+    }
+]

@@ -3,6 +3,8 @@ import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/cor
 import { MatSidenav } from '@angular/material/sidenav';
 import { TokenStorageService } from './core/auth/services/token-storage.service';
 import { Router } from '@angular/router';
+import { UserService } from './core/auth/signup/signup.service';
+import { ThemeService } from './shared/services/theme.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -25,7 +27,9 @@ export class AppComponent implements OnDestroy {
     changeDetectorRef: ChangeDetectorRef,
     media: MediaMatcher,
     private token: TokenStorageService,
-    private router: Router // Injecter le Router
+    private router: Router,
+    private userService: UserService,
+    private themeService: ThemeService
     ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
@@ -50,6 +54,8 @@ export class AppComponent implements OnDestroy {
 
 
   ngOnInit(): void {
+    const currentTheme = this.themeService.getCurrentTheme();
+
     this.token.isAuthenticated$.subscribe(isLoggedIn => {
       this.isLogged = isLoggedIn;
     });
@@ -86,9 +92,23 @@ export class AppComponent implements OnDestroy {
     }
   }
 
+
   logout() {
-    this.token.signOut();
-    window.location.reload(); // Recharge la page après la déconnexion
+    this.userService.logout().subscribe({
+      next: (res) => {
+        this.token.signOut();
+        this.router.navigate(['/login']); // Redirection vers la page de login après déconnexion
+      },
+      error: (err) => {
+        console.error('Error during logout', err);
+      }
+    });
   }
+
+
+  // logout() {
+  //   this.token.signOut();
+  //   window.location.reload(); // Recharge la page après la déconnexion
+  // }
 
 }

@@ -1,0 +1,45 @@
+.application-container {
+    width: 100%;
+    padding: 2% 10%;
+    background-color: #fff;
+  }
+  
+  .application-card {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+  }
+  
+  .theme-option {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border-radius: 4px;
+    color: #fff;
+    box-shadow: var(--box-shadow);
+    height: 30px;
+  }
+  
+  .form-field-width {
+    width: 100%;
+  }
+  
+  .mat-card-title {
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+  
+  button {
+    margin-top: 20px;
+  }
+  
+  button.btn-save {
+    background-color: var(--color-secondary);
+    color: var(--color-primary-contrast);
+  }
+  
+  button.btn-save:hover {
+    background-color: var(--color-primary);
+  }
+  

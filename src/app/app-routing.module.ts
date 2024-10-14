@@ -11,6 +11,7 @@ import { ConfidentialityComponent } from './account/confidentiality/confidential
 import { PersonalInformationsComponent } from './account/personal-informations/personal-informations.component';
 import { SubscriptionComponent } from './account/subscription/subscription.component';
 import { AccountsComponent } from './account/accounts/accounts.component';
+import { ApplicationComponent } from './account/application/application.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/index', pathMatch: 'full' },
@@ -44,6 +45,10 @@ const routes: Routes = [
       {
         path: 'accounts',
         component: AccountsComponent  // Un autre exemple de route enfant
+      },
+      {
+        path: 'application',
+        component: ApplicationComponent  // Un autre exemple de route enfant
       }
     ]
   },

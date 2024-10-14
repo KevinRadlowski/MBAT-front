@@ -51,12 +51,14 @@
 
     <!-- Card pour le mot de passe -->
     <mat-card class="account-card">
-        <mat-card-header fxLayoutAlign="space-between center" class="password-display">
+        <mat-card-header>
             <mat-card-title>Mot de passe</mat-card-title>
-            <button mat-stroked-button class="btn-modify" (click)="togglePasswordForm()">Modifier</button>
         </mat-card-header>
         <mat-card-content>
-
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="password-display">
+                <span>********</span>
+            <button mat-stroked-button class="btn-modify" (click)="togglePasswordForm()">Modifier</button>
+            </div>
 
             <!-- Formulaire de modification du mot de passe -->
             <form *ngIf="showPasswordForm" [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
@@ -83,7 +85,8 @@
                     <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
                         'visibility'}}
                     </mat-icon><input matInput [type]="hidePassword ? 'password' : 'text'"
-                        formControlName="confirmPassword" required onpaste="return false;" oncopy="return false;" oncut="return false;">
+                        formControlName="confirmPassword" required onpaste="return false;" oncopy="return false;"
+                        oncut="return false;">
                 </mat-form-field>
                 <div fxLayout="row" fxLayoutAlign="end">
                     <button mat-raised-button color="primary" type="submit">Changer le mot de passe</button>

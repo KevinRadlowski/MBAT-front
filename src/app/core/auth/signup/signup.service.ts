@@ -34,6 +34,12 @@ export class UserService {
       );
   }
 
+  logout(): Observable<any> {
+    return this.http.post(`${this.baseUrl}/logout`, {}, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   getUser(username: String): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/get-one/${username}`).pipe(
       catchError(this.handleError)
@@ -117,7 +123,12 @@ export class UserService {
   // Méthode pour rafraîchir le token
   refreshToken(refreshToken: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/refresh-token`, { refreshToken });
-}
+  }
+
+  // Méthode pour mettre à jour le thème utilisateur
+  updateUserTheme(theme: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/update-theme`, { theme });
+  }
 
 
   /**
@@ -126,86 +137,6 @@ export class UserService {
  * @returns {Observable<Error>} - Un observable contenant un message d'erreur.
  */
   private handleError(error: HttpErrorResponse): Observable<never> {
-    // let apiError: ApiError;
-    // let errorMessage = 'An unknown error occurred!';
-    // if (error.error instanceof ErrorEvent) {
-    //   // Erreur côté client
-    //   errorMessage = `Error: ${error.error.message}`;
-    // } else {
-    //   console.log(error);
-    //   console.log(error.status);
-    //   // Erreur côté serveur
-    //   if (typeof error.error === 'string') {
-    //     errorMessage = error.error; // Si la réponse est une chaîne de texte, c'est notre message d'erreur.
-    //   } else if (error.error instanceof Blob && error.error.type === 'text/plain') {
-    //     // Convertir Blob en texte si c'est une réponse en texte
-    //     return new Observable(observer => {
-    //       const reader = new FileReader();
-    //       reader.onload = () => {
-    //         errorMessage = reader.result as string;
-    //         observer.error(new Error(errorMessage));
-    //       };
-    //       reader.onerror = () => {
-    //         observer.error(new Error('An unknown error occurred!'));
-    //       };
-    //       reader.readAsText(error.error);
-    //     });
-    //   }
-    //   // Gestion des statuts HTTP
-    //   switch (error.status) {
-    //     case 401:
-    //       errorMessage = 'Identifiant ou mot de passe incorrect.'; // Par défaut, si le message n'est pas spécifique
-    //       if (error.error?.message) {
-    //         errorMessage = error.error.message; // Prendre le message spécifique de l'erreur si disponible
-    //       }
-    //       break;
-    //     case 403:
-    //       errorMessage = 'Vous n\'avez pas la permission pour effectuer cette action.';
-    //       break;
-    //     case 404:
-    //       errorMessage = 'Ressource non trouvée.';
-    //       break;
-    //     default:
-    //       errorMessage = `Erreur serveur: ${error.message}`;
-    //       break;
-    //   }
-    // }
-    // return throwError(() => new Error(errorMessage));
-
-
-
-    // -----------------------------------------------------
-
-    //   let errorMessage = 'Une erreur inconnue est survenue !';
-    // if (error.error instanceof ErrorEvent) {
-    //   // Erreur côté client
-    //   errorMessage = `Erreur: ${error.error.message}`;
-    // } else {
-    //   // Erreur côté serveur
-    //   if (typeof error.error === 'string') {
-    //     errorMessage = error.error; // Si la réponse est une chaîne de texte, c'est notre message d'erreur.
-    //   } else if (error.error && error.error.message) {
-    //     // Ici, nous extrayons le message d'erreur du back-end
-    //     errorMessage = error.error.message;
-    //   }
-    //   switch (error.status) {
-    //     case 401:
-    //       errorMessage = 'Identifiant ou mot de passe incorrect.';
-    //       break;
-    //     case 404:
-    //       errorMessage = 'Utilisateur non trouvé.';
-    //       break;
-    //     case 400:
-    //       errorMessage = error.error.message || 'Requête incorrecte.';
-    //       break;
-    //     default:
-    //       errorMessage = `Erreur serveur: ${error.message}`;
-    //   }
-    // }
-    // return throwError(() => new Error(errorMessage));
-
-    // ----------------------------------------------------------------------
-
     let errorMessage = 'Une erreur inconnue est survenue !';
     let email = ''; // Ajout pour capturer l'email s'il est fourni dans la réponse
 

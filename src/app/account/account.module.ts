@@ -6,6 +6,7 @@ import { ConfidentialityComponent } from './confidentiality/confidentiality.comp
 import { SubscriptionComponent } from './subscription/subscription.component';
 import { PersonalInformationsComponent } from './personal-informations/personal-informations.component';
 import { AccountsComponent } from './accounts/accounts.component';
+import { ApplicationComponent } from './application/application.component';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { AccountsComponent } from './accounts/accounts.component';
     ConfidentialityComponent,
     SubscriptionComponent,
     PersonalInformationsComponent,
-    AccountsComponent
+    AccountsComponent,
+    ApplicationComponent
   ],
   imports: [
     CommonModule,

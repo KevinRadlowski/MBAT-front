@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { UserService } from '../signup/signup.service';
+import { CookieService } from 'ngx-cookie-service';
+import { jwtDecode } from "jwt-decode";
 
 const TOKEN_KEY = 'auth-token';
 const TOKEN_TYPE = 'auth-token-type';
@@ -18,7 +20,7 @@ export class TokenStorageService {
     public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
     private refreshTokenTimeout: any;
 
-    constructor(private router: Router, private userService: UserService) {
+    constructor(private router: Router, private userService: UserService, private cookieService: CookieService) {
         this.updateAuthStatus();
 
     }
@@ -66,15 +68,20 @@ export class TokenStorageService {
     }
 
     saveRefreshToken(refreshToken: string): void {
-        sessionStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-    }
+        this.clearRefreshToken();
+        this.cookieService.set('refresh_token', refreshToken, {
+            expires: 7, // Nombre de jours avant expiration
+            // TODO : Remettre en route lors du déploiement 
+            // secure: true, // Pour les connexions HTTPS
+            sameSite: 'Strict' // Strict pour éviter les attaques CSRF
+          });    }
 
     public getToken(): string | null {
         return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
     }
 
     public getRefreshToken(): string | null {
-        return sessionStorage.getItem(REFRESH_TOKEN_KEY);
+        return this.cookieService.get('refresh_token') || null; // Récupération du refresh token depuis le cookie
     }
 
     public getTokenType(): string | null {
@@ -84,10 +91,11 @@ export class TokenStorageService {
     // Check if token is expired
     public isTokenExpired(token: string): boolean {
         try {
-            const expiry = JSON.parse(atob(token.split('.')[1])).exp * 1000;
-            const now = Date.now();
-            return expiry < now;
+            const decodedToken: any = jwtDecode(token);
+            const expiry = decodedToken.exp * 1000;
+            return expiry < Date.now();
         } catch (e) {
+            console.error('Invalid token structure');
             return true;
         }
     }
@@ -109,6 +117,7 @@ export class TokenStorageService {
         this.refreshTokenTimeout = setTimeout(() => {
             this.refreshToken();
         }, timeUntilExpiration - 60000); // Refresh 1min before expiration
+        // }, timeUntilExpiration - 5000); // Refresh 5sec before expiration
     }
 
     // Refresh token using refresh token
@@ -171,6 +180,10 @@ export class TokenStorageService {
         sessionStorage.removeItem(USER_ID);
     }
 
+    clearRefreshToken(): void {
+        this.cookieService.delete('refresh_token'); // Suppression du refresh token
+    }
+
     isAuthenticatedUser(): boolean {
         const token = this.getToken();
         return token ? this.isTokenExpired(token) : false;
@@ -190,6 +203,7 @@ export class TokenStorageService {
     signOut(): void {
         localStorage.clear();
         sessionStorage.clear();
+        this.clearRefreshToken(); // Suppression du refresh token
         this.updateAuthStatus();  // Met à jour l'état d'authentification après la déconnexion
         this.deleteCookie('g_state'); // Supprime le cookie `g_state`
         if (this.refreshTokenTimeout) {
