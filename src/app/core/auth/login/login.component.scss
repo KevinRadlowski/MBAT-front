@@ -44,11 +44,14 @@ h3 {
   color: var(--color-secondary);
 }
 
+.no-account-h3 {
+  margin-top: 20px;
+}
+
 .btn {
-  margin: 40px;
   background-color: var(--color-secondary);
   width: 250px;
-  height: 140px;
+  height: 40px;
   color: var(--color-primary-contrast);
 }
 
@@ -67,4 +70,14 @@ h3 {
   height: 2px;
   width: 25%;
   background-color: black
+}
+
+.btn-resend-verification {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  margin-top: 10px;
+}
+
+.btn-resend-verification:hover {
+  background-color: var(--color-secondary);
 }

@@ -1,0 +1,165 @@
+<div class="container-fluid account-container" fxLayout="column" fxLayoutAlign="center center">
+    <h2>Authentification à deux facteurs (2FA)</h2>
+
+    <!-- Card principale avec Stepper inclus -->
+    <mat-card class="account-card">
+        <mat-card-header>
+            <mat-card-title>Première méthode</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+                <div class="verification-status">
+                    <ng-container *ngIf="firstMethodConfigured; else notConfigured">
+                        <div fxLayout="row" fxLayoutAlign="start center">
+                            <mat-icon matPrefix class="icon-color icon-verified">verified</mat-icon>
+                            <div>
+                                <p class="verified-text">Authentification à double facteur activée.</p>
+                                <p class="verified-text">Méthode mise en place : {{ twoFactorMethod == 'app' ? 'App Authentificator' :
+                                    'Email'}}</p>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #notConfigured>
+                        <span>Configurer l'authentification à deux facteurs pour sécuriser votre compte.</span>
+                    </ng-template>
+                </div>
+                <button *ngIf="!firstMethodConfigured" mat-stroked-button class="btn-modify"
+                    (click)="startFirstMethodSetup()">
+                    {{ showFirstMethodSetup ? 'Annuler' : 'Configurer' }}
+                </button>
+                <button *ngIf="firstMethodConfigured" mat-stroked-button class="btn-modify"
+                    (click)="desactivateFirstMethod()">
+                    Désactiver
+                </button>
+            </div>
+
+        </mat-card-content>
+
+        <!-- Stepper à l'intérieur de la carte -->
+        <mat-card-content *ngIf="showFirstMethodSetup">
+            <mat-horizontal-stepper [linear]="true" #stepper>
+                <!-- Étape 1 : Choisir la méthode -->
+                <mat-step [stepControl]="methodSelectionForm">
+                    <form [formGroup]="methodSelectionForm" class="full-width-form">
+                        <ng-template matStepLabel>Choisissez une méthode</ng-template>
+                        <div fxLayout="row" fxLayoutAlign="space-between center" class="radio-card-group">
+                            <!-- <mat-card class="radio-card" (click)="methodSelectionForm.get('method')?.setValue('sms')"
+                                [class.active]="methodSelectionForm.get('method')?.value === 'sms'">
+                                <mat-radio-button class="custom-radio" value="sms"
+                                    [checked]="methodSelectionForm.get('method')?.value === 'sms'">
+                                    <span class="radio-text">SMS</span>
+                                </mat-radio-button>
+                            </mat-card> -->
+                            <mat-card class="radio-card" (click)="methodSelectionForm.get('method')?.setValue('email')"
+                                [class.active]="methodSelectionForm.get('method')?.value === 'email'">
+                                <mat-radio-button class="custom-radio" value="email"
+                                    [checked]="methodSelectionForm.get('method')?.value === 'email'">
+                                    <span class="radio-text">Email</span>
+                                </mat-radio-button>
+                            </mat-card>
+                            <mat-card class="radio-card" (click)="methodSelectionForm.get('method')?.setValue('app'); forceFormValidation()"
+                                [class.active]="methodSelectionForm.get('method')?.value === 'app'">
+                                <mat-radio-button class="custom-radio" value="app"
+                                    [checked]="methodSelectionForm.get('method')?.value === 'app'">
+                                    <span class="radio-text">Authenticator App</span>
+                                </mat-radio-button>
+                            </mat-card>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="end" class="form-buttons">
+                            <button mat-raised-button class="btn-submit" matStepperNext
+                                [disabled]="!methodSelectionForm.valid">Suivant</button>
+                        </div>
+                    </form>
+                </mat-step>
+
+                <!-- Étape 2 : Configurer la méthode -->
+                <mat-step [stepControl]="getCurrentForm()">
+                    <ng-template matStepLabel>Configurer la méthode</ng-template>
+
+                    <ng-container [ngSwitch]="methodSelectionForm.get('method')?.value">
+                        <!-- Formulaire SMS -->
+                        <!-- <div *ngSwitchCase="'sms'" fxLayout="row" fxLayoutAlign="space-between center"
+                            class="input-container">
+                            <form [formGroup]="smsForm" class="full-width-form">
+                                <mat-form-field appearance="outline" class="form-field-width large-input">
+                                    <mat-label>Numéro de téléphone</mat-label>
+                                    <input matInput formControlName="phoneNumber" placeholder="+33...">
+                                </mat-form-field>
+                            </form>
+                            <button mat-raised-button class="btn-submit" (click)="sendVerificationCode()">Envoyer le
+                                code</button>
+                        </div> -->
+
+                        <!-- Formulaire Email -->
+                        <div *ngSwitchCase="'email'" fxLayout="row" fxLayoutAlign="space-between center"
+                            class="input-container">
+                            <form [formGroup]="emailForm" class="full-width-form">
+                                <mat-form-field appearance="outline" class="form-field-width large-input">
+                                    <mat-label>Adresse email</mat-label>
+                                    <input matInput formControlName="email" type="email">
+                                </mat-form-field>
+                            </form>
+                            <button mat-raised-button class="btn-submit" (click)="sendVerificationCode()">Envoyer le
+                                code</button>
+                        </div>
+
+                        <!-- Méthode App : Pas de bouton supplémentaire -->
+                        <div *ngSwitchCase="'app'" fxLayout="column" fxLayoutAlign="center center">
+                            <p>Scannez ce QR code avec votre application Authenticator.</p>
+                            <img [src]="qrCodeImage" alt="QR Code" *ngIf="qrCodeImage" class="qr-code-image">
+                        </div>
+                    </ng-container>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between" class="form-buttons">
+                        <button mat-stroked-button class="btn-modify" matStepperPrevious>Précédent</button>
+                        <button mat-raised-button class="btn-submit" matStepperNext
+                            [disabled]="!isCodeSent">Suivant</button>
+                    </div>
+                </mat-step>
+
+                <!-- Étape 3 : Validation -->
+                <mat-step>
+                    <ng-template matStepLabel>Validation</ng-template>
+
+                    <ng-container [ngSwitch]="methodSelectionForm.get('method')?.value">
+                        <!-- Validation pour SMS -->
+                        <!-- <div *ngSwitchCase="'sms'" fxLayout="column" fxLayoutAlign="center center">
+                            <form [formGroup]="smsForm" class="full-width-form">
+                                <mat-form-field appearance="outline" class="form-field-width large-input">
+                                    <mat-label>Code reçu par SMS</mat-label>
+                                    <input matInput formControlName="verificationCode">
+                                </mat-form-field>
+                            </form>
+                        </div> -->
+
+                        <!-- Validation pour Email -->
+                        <div *ngSwitchCase="'email'" fxLayout="column" fxLayoutAlign="center center">
+                            <form [formGroup]="emailForm" class="full-width-form">
+                                <mat-form-field appearance="outline" class="form-field-width large-input">
+                                    <mat-label>Code reçu par Email</mat-label>
+                                    <input matInput formControlName="verificationCode">
+                                </mat-form-field>
+                            </form>
+                        </div>
+
+                        <!-- Validation pour App -->
+                        <div *ngSwitchCase="'app'" fxLayout="column" fxLayoutAlign="center center" class="input-container">
+                            <form [formGroup]="authenticatorForm" class="full-width-form">
+                                <mat-form-field appearance="outline" class="form-field-width large-input">
+                                    <mat-label>Code Authenticator</mat-label>
+                                    <input matInput formControlName="authenticatorCode">
+                                </mat-form-field>
+                            </form>
+                        </div>
+                    </ng-container>
+
+                    <div fxLayout="row" fxLayoutAlign="space-between" class="form-buttons">
+                        <button mat-stroked-button class="btn-modify" matStepperPrevious>Précédent</button>
+                        <button mat-raised-button class="btn-submit" (click)="validateCode()">Valider</button>
+                    </div>
+                </mat-step>
+            </mat-horizontal-stepper>
+        </mat-card-content>
+    </mat-card>
+</div>

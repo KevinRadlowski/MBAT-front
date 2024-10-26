@@ -2,8 +2,11 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthLoginInfo } from '../../helpers/login-info';
-import { AuthService } from '../../services/auth.service';
 import { TokenStorageService } from '../../services/token-storage.service';
+import { UserService } from '../../signup/signup.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { ApiError } from 'src/app/shared/model/error.model';
+import { ThemeService } from 'src/app/shared/services/theme.service';
 
 @Component({
   selector: 'app-login-form',
@@ -14,17 +17,24 @@ export class LoginFormComponent implements OnInit {
   public formConnect: FormGroup;
   hidePassword = true;
   errorMessage = '';
-  role!: String;
-  roles: string[] = [];
   loading = false;
+  private errorHandled = false; // Ajouter un indicateur pour éviter la double gestion d'erreur
   private loginInfo!: AuthLoginInfo;
+  @Output() showResendVerificationButton: EventEmitter<boolean> = new EventEmitter(); // Ajouter un indicateur pour afficher ou non le bouton de renvoi d'email de validation du compte
+  @Output() showResendUnlockButton: EventEmitter<boolean> = new EventEmitter(); // Ajouter un indicateur pour afficher ou non le bouton de renvoi d'email de déverouillage du compte
   @Output() isLoginFailed: EventEmitter<any> = new EventEmitter();
+  @Output() emailNonValide: EventEmitter<string> = new EventEmitter(); // Émet l'email pour le renvoi de validation
+
+  public formTotp!: FormGroup;
+  public isTotpRequired = false; // Indique si le 2FA est requis
 
   constructor(
-    private authService: AuthService,
     private tokenStorage: TokenStorageService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private userService: UserService,
+    private alertService: AlertService,
+    private themeService: ThemeService
   ) {
     this.formConnect = this.connectForm();
   }
@@ -32,18 +42,24 @@ export class LoginFormComponent implements OnInit {
   get f() { return this.formConnect.controls; }
 
   ngOnInit(): void {
+    this.formTotp = this.fb.group({
+      totp: ['', Validators.compose([Validators.required, Validators.minLength(6)])]
+    });
   }
 
   connectForm(): FormGroup {
     return this.fb.group(
       {
         username: [
-          null,
+          '',
           Validators.compose([Validators.required])
         ],
         password: [
-          null,
+          '',
           Validators.compose([Validators.required])
+        ],
+        rememberMe: [
+          false
         ]
       }
     );
@@ -53,21 +69,73 @@ export class LoginFormComponent implements OnInit {
   submitFormulaireConnexion() {
     this.loginInfo = this.formConnect.value;
     this.loading = true;
-    this.authService.login(this.loginInfo).subscribe({
-      next: (data) => {
-        this.tokenStorage.saveToken(data.accessToken);
-        this.tokenStorage.saveUser(data.username);
-        this.isLoginFailed.emit(false);
-      },
-      error: (error) => {
-        this.errorMessage = error.error.message;
-        this.isLoginFailed.emit(true);
-        this.loading = false;
-      },
-      complete: () => this.router.navigate(['../index'])
+    this.errorHandled = false;
 
+    if (this.formConnect.invalid) {
+      this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
+      this.alertService.error(this.errorMessage, true);
+      return;
     }
-    );
+
+    const rememberMe = this.formConnect.get('rememberMe')?.value || false;
+
+    this.userService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
+      next: (data: any) => {
+        console.log("data : ", data)
+        if (data.requires2FA) { // Si la double authentification est requise
+          this.isTotpRequired = true;
+        } else {
+          this.completeLogin(data, rememberMe);
+        }
+
+      },
+      error: (error: ApiError) => {
+        this.errorHandled = true;
+        this.handleError(error);
+      }
+    });
+  }
+
+  submitTotp() {
+    const totpCode = this.formTotp.value.totp;
+    this.userService.verifyAuthenticatorCode(this.loginInfo.username, totpCode).subscribe({
+      next: (data: any) => {
+        this.completeLogin(data, this.formConnect.get('rememberMe')?.value);
+      },
+      error: (error: ApiError) => {
+        this.alertService.error('Échec de la vérification du code TOTP');
+      }
+    });
+
+  }
+
+  private handleError(error: ApiError) {
+    const errorMessage = error.message || 'Une erreur est survenue';
+    const userEmail = error.email || this.formConnect.get('username')?.value;
+
+    if (errorMessage.includes('compte non validé')) {
+      this.showResendVerificationButton.emit(true);
+      this.emailNonValide.emit(userEmail);
+      this.alertService.error('Votre compte n\'est pas encore validé. Veuillez vérifier vos emails.', false);
+    } else if (errorMessage.includes('Votre compte est actuellement verrouillé')) {
+      this.showResendUnlockButton.emit(true);
+      this.alertService.error(errorMessage);
+    } else {
+      this.showResendVerificationButton.emit(false);
+      this.alertService.error(errorMessage);
+    }
+
+    this.isLoginFailed.emit(true);
+    this.loading = false;
+  }
+
+  private completeLogin(data: any, rememberMe: boolean) {
+    this.tokenStorage.saveAll(data, rememberMe);
+    this.tokenStorage.updateAuthStatus();
+    this.themeService.setTheme(data.theme);
+    this.isLoginFailed.emit(false);
+    this.loading = false;
+    this.router.navigate(['../index']);
   }
 
 }

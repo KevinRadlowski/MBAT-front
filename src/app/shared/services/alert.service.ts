@@ -1,23 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlertService {
-  private subject = new Subject<any>();
+  private subject = new BehaviorSubject<any>(null); // Utilisation de BehaviorSubject pour garder le dernier message
   private keepAfterNavigationChange = false;
 
   constructor(private router: Router) {
-    // Clear alert message on route change
+    // Gère les changements de route pour conserver ou supprimer le message
     router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         if (this.keepAfterNavigationChange) {
-          // only keep for a single location change
           this.keepAfterNavigationChange = false;
         } else {
-          // clear alert
           this.clear();
         }
       }
@@ -27,9 +25,14 @@ export class AlertService {
   success(message: string, keepAfterNavigationChange = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
     this.subject.next({ type: 'success', text: message });
+  }
+
+  successAutoClear(message: string, keepAfterNavigationChange = false, timeout: number = 5000) {
+    this.keepAfterNavigationChange = keepAfterNavigationChange;
+    this.subject.next({ type: 'success', text: message });
     setTimeout(() => {
       this.clear();
-    }, 5000);
+    }, timeout);
   }
 
   error(message: string, keepAfterNavigationChange = false) {
@@ -37,12 +40,13 @@ export class AlertService {
     this.subject.next({ type: 'error', text: message });
   }
 
-  errorAutoClear(message: string, keepAfterNavigationChange = false) {
+  // Affiche une erreur et la supprime automatiquement après un certain délai
+  errorAutoClear(message: string, keepAfterNavigationChange = false, timeout: number = 5000) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
     this.subject.next({ type: 'error', text: message });
     setTimeout(() => {
       this.clear();
-    }, 5000);
+    }, timeout);
   }
 
   getMessage(): Observable<any> {
@@ -53,4 +57,3 @@ export class AlertService {
     this.subject.next(null);
   }
 }
-

@@ -1,12 +1,41 @@
-import { Component } from '@angular/core';
-
+import { MediaMatcher } from '@angular/cdk/layout';
+import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
+import { TokenStorageService } from './core/auth/services/token-storage.service';
+import { Router } from '@angular/router';
+import { UserService } from './core/auth/signup/signup.service';
+import { ThemeService } from './shared/services/theme.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   title = 'MBAT';
+  info: any;
+  mobileQuery: MediaQueryList;
+  isDesktopFormat: boolean = false;
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+  isExpanded = true;
+  showSubmenu: boolean = false;
+  isShowing = false;
+  showSubSubMenu: boolean = false;
+  isLogged = false;
+  hideSidenav = false; // Nouvelle variable pour gérer l'affichage de la sidenav
+
+  constructor(
+    changeDetectorRef: ChangeDetectorRef,
+    media: MediaMatcher,
+    private token: TokenStorageService,
+    private router: Router,
+    private userService: UserService,
+    private themeService: ThemeService
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 600px)');
+    this._mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this._mobileQueryListener);
+    this.isDesktopFormat = media.matchMedia('(max-width: 600px)') ? true : false;
+  }
 
   onActivate(event: Event) {
     window.scroll({
@@ -15,4 +44,62 @@ export class AppComponent {
       behavior: 'smooth'
     });
   }
+
+  private _mobileQueryListener: () => void;
+
+
+  ngOnDestroy(): void {
+    this.mobileQuery.removeListener(this._mobileQueryListener);
+  }
+
+
+  ngOnInit(): void {
+    const currentTheme = this.themeService.getCurrentTheme();
+
+    this.token.isAuthenticated$.subscribe(isLoggedIn => {
+      this.isLogged = isLoggedIn;
+    });
+
+    this.router.events.subscribe(() => {
+      this.checkIfOnAccountPage();
+    });
+  }
+
+  checkIfOnAccountPage() {
+    const currentUrl = this.router.url;
+    this.hideSidenav = currentUrl.startsWith('/my-account');
+  }
+
+  checkIfUserIsLogged() {
+
+    this.token.isAuthenticated$.subscribe(isLoggedIn => {
+      this.isLogged = isLoggedIn;
+    });
+  }
+
+  mouseenter() {
+    if (!this.isExpanded) {
+      this.isShowing = true;
+    }
+  }
+
+  mouseleave() {
+    if (!this.isExpanded) {
+      this.isShowing = false;
+    }
+  }
+
+
+  logout() {
+    this.userService.logout().subscribe({
+      next: (res) => {
+        this.token.signOut();
+        this.router.navigate(['/login']); // Redirection vers la page de login après déconnexion
+      },
+      error: (err) => {
+        console.error('Error during logout', err);
+      }
+    });
+  }
+
 }

@@ -1,0 +1,65 @@
+:root {
+    /** primary **/
+    --color-primary: #4C4C47; /* Gris charbon élégant, neutre et sophistiqué */
+    --color-primary-contrast: #FFFFFF; 
+    --color-primary-lighter: #5D5D58;
+    --color-primary-light: #6F6F6B;
+    --color-primary-darker: #3B3B35;
+    --color-primary-dark: #2A2A25;
+  
+    /** secondary **/
+    --color-secondary: #8C746A; /* Brun chaud, professionnel et apaisant */
+    --color-secondary-contrast: #FFFFFF;
+    --color-secondary-lighter: #A1877E;
+    --color-secondary-light: #B69993;
+    --color-secondary-darker: #735B54;
+    --color-secondary-dark: #5A443E;
+  
+    /** tertiary **/
+    --color-tertiary: #D4A373; /* Brun clair, subtil mais professionnel */
+    --color-tertiary-contrast: #FFFFFF;
+    --color-tertiary-lighter: #DDBA8E;
+    --color-tertiary-light: #E4C9A5;
+    --color-tertiary-darker: #B78A55;
+    --color-tertiary-dark: #936D42;
+  
+    /** success **/
+    --color-success: #6C8D47; /* Vert olive pour un style naturel et équilibré */
+    --color-success-contrast: #FFFFFF;
+    --color-success-tint: #7FAE5E;
+    --color-success-shade: #5D7B3A;
+  
+    /** warning **/
+    --color-warning: #D98E04; /* Jaune moutarde pour les alertes avec du caractère */
+    --color-warning-contrast: #FFFFFF;
+    --color-warning-shade: #B47A03;
+    --color-warning-tint: #F0A419;
+  
+    /** danger **/
+    --color-danger: #B24C63; /* Rouge bordeaux pour une touche de sophistication */
+    --color-danger-contrast: #FFFFFF;
+    --color-danger-shade: #9A3E55;
+    --color-danger-tint: #C26179;
+  
+    /** dark **/
+    --color-dark: #2F2F2D; /* Noir graphite pour les fonds sombres élégants */
+    --color-dark-contrast: #FFFFFF;
+    --color-dark-shade: #232321;
+    --color-dark-tint: #3C3C3A;
+  
+    /** medium **/
+    --color-medium: #A9A9A5; /* Gris moyen, idéal pour les éléments de fond */
+    --color-medium-contrast: #FFFFFF;
+    --color-medium-shade: #91918E;
+    --color-medium-tint: #BCBCB9;
+  
+    /** light **/
+    --color-light: #ECE9E6; /* Beige clair doux pour un aspect naturel et lumineux */
+    --color-light-contrast: #000000;
+    --color-light-shade: #DBD6D3;
+    --color-light-tint: #FFFFFF;
+  
+    --box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18), 0 6px 12px rgba(0, 0, 0, 0.22);
+    --box-shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.28);
+  }
+  

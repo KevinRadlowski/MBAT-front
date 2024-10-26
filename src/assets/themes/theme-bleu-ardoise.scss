@@ -1,0 +1,65 @@
+:root {
+    /** primary **/
+    --color-primary: #2A3E50; /* Bleu ardoise, élégant et sérieux */
+    --color-primary-contrast: #FFFFFF; /* Contraste blanc pour une bonne lisibilité */
+    --color-primary-lighter: #3F556D; 
+    --color-primary-light: #506680;
+    --color-primary-darker: #1A2B3A; /* Bleu ardoise plus profond */
+    --color-primary-dark: #101D28;
+  
+    /** secondary **/
+    --color-secondary: #8395A7; /* Gris doux, neutre mais sophistiqué */
+    --color-secondary-contrast: #FFFFFF;
+    --color-secondary-lighter: #A1B0C2;
+    --color-secondary-light: #B4C1D3;
+    --color-secondary-darker: #677786;
+    --color-secondary-dark: #4C5A6A;
+  
+    /** tertiary **/
+    --color-tertiary: #F4A261; /* Orange doux, chaleureux pour les accents */
+    --color-tertiary-contrast: #FFFFFF;
+    --color-tertiary-lighter: #F6B482;
+    --color-tertiary-light: #F9C599;
+    --color-tertiary-darker: #DA8E4E;
+    --color-tertiary-dark: #BB783E;
+  
+    /** success **/
+    --color-success: #218C74; /* Vert émeraude discret pour le succès */
+    --color-success-contrast: #FFFFFF;
+    --color-success-tint: #32A48B;
+    --color-success-shade: #187662;
+  
+    /** warning **/
+    --color-warning: #E07A5F; /* Rouge brique pour les alertes */
+    --color-warning-contrast: #FFFFFF;
+    --color-warning-shade: #C96D53;
+    --color-warning-tint: #EB8C74;
+  
+    /** danger **/
+    --color-danger: #B33951; /* Rouge foncé pour le danger ou erreurs */
+    --color-danger-contrast: #FFFFFF;
+    --color-danger-shade: #992C45;
+    --color-danger-tint: #CC4D67;
+  
+    /** dark **/
+    --color-dark: #3A3A3A; /* Gris foncé neutre pour un style moderne */
+    --color-dark-contrast: #FFFFFF;
+    --color-dark-shade: #292929;
+    --color-dark-tint: #4B4B4B;
+  
+    /** medium **/
+    --color-medium: #7D879C; /* Gris bleu pour des éléments de fond discrets */
+    --color-medium-contrast: #FFFFFF;
+    --color-medium-shade: #69738B;
+    --color-medium-tint: #8F9AAD;
+  
+    /** light **/
+    --color-light: #F1F1F1; /* Gris clair subtil pour le fond */
+    --color-light-contrast: #000000;
+    --color-light-shade: #E3E3E3;
+    --color-light-tint: #FFFFFF;
+  
+    --box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.23);
+    --box-shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.30);
+  }
+  

@@ -1,0 +1,48 @@
+.unlock-message {
+    padding: 30px;
+    margin: 30px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .unlock-message p {
+    font-size: 1.1em;
+    color: var(--color-dark);
+    margin-bottom: 20px;
+  }
+  
+  .unlock-message p.redirect-timer {
+    font-size: 0.9em;
+    color: var(--color-medium-shade);
+  }
+  
+  .unlock-message button {
+    background-color: var(--color-primary);
+    color: var(--color-primary-contrast);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .unlock-message button:hover {
+    background-color: var(--color-secondary);
+  }
+  
+  .unlock-message button:active {
+    background-color: var(--color-secondary-dark);
+  }
+  
+  @media screen and (max-width: 640px) {
+    .unlock-message {
+      padding: 20px;
+      margin: 20px;
+    }
+  
+    .unlock-message button {
+      width: 100%;
+    }
+  }
+  

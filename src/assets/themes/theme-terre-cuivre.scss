@@ -1,0 +1,61 @@
+:root {
+    /** primary **/
+    --color-primary: #9C640C;
+    --color-primary-contrast: #fff;
+    --color-primary-lighter: #D68910;
+    --color-primary-light: #E59866;
+    --color-primary-darker: #7D4906;
+    --color-primary-dark: #5B2C06;
+
+    /** secondary **/
+    --color-secondary: #556B2F;
+    --color-secondary-contrast: #fff;
+    --color-secondary-lighter: #6B8E23;
+    --color-secondary-light: #8FBC8F;
+    --color-secondary-darker: #3A4F1F;
+    --color-secondary-dark: #2C3E1F;
+
+    /** tertiary **/
+    --color-tertiary: #AF601A;
+    --color-tertiary-contrast: #000;
+    --color-tertiary-lighter: #CA895D;
+    --color-tertiary-light: #D7BDE2;
+    --color-tertiary-darker: #7E5109;
+    --color-tertiary-dark: #4D2C11;
+
+    /** success **/
+    --color-success: #27AE60;
+    --color-success-contrast: #ffffff;
+    --color-success-tint: #2ECC71;
+    --color-success-shade: #229954;
+
+    /** warning **/
+    --color-warning: #F39C12;
+    --color-warning-contrast: #ffffff;
+    --color-warning-shade: #E67E22;
+    --color-warning-tint: #F7DC6F;
+
+    /** danger **/
+    --color-danger: #E74C3C;
+    --color-danger-contrast: #ffffff;
+    --color-danger-shade: #C0392B;
+    --color-danger-tint: #F1948A;
+
+    /** dark **/
+    --color-dark: #5B2C06;
+    --color-dark-contrast: #ffffff;
+    --color-dark-shade: #4E2B17;
+    --color-dark-tint: #7F5135;
+
+    /** medium **/
+    --color-medium: #8E764C;
+    --color-medium-contrast: #ffffff;
+    --color-medium-shade: #7C6742;
+    --color-medium-tint: #A38F5C;
+
+    /** light **/
+    --color-light: #FDFEFE;
+    --color-light-contrast: #000000;
+    --color-light-shade: #D5DBDB;
+    --color-light-tint: #FBFCFC;
+}

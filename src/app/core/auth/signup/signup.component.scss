@@ -1,28 +1,30 @@
 .register-title {
-    margin: 30px 0 0 50px;
-  }
-  
-  .separator {
-    background-color: black;
-    height: 2px;
-    width: 50%;
-  }
-  
-  .register-img {
-    width: 600px;
-  }
-  
-  .required-field {
-    font-style: italic;
-  }
-  
-  .register-link:hover {
-    color: var(--color-secondary);
-  }
-  
-  .register-form {
-    box-shadow: var(--box-shadow);
-    border-radius: 10px;
-    width: 70%;
-    margin: 30px;
-  }
+  margin: 30px 0 30px 50px;
+}
+.header-content {
+  margin: 0px 20px;
+}
+.separator {
+  background-color: black;
+  height: 2px;
+  width: 50%;
+}
+
+.register-img {
+  width: 600px;
+}
+
+.required-field {
+  font-style: italic;
+}
+
+.register-link:hover {
+  color: var(--color-secondary);
+}
+
+.register-form {
+  box-shadow: var(--box-shadow);
+  border-radius: 10px;
+  width: 70%;
+  margin: 30px;
+}
