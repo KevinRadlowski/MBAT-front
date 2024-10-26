@@ -1,0 +1,168 @@
+.account-container {
+    width: 100%;
+    padding: 2% 10%;
+    background-color: #fff;
+}
+
+.account-card {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+.mat-card-title {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.form-field-width {
+    width: 100%;
+}
+
+.large-input {
+    margin: 0 auto;
+    display: block;
+}
+
+.full-width-form {
+    width: 100%;
+    /* Le form prend toute la largeur disponible */
+    display: flex;
+    align-items: center;
+}
+
+.input-container {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.radio-container {
+    margin: 20px 0;
+    width: 100%;
+}
+
+.radio-container mat-radio-group {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.btn-submit {
+    background-color: var(--color-secondary);
+    color: var(--color-primary-contrast);
+    white-space: nowrap;
+    padding: 0 16px;
+}
+
+.btn-submit:hover {
+    background-color: var(--color-primary);
+}
+
+.btn-submit:disabled {
+    background-color: rgba(0, 0, 0, 0.12); /* Couleur grisée */
+    color: rgba(0, 0, 0, 0.26); /* Couleur du texte grisée */
+    cursor: not-allowed; /* Changer le curseur pour indiquer qu'il est désactivé */
+  }
+  
+
+.btn-modify {
+    color: var(--color-secondary);
+    border-color: var(--color-secondary);
+    white-space: nowrap;
+    padding: 0 16px;
+}
+
+.btn-modify:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.form-buttons {
+    margin-top: 20px;
+}
+
+.qr-code-image {
+    max-width: 300px;
+    margin: 20px auto;
+    display: block;
+}
+
+button {
+    margin-left: 10px;
+}
+
+.mat-card-content {
+    padding: 0 !important;
+}
+
+.radio-card-group {
+    width: 100%;
+}
+
+.radio-card {
+    padding: 10px;
+    text-align: center;
+    flex: 1;
+    margin: 0 10px;
+    cursor: pointer;
+    border: 1px solid var(--color-secondary);
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color: var(--color-secondary);
+}
+
+.radio-card:hover,
+.radio-card.active {
+    background-color: var(--color-primary);
+    color: white !important;
+}
+
+.radio-card:hover span.radio-text,
+.radio-card.active span.radio-text {
+    color: white !important;
+}
+
+/* Cibler les boutons radio dans tout l'application avec ::ng-deep */
+::ng-deep .mat-radio-outer-circle {
+    border-color: var(--color-primary) !important;
+    /* Bordure du cercle externe, couleur de l'application */
+}
+
+::ng-deep .mat-radio-inner-circle {
+    background-color: var(--color-primary) !important;
+    /* Cercle interne rempli, couleur de l'application */
+}
+
+/* Quand le bouton radio est sélectionné */
+::ng-deep .mat-radio-checked .mat-radio-outer-circle {
+    border-color: var(--color-success) !important;
+    /* Bordure externe lorsque sélectionné */
+}
+
+::ng-deep .mat-radio-checked .mat-radio-inner-circle {
+    background-color: var(--color-success) !important;
+    /* Cercle interne lorsque sélectionné */
+}
+
+/* Survol du bouton radio */
+::ng-deep .mat-radio-button:hover .mat-radio-outer-circle {
+    border-color: white !important;
+    /* Change la bordure à blanc lors du survol */
+}
+
+::ng-deep .mat-radio-button:hover .mat-radio-inner-circle {
+    background-color: white !important;
+    /* Change le cercle interne à blanc lors du survol */
+}
+
+
+.verified-text {
+    padding: 0;
+    margin: 0;
+}
+
+.icon-verified {
+    color: var(--color-success);
+    margin-right: 5px;
+}

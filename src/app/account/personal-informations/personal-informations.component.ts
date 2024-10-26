@@ -94,9 +94,11 @@ export class PersonalInformationsComponent {
     if (this.emailForm.valid && this.userId !== null) {
       const newEmail = this.emailForm.value.email;
       this.userService.updateUser(this.userId, { username: newEmail }).subscribe({
-        next: () => {
+        next: (response: any) => {
+          console.log(response);
           this.alertService.success('Adresse email mise à jour avec succès.');
           this.currentEmail = newEmail;  // Mise à jour de l'email affiché
+          this.tokenStorage.saveToken(response.jwt, 'Bearer', false); // Sauvegarde du nouveau JWT
           this.tokenStorage.saveUsername(this.currentEmail);
           this.isVerified = false;  // Réinitialise l'état de vérification
           this.toggleEmailForm();
@@ -111,16 +113,13 @@ export class PersonalInformationsComponent {
   onPasswordSubmit(): void {
     if (this.passwordForm.valid && this.userId !== null) {  // Vérification explicite que this.userId n'est pas null
       const oldPassword = this.passwordForm.value.oldPassword;
-  
-      console.log("userid: " + this.userId)
+
       // Vérification du mot de passe actuel
-      this.userService.checkOldPassword(this.userId, oldPassword).subscribe({
+      this.userService.validateOldPassword(this.userId, oldPassword).subscribe({
         next: (response) => {
-          console.log("response : " + response)
           // Si le mot de passe est correct, soumettre les nouvelles informations
           const newPassword = this.passwordForm.value.newPassword;
-      console.log("userid: " + this.userId)
-      this.userService.updateUserPassword(this.userId!, { oldPassword, newPassword }).subscribe({
+          this.userService.changeAuthenticatedUserPassword(oldPassword, newPassword).subscribe({
             next: () => {
               this.alertService.success('Mot de passe mis à jour avec succès.');
               this.togglePasswordForm();

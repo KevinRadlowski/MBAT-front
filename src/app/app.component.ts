@@ -30,7 +30,7 @@ export class AppComponent implements OnDestroy {
     private router: Router,
     private userService: UserService,
     private themeService: ThemeService
-    ) {
+  ) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');
     this._mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this._mobileQueryListener);
@@ -60,14 +60,12 @@ export class AppComponent implements OnDestroy {
       this.isLogged = isLoggedIn;
     });
 
-  this.router.events.subscribe(() => {
+    this.router.events.subscribe(() => {
       this.checkIfOnAccountPage();
-  });
+    });
   }
 
-
-   // Nouvelle méthode pour vérifier si l'utilisateur est sur la page "my-account"
-   checkIfOnAccountPage() {
+  checkIfOnAccountPage() {
     const currentUrl = this.router.url;
     this.hideSidenav = currentUrl.startsWith('/my-account');
   }
@@ -78,7 +76,6 @@ export class AppComponent implements OnDestroy {
       this.isLogged = isLoggedIn;
     });
   }
-  
 
   mouseenter() {
     if (!this.isExpanded) {
@@ -104,11 +101,5 @@ export class AppComponent implements OnDestroy {
       }
     });
   }
-
-
-  // logout() {
-  //   this.token.signOut();
-  //   window.location.reload(); // Recharge la page après la déconnexion
-  // }
 
 }

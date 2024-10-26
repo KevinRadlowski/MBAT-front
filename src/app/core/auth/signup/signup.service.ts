@@ -12,123 +12,342 @@ const httpOptions = {
 })
 export class UserService {
 
-  private baseUrl = `${environment.apiUrl}/api/user`;
+  // private baseUrl = `${environment.apiUrl}/api/user`;
+  private baseUrlUser = `${environment.apiUrl}/api/user`;
+  private baseUrlAuth = `${environment.apiUrl}/api/auth`;
+  private baseUrlPassword = `${environment.apiUrl}/api/password`;
+  private baseUrlTwoFactor = `${environment.apiUrl}/api/twofactor`;
 
   constructor(private http: HttpClient) { }
 
+
+
+  // ----------- MÉTHODES DU AuthController -----------
+
+
+
   /**
-* Envoie une requête HTTP POST à l'API pour authentifier un utilisateur avec un nom d'utilisateur et un mot de passe.
-* @param {string} username - Le nom d'utilisateur de l'utilisateur qui tente de se connecter.
-* @param {string} password - Le mot de passe de l'utilisateur qui tente de se connecter.
-* @returns {Observable<any>} - Un observable qui émet une réponse HTTP de l'API lorsqu'elle est disponible.
-*/
+     * Authentifie un utilisateur avec nom d'utilisateur et mot de passe.
+     * @param {string} username - Le nom d'utilisateur.
+     * @param {string} password - Le mot de passe.
+     * @returns {Observable<any>} - Un observable de la réponse de l'API.
+     */
   login(username: string, password: string): Observable<any> {
-    return this.http.post(
-      `${this.baseUrl}` + `/signin`,
-      {
-        username,
-        password,
-      },
-      httpOptions).pipe(
-        catchError(this.handleError)
-      );
+    return this.http.post(`${this.baseUrlAuth}/signin`, { username, password }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
   }
-
+  /**
+     * Déconnecte l'utilisateur.
+     * @returns {Observable<any>} - Un observable de la réponse de l'API.
+     */
   logout(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/logout`, {}, httpOptions).pipe(
+    return this.http.post(`${this.baseUrlAuth}/logout`, {}, httpOptions).pipe(
       catchError(this.handleError)
     );
   }
 
-  getUser(username: String): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/get-one/${username}`).pipe(
+
+  /**
+   * Rafraîchit le token JWT pour l'utilisateur.
+   * @param {string} refreshToken - Le token de rafraîchissement.
+   * @returns {Observable<any>} - Un observable avec le nouveau token JWT.
+   */
+  refreshToken(refreshToken: string): Observable<any> {
+    return this.http.post(`${this.baseUrlAuth}/refresh-token`, { refreshToken }, httpOptions).pipe(
       catchError(this.handleError)
     );
   }
 
+
+
+  // ----------- MÉTHODES DU UserController -----------
+
+
+
+  /**
+     * Obtient un utilisateur par son nom d'utilisateur.
+     * @param {string} username - Le nom d'utilisateur.
+     * @returns {Observable<any>} - Un observable de la réponse de l'API.
+     */
+  getUser(username: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrlUser}/get-one/${username}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Vérifie si un e-mail existe dans la base de données.
+   * @param {string} email - L'e-mail à vérifier.
+   * @returns {Observable<boolean>} - Un observable avec true/false.
+   */
   checkEmailExists(email: string): Observable<boolean> {
-    return this.http.get<boolean>(`${this.baseUrl}/check-email?email=${email}`);
+    return this.http.get<boolean>(`${this.baseUrlUser}/check-email?email=${email}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-
+  /**
+     * Créé un nouvel utilisateur.
+     * @param {Object} user - Les informations de l'utilisateur à créer.
+     * @returns {Observable<Object>} - Un observable de la réponse de l'API.
+     */
   createUser(user: Object): Observable<Object> {
-    return this.http.post(`${this.baseUrl}` + `/signup`, user).pipe(
+    return this.http.post(`${this.baseUrlUser}/signup`, user, httpOptions).pipe(
       catchError(this.handleError)
     );
   }
 
-  updateUser(id: Number, value: any): Observable<Object> {
-    return this.http.put(`${this.baseUrl}/${id}`, value).pipe(
+  /**
+   * Met à jour un utilisateur existant.
+   * @param {number} id - L'identifiant de l'utilisateur à mettre à jour.
+   * @param {any} value - Les nouvelles valeurs à mettre à jour.
+   * @returns {Observable<Object>} - Un observable de la réponse de l'API.
+   */
+  updateUser(id: number, value: any): Observable<Object> {
+    return this.http.put(`${this.baseUrlUser}/${id}`, value, httpOptions).pipe(
       catchError(this.handleError)
     );
   }
 
-  updateUserPassword(id: Number, value: any): Observable<Object> {
-    return this.http.put(`${this.baseUrl}/update-password/${id}`, value).pipe(
+  /**
+   * Supprime un utilisateur.
+   * @param {number} id - L'identifiant de l'utilisateur à supprimer.
+   * @returns {Observable<any>} - Un observable de la réponse de l'API.
+   */
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrlUser}/delete-user/${id}`, httpOptions).pipe(
       catchError(this.handleError)
     );
   }
 
-  deleteUser(id: Number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/delete-user/${id}`).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  // Méthode pour demander la réinitialisation du mot de passe
-  requestPasswordReset(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/forgot-password`, { email }, httpOptions).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  resetPassword(token: string, newPassword: string): Observable<any> {
-    return this.http.post(
-      `${this.baseUrl}/reset-password`,
-      { token, newPassword },
-      httpOptions // Pas besoin de spécifier responseType ici si on attend une réponse JSON
-    ).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  checkOldPassword(userId: number, oldPassword: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/check-old-password`, {
-      params: {
-        userId: userId.toString(),
-        oldPassword: oldPassword
-      }
-    });
-  }
-
+  /**
+     * Vérifie l'e-mail de l'utilisateur.
+     * @param {string} token - Le jeton de vérification.
+     * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+     */
   verifyEmail(token: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/verify-email`, {
+    return this.http.get(`${this.baseUrlUser}/verify-email`, {
       params: { token },
-      responseType: 'text' // Indique que la réponse attendue est du texte
+      responseType: 'text'
     }).pipe(
       catchError(this.handleError)
     );
   }
 
+  /**
+ * Renvoyer l'e-mail de vérification.
+ * @param {string} email - L'adresse e-mail de l'utilisateur.
+ * @returns {Observable<any>} - Un observable de la réponse de l'API.
+ */
   resendVerificationEmail(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/resend-verification-email`, { email }, httpOptions);
+    return this.http.post(`${this.baseUrlUser}/resend-verification-email`, { email }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // Méthode pour renvoyer un mail de déverrouillage
+  /**
+* Renvoyer un e-mail de déverrouillage de compte.
+* @param {string} email - L'adresse e-mail de l'utilisateur.
+* @returns {Observable<any>} - Un observable de la réponse de l'API.
+*/
   resendUnlockEmail(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/resend-unlock-email`, { email }, httpOptions);
+    return this.http.post(`${this.baseUrlUser}/resend-unlock-email`, { email }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
   }
 
 
-  // Méthode pour rafraîchir le token
-  refreshToken(refreshToken: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/refresh-token`, { refreshToken });
-  }
-
-  // Méthode pour mettre à jour le thème utilisateur
+  /**
+   * Met à jour le thème de l'utilisateur.
+   * @param {string} theme - Le thème choisi par l'utilisateur.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
   updateUserTheme(theme: string): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/update-theme`, { theme });
+    return this.http.patch(`${this.baseUrlUser}/update-theme`, { theme }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
   }
+
+
+
+  // ----------- MÉTHODES DU PasswordController -----------
+
+
+
+  /**
+     * Demande de réinitialisation de mot de passe par e-mail.
+     * @param {string} email - L'adresse e-mail de l'utilisateur.
+     * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+     */
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrlPassword}/request-reset`, { email }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Réinitialise le mot de passe de l'utilisateur avec un jeton.
+   * @param {string} token - Le jeton de réinitialisation.
+   * @param {string} newPassword - Le nouveau mot de passe.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.baseUrlPassword}/reset-password`, { token, newPassword }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Vérifie si l'ancien mot de passe est correct pour un utilisateur donné.
+   * @param {number} userId - L'identifiant de l'utilisateur.
+   * @param {string} oldPassword - L'ancien mot de passe à vérifier.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
+  validateOldPassword(userId: number, oldPassword: string): Observable<any> {
+    return this.http.get(`${this.baseUrlPassword}/validate-old-password`, {
+      params: {
+        userId: userId.toString(),
+        oldPassword
+      }
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Change le mot de passe de l'utilisateur actuellement authentifié.
+   * @param {string} oldPassword - L'ancien mot de passe.
+   * @param {string} newPassword - Le nouveau mot de passe.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
+  changeAuthenticatedUserPassword(oldPassword: string, newPassword: string): Observable<any> {
+    return this.http.patch(`${this.baseUrlPassword}/change`, { oldPassword, newPassword }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Met à jour le mot de passe d'un utilisateur spécifique (pour les administrateurs).
+   * @param {number} id - L'identifiant de l'utilisateur.
+   * @param {string} newPassword - Le nouveau mot de passe.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
+  adminUpdateUserPassword(id: number, newPassword: string): Observable<any> {
+    return this.http.put(`${this.baseUrlPassword}/admin/update/${id}`, { newPassword }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
+
+  // ----------- MÉTHODES DU TwoFactorAuthController -----------
+
+
+
+  /**
+   * Génère un QR code pour l'Authenticator App.
+   * @param {string} username - Le nom d'utilisateur.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
+  getQrCode(username: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/generate-qr`, { username }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Envoie le code SMS pour la validation 2FA.
+   * @param {string} phoneNumber - Le numéro de téléphone.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
+  sendSmsCode(phoneNumber: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/enable-2fa/sms`, { phoneNumber }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Vérifie le code envoyé par SMS pour la validation 2FA.
+   * @param {string} code - Le code envoyé par SMS.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
+  verifySmsCode(code: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/verify-2fa/sms`, { code }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+ * Envoie le code par e-mail pour la validation 2FA.
+ * @param {string} email - L'adresse e-mail de l'utilisateur.
+ * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+ */
+  sendEmailCode(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/enable-2fa/email`, { email }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Vérifie le code envoyé par e-mail pour la validation 2FA.
+   * @param {string} code - Le code envoyé par e-mail.
+   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+   */
+  verifyEmailCode(code: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/verify-2fa/email`, { code }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+ * Vérifie le code envoyé par l'Authenticator App pour la validation 2FA.
+ * @param {string} username - Le nom d'utilisateur.
+ * @param {string} code - Le code généré par l'Authenticator App.
+ * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+ */
+  verifyAuthenticatorCode(username: string, code: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/verify-2fa`, { username, code }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Récupère les codes de secours pour l'utilisateur.
+   * @param {string} username - Le nom d'utilisateur.
+   * @returns {Observable<any>} - Un observable avec les codes de secours.
+   */
+  getBackupCodes(username: string): Observable<any> {
+    return this.http.get(`${this.baseUrlTwoFactor}/backup-codes?username=${username}`, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Génère de nouveaux codes de secours pour l'utilisateur.
+   * @param {string} username - Le nom d'utilisateur.
+   * @returns {Observable<any>} - Un observable avec les nouveaux codes de secours.
+   */
+  generateNewBackupCodes(username: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/generate-new-backup-codes`, { username }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  updateUserTwoFactor(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrlTwoFactor}/update-twofactor/${id}`, data, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  disableUserTwoFactor(id: number): Observable<any> {
+    return this.http.put(`${this.baseUrlTwoFactor}/disable-twofactor/${id}`, {}, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
+  // ----------- GESTION DES ERREURS -----------
 
 
   /**

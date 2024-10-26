@@ -53,6 +53,9 @@ export class TokenStorageService {
             sessionStorage.setItem(TOKEN_KEY, token);
             sessionStorage.setItem(TOKEN_TYPE, tokenType);
         }
+
+        console.log('Token sauvegardé:', token);
+        console.log('Type de token sauvegardé:', tokenType);
     }
 
     public saveUser(user: any, id: string, rememberMe: boolean): void {

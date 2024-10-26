@@ -25,6 +25,8 @@ export class LoginFormComponent implements OnInit {
   @Output() isLoginFailed: EventEmitter<any> = new EventEmitter();
   @Output() emailNonValide: EventEmitter<string> = new EventEmitter(); // Émet l'email pour le renvoi de validation
 
+  public formTotp!: FormGroup;
+  public isTotpRequired = false; // Indique si le 2FA est requis
 
   constructor(
     private tokenStorage: TokenStorageService,
@@ -40,6 +42,9 @@ export class LoginFormComponent implements OnInit {
   get f() { return this.formConnect.controls; }
 
   ngOnInit(): void {
+    this.formTotp = this.fb.group({
+      totp: ['', Validators.compose([Validators.required, Validators.minLength(6)])]
+    });
   }
 
   connectForm(): FormGroup {
@@ -76,34 +81,61 @@ export class LoginFormComponent implements OnInit {
 
     this.userService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
       next: (data: any) => {
-        this.tokenStorage.saveAll(data, rememberMe);
-        this.tokenStorage.updateAuthStatus(); // Mise à jour immédiate de l'état 
-        this.themeService.setTheme(data.theme);  
-        this.isLoginFailed.emit(false);
-        this.loading = false;
-        this.router.navigate(['../index']); // Redirection après connexion
+        console.log("data : ", data)
+        if (data.requires2FA) { // Si la double authentification est requise
+          this.isTotpRequired = true;
+        } else {
+          this.completeLogin(data, rememberMe);
+        }
+
       },
       error: (error: ApiError) => {
         this.errorHandled = true;
-        const errorMessage = error.message || 'Une erreur est survenue';
-        const userEmail = error.email || this.formConnect.get('username')?.value;
-
-        if (errorMessage.includes('compte non validé')) {
-          this.showResendVerificationButton.emit(true);
-          this.emailNonValide.emit(userEmail);
-          this.alertService.error('Votre compte n\'est pas encore validé. Veuillez vérifier vos emails.', false);
-        } else if (errorMessage.includes('Votre compte est actuellement verrouillé')) {
-          this.showResendUnlockButton.emit(true);
-          this.alertService.error(errorMessage);
-        } else {
-          this.showResendVerificationButton.emit(false);
-          this.alertService.error(errorMessage);
-        }
-
-        this.isLoginFailed.emit(true);
-        this.loading = false;
+        this.handleError(error);
       }
     });
+  }
+
+  submitTotp() {
+    const totpCode = this.formTotp.value.totp;
+    this.userService.verifyAuthenticatorCode(this.loginInfo.username, totpCode).subscribe({
+      next: (data: any) => {
+        this.completeLogin(data, this.formConnect.get('rememberMe')?.value);
+      },
+      error: (error: ApiError) => {
+        this.alertService.error('Échec de la vérification du code TOTP');
+      }
+    });
+
+  }
+
+  private handleError(error: ApiError) {
+    const errorMessage = error.message || 'Une erreur est survenue';
+    const userEmail = error.email || this.formConnect.get('username')?.value;
+
+    if (errorMessage.includes('compte non validé')) {
+      this.showResendVerificationButton.emit(true);
+      this.emailNonValide.emit(userEmail);
+      this.alertService.error('Votre compte n\'est pas encore validé. Veuillez vérifier vos emails.', false);
+    } else if (errorMessage.includes('Votre compte est actuellement verrouillé')) {
+      this.showResendUnlockButton.emit(true);
+      this.alertService.error(errorMessage);
+    } else {
+      this.showResendVerificationButton.emit(false);
+      this.alertService.error(errorMessage);
+    }
+
+    this.isLoginFailed.emit(true);
+    this.loading = false;
+  }
+
+  private completeLogin(data: any, rememberMe: boolean) {
+    this.tokenStorage.saveAll(data, rememberMe);
+    this.tokenStorage.updateAuthStatus();
+    this.themeService.setTheme(data.theme);
+    this.isLoginFailed.emit(false);
+    this.loading = false;
+    this.router.navigate(['../index']);
   }
 
 }

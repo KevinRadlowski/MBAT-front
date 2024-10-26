@@ -1,5 +1,8 @@
+<app-loader [isLoading]="loading"></app-loader> <!-- Ajouter le loader ici -->
+
 <div id="form" class="body-form-connect">
-  <form class="connexion-form" fxLayout="column" [formGroup]="formConnect" (ngSubmit)="submitFormulaireConnexion()">
+  <form *ngIf="!isTotpRequired" class="connexion-form" fxLayout="column" [formGroup]="formConnect"
+    (ngSubmit)="submitFormulaireConnexion()">
     <div fxLayout="column" fxLayoutAlign="none center">
       <mat-form-field appearance="outline">
         <mat-label>E-mail</mat-label>
@@ -24,5 +27,23 @@
       </button>
     </div>
   </form>
+
+  <div *ngIf="isTotpRequired" id="form-totp" class="body-form-connect">
+    <form [formGroup]="formTotp" (ngSubmit)="submitTotp()" class="connexion-form" fxLayout="column">
+      <div fxLayout="column" fxLayoutAlign="none center">
+        <mat-form-field appearance="outline">
+          <mat-label>Code TOTP</mat-label>
+          <input matInput formControlName="totp" type="text" class="form-control" required>
+          <mat-icon matPrefix class="icon-color">vpn_key</mat-icon>
+        </mat-form-field>
+      </div>
+      <div fxLayout="column" fxLayoutAlign="none center">
+        <button mat-stroked-button type="submit" class="btn">
+          <span>Valider le code</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
 
 </div>
