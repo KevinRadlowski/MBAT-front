@@ -20,6 +20,7 @@ export class LoginFormComponent implements OnInit {
   loading = false;
   private errorHandled = false; // Ajouter un indicateur pour éviter la double gestion d'erreur
   private loginInfo!: AuthLoginInfo;
+  private twoFactorMethod = '';
   @Output() showResendVerificationButton: EventEmitter<boolean> = new EventEmitter(); // Ajouter un indicateur pour afficher ou non le bouton de renvoi d'email de validation du compte
   @Output() showResendUnlockButton: EventEmitter<boolean> = new EventEmitter(); // Ajouter un indicateur pour afficher ou non le bouton de renvoi d'email de déverouillage du compte
   @Output() isLoginFailed: EventEmitter<any> = new EventEmitter();
@@ -83,7 +84,23 @@ export class LoginFormComponent implements OnInit {
       next: (data: any) => {
         console.log("data : ", data)
         if (data.requires2FA) { // Si la double authentification est requise
-          this.isTotpRequired = true;
+          this.twoFactorMethod = data.twoFactorMethod
+          if (this.twoFactorMethod === 'email') {
+            this.userService.generateEmailCode(this.loginInfo.username).subscribe({
+              next: () => {
+                this.alertService.success('Un code de vérification a été envoyé à votre adresse email.');
+                this.isTotpRequired = true;
+                this.loading = false;
+              },
+              error: (error: ApiError) => {
+                this.alertService.error('Erreur lors de l\'envoi du code de vérification par email.');
+                this.loading = false;
+              }
+            });
+          } else {
+            this.isTotpRequired = true;
+            this.loading = false;
+          }
         } else {
           this.completeLogin(data, rememberMe);
         }
@@ -98,15 +115,15 @@ export class LoginFormComponent implements OnInit {
 
   submitTotp() {
     const totpCode = this.formTotp.value.totp;
-    this.userService.verifyAuthenticatorCode(this.loginInfo.username, totpCode).subscribe({
+
+    this.userService.verify2FaCode(this.loginInfo.username, totpCode).subscribe({
       next: (data: any) => {
         this.completeLogin(data, this.formConnect.get('rememberMe')?.value);
       },
       error: (error: ApiError) => {
-        this.alertService.error('Échec de la vérification du code TOTP');
+        this.alertService.error('Échec de la vérification du code');
       }
     });
-
   }
 
   private handleError(error: ApiError) {

@@ -243,7 +243,7 @@ export class UserService {
 
   // ----------- MÉTHODES DU TwoFactorAuthController -----------
 
-
+  // ------------ 2FA APP AUTHENTICATOR ------------
 
   /**
    * Génère un QR code pour l'Authenticator App.
@@ -255,6 +255,19 @@ export class UserService {
       catchError(this.handleError)
     );
   }
+
+  /**
+  * Active la validation 2FA avec une app Authenticator.
+  * @param {string} email - L'adresse e-mail de l'utilisateur.
+  * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+  */
+  enable2FaApp(username: string, code: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/enable-2fa/app`, { username, code }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // ------------ 2FA SMS ------------
 
   /**
    * Envoie le code SMS pour la validation 2FA.
@@ -278,39 +291,44 @@ export class UserService {
     );
   }
 
+  //------------ 2FA EMAIL ------------
+
   /**
  * Envoie le code par e-mail pour la validation 2FA.
  * @param {string} email - L'adresse e-mail de l'utilisateur.
  * @returns {Observable<any>} - Un observable avec la réponse de l'API.
  */
-  sendEmailCode(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrlTwoFactor}/enable-2fa/email`, { email }, httpOptions).pipe(
+  generateEmailCode(username: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/generate-email-code`, { username }, httpOptions).pipe(
       catchError(this.handleError)
     );
   }
 
   /**
-   * Vérifie le code envoyé par e-mail pour la validation 2FA.
-   * @param {string} code - Le code envoyé par e-mail.
+* Active la validation 2FA avec une app Authenticator.
+* @param {string} email - L'adresse e-mail de l'utilisateur.
+* @returns {Observable<any>} - Un observable avec la réponse de l'API.
+*/
+  enable2FaEmail(username: string, code: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/enable-2fa/email`, { username, code }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
+    /**
+   * Vérifie le code envoyé soit par l'Authenticator App, soit par mail, soit par SMS pour la validation 2FA.
+   * @param {string} username - Le nom d'utilisateur.
+   * @param {string} code - Le code généré par l'Authenticator App.
    * @returns {Observable<any>} - Un observable avec la réponse de l'API.
    */
-  verifyEmailCode(code: string): Observable<any> {
-    return this.http.post(`${this.baseUrlTwoFactor}/verify-2fa/email`, { code }, httpOptions).pipe(
-      catchError(this.handleError)
-    );
-  }
+    verify2FaCode(username: string, code: string): Observable<any> {
+      return this.http.post(`${this.baseUrlTwoFactor}/verify-2fa`, { username, code }, httpOptions).pipe(
+        catchError(this.handleError)
+      );
+    }
 
-  /**
- * Vérifie le code envoyé par l'Authenticator App pour la validation 2FA.
- * @param {string} username - Le nom d'utilisateur.
- * @param {string} code - Le code généré par l'Authenticator App.
- * @returns {Observable<any>} - Un observable avec la réponse de l'API.
- */
-  verifyAuthenticatorCode(username: string, code: string): Observable<any> {
-    return this.http.post(`${this.baseUrlTwoFactor}/verify-2fa`, { username, code }, httpOptions).pipe(
-      catchError(this.handleError)
-    );
-  }
+  // ------------ 2FA BACKUP ------------
 
   /**
    * Récupère les codes de secours pour l'utilisateur.
