@@ -6,6 +6,7 @@
     --color-primary-light: #506680;
     --color-primary-darker: #1A2B3A; /* Bleu ardoise plus profond */
     --color-primary-dark: #101D28;
+    --color-primary-filter: brightness(0) saturate(100%) invert(19%) sepia(21%) saturate(1061%) hue-rotate(166deg) brightness(93%) contrast(86%);
   
     /** secondary **/
     --color-secondary: #8395A7; /* Gris doux, neutre mais sophistiqué */

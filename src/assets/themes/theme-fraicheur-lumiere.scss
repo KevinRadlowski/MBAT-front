@@ -1,14 +1,15 @@
 :root {
-  --color-primary: #CC6C7B;
   /* Pétale encore plus foncé */
+  --color-primary: #CC6C7B;
   --color-primary-contrast: #FFFFFF;
   --color-primary-lighter: #D98B97;
   --color-primary-light: #E5AAB2;
   --color-primary-darker: #B35562;
   --color-primary-dark: #993D4A;
+  --color-primary-filter: brightness(0) saturate(100%) invert(58%) sepia(39%) saturate(850%) hue-rotate(304deg) brightness(87%) contrast(80%);
 
-  --color-secondary: #C14463;
   /* Coquelicot encore plus foncé */
+  --color-secondary: #C14463;
   --color-secondary-contrast: #FFFFFF;
   --color-secondary-lighter: #D0627B;
   --color-secondary-light: #E08F9E;
@@ -16,8 +17,8 @@
   --color-secondary-dark: #8F2C46;
 
 
-  --color-tertiary: #A49393;
   /* Gris taupe doux */
+  --color-tertiary: #A49393;
   --color-tertiary-contrast: #FFFFFF;
   --color-tertiary-lighter: #BCA5A5;
   --color-tertiary-light: #D1BFBF;

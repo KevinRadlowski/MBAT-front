@@ -1,3 +1,6 @@
+.app-img {
+    filter: var(--color-primary-filter);
+}
 .toolbar {
     background-color: var(--color-primary-contrast);
     color: var(--color-primary);
@@ -76,6 +79,15 @@
 
 }
 
+
+mat-nav-list a {
+    border-left: 5px solid #fff;
+
+    &.active {
+        border-left: 5px solid var(--color-primary);
+        background-color: #f0f0f0;
+    }
+}
 .active span,
 .active mat-icon {
     color: var(--color-tertiary);

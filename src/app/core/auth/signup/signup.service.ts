@@ -28,12 +28,12 @@ export class UserService {
 
   /**
      * Authentifie un utilisateur avec nom d'utilisateur et mot de passe.
-     * @param {string} username - Le nom d'utilisateur.
+     * @param {string} identifier - Le nom d'utilisateur.
      * @param {string} password - Le mot de passe.
      * @returns {Observable<any>} - Un observable de la réponse de l'API.
      */
-  login(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.baseUrlAuth}/signin`, { username, password }, httpOptions).pipe(
+  login(identifier: string, password: string): Observable<any> {
+    return this.http.post(`${this.baseUrlAuth}/signin`, { identifier, password }, httpOptions).pipe(
       catchError(this.handleError)
     );
   }

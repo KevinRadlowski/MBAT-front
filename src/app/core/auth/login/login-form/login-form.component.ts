@@ -51,7 +51,7 @@ export class LoginFormComponent implements OnInit {
   connectForm(): FormGroup {
     return this.fb.group(
       {
-        username: [
+        identifier: [
           '',
           Validators.compose([Validators.required])
         ],
@@ -75,18 +75,19 @@ export class LoginFormComponent implements OnInit {
     if (this.formConnect.invalid) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
       this.alertService.error(this.errorMessage, true);
+      this.loading = false;
       return;
     }
 
     const rememberMe = this.formConnect.get('rememberMe')?.value || false;
 
-    this.userService.login(this.loginInfo.username, this.loginInfo.password).subscribe({
+    this.userService.login(this.loginInfo.identifier, this.loginInfo.password).subscribe({
       next: (data: any) => {
         console.log("data : ", data)
         if (data.requires2FA) { // Si la double authentification est requise
           this.twoFactorMethod = data.twoFactorMethod
           if (this.twoFactorMethod === 'email') {
-            this.userService.generateEmailCode(this.loginInfo.username).subscribe({
+            this.userService.generateEmailCode(this.loginInfo.identifier).subscribe({
               next: () => {
                 this.alertService.success('Un code de vérification a été envoyé à votre adresse email.');
                 this.isTotpRequired = true;
@@ -116,7 +117,7 @@ export class LoginFormComponent implements OnInit {
   submitTotp() {
     const totpCode = this.formTotp.value.totp;
 
-    this.userService.verify2FaCode(this.loginInfo.username, totpCode).subscribe({
+    this.userService.verify2FaCode(this.loginInfo.identifier, totpCode).subscribe({
       next: (data: any) => {
         this.completeLogin(data, this.formConnect.get('rememberMe')?.value);
       },

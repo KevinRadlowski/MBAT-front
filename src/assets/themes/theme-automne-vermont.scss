@@ -1,22 +1,23 @@
 :root {
-    --color-primary: #8B4513;
     /* Cramoisi */
+    --color-primary: #8B4513;
     --color-primary-contrast: #FFFFFF;
     --color-primary-lighter: #9E5527;
     --color-primary-light: #B1683C;
     --color-primary-darker: #733912;
     --color-primary-dark: #5D2C0E;
-
-    --color-secondary: #556B2F;
+    --color-primary-filter: brightness(0) saturate(100%) invert(28%) sepia(16%) saturate(4231%) hue-rotate(355deg) brightness(95%) contrast(88%);
+    
     /* Forêt */
+    --color-secondary: #556B2F;
     --color-secondary-contrast: #FFFFFF;
     --color-secondary-lighter: #6A833E;
     --color-secondary-light: #809B4D;
     --color-secondary-darker: #485924;
     --color-secondary-dark: #3C4B1C;
 
-    --color-tertiary: #D2691E;
     /* Rouille */
+    --color-tertiary: #D2691E;
     --color-tertiary-contrast: #FFFFFF;
     --color-tertiary-lighter: #E07F39;
     --color-tertiary-light: #EB8F55;

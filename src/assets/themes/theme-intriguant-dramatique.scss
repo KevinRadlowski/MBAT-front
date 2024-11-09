@@ -1,22 +1,23 @@
 :root {
+  /* Nuage d'orage */
     --color-primary: #4C6A92;
-    /* Nuage d'orage */
     --color-primary-contrast: #FFFFFF;
     --color-primary-lighter: #5E7DA4;
     --color-primary-light: #6F8FB6;
     --color-primary-darker: #3E5774;
     --color-primary-dark: #324862;
+    --color-primary-filter: brightness(0) saturate(100%) invert(41%) sepia(59%) saturate(386%) hue-rotate(175deg) brightness(84%) contrast(83%);
 
-    --color-secondary: #3B577A;
     /* Chute d'eau */
+    --color-secondary: #3B577A;
     --color-secondary-contrast: #FFFFFF;
     --color-secondary-lighter: #496889;
     --color-secondary-light: #577899;
     --color-secondary-darker: #2F4661;
     --color-secondary-dark: #243451;
 
-    --color-tertiary: #2C6B2F;
     /* Prairie */
+    --color-tertiary: #2C6B2F;
     --color-tertiary-contrast: #FFFFFF;
     --color-tertiary-lighter: #3C7C3F;
     --color-tertiary-light: #4C8E4F;

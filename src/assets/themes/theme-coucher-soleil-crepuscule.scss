@@ -1,22 +1,23 @@
 :root {
-    --color-primary: #6A0DAD;
     /* Violet profond */
+    --color-primary: #6A0DAD;
     --color-primary-contrast: #FFFFFF;
     --color-primary-lighter: #8347C2;
     --color-primary-light: #9C72D6;
     --color-primary-darker: #59108C;
     --color-primary-dark: #480B6C;
+    --color-primary-filter: brightness(0) saturate(100%) invert(11%) sepia(95%) saturate(4272%) hue-rotate(274deg) brightness(94%) contrast(106%);
 
-    --color-secondary: #483D8B;
     /* Indigo */
+    --color-secondary: #483D8B;
     --color-secondary-contrast: #FFFFFF;
     --color-secondary-lighter: #5B4FA1;
     --color-secondary-light: #7266B8;
     --color-secondary-darker: #3D316E;
     --color-secondary-dark: #2F2755;
 
-    --color-tertiary: #D2B48C;
     /* Taupe */
+    --color-tertiary: #D2B48C;
     --color-tertiary-contrast: #000000;
     --color-tertiary-lighter: #E3C8A2;
     --color-tertiary-light: #F4DBB7;

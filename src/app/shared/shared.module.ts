@@ -6,10 +6,12 @@ import { RouterModule } from '@angular/router';
 import { MaterialModule } from './material.module';
 import { AlertComponent } from './alert/alert.component';
 import { LoaderComponent } from './loader/loader.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({ declarations: [
         AlertComponent,
-        LoaderComponent
+        LoaderComponent,
+        ConfirmationDialogComponent
     ],
     exports: [
         CommonModule,
@@ -18,7 +20,8 @@ import { LoaderComponent } from './loader/loader.component';
         ReactiveFormsModule,
         AlertComponent,
         RouterModule,
-        LoaderComponent
+        LoaderComponent,
+        ConfirmationDialogComponent
     ], imports: [CommonModule,
         MaterialModule,
         FormsModule,

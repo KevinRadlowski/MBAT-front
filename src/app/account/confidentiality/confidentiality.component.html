@@ -1,4 +1,4 @@
-<div class="container-fluid account-container" fxLayout="column" fxLayoutAlign="center center">
+<div class="container-fluid account-container" fxLayout="column" fxLayoutAlign="start center">
     <h2>Authentification à deux facteurs (2FA)</h2>
 
     <!-- Card principale avec Stepper inclus -->
@@ -29,7 +29,7 @@
                 </button>
                 <button *ngIf="firstMethodConfigured" mat-stroked-button class="btn-modify"
                     (click)="desactivateFirstMethod()">
-                    Désactiver
+                    {{ showPasswordForm ? 'Annuler' : 'Désactiver' }}
                 </button>
             </div>
 
@@ -160,5 +160,24 @@
                 </mat-step>
             </mat-horizontal-stepper>
         </mat-card-content>
+        <mat-card *ngIf="showPasswordForm" >
+            <mat-card-header>
+              <h3>Confirmer la désactivation avec votre mot de passe</h3>
+            </mat-card-header>
+            <mat-card-content>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" class="input-container">
+                    <form [formGroup]="passwordForm" class="full-width-form">
+                        <mat-form-field appearance="outline" class="form-field-width large-input">
+                          <mat-label>Mot de passe</mat-label>
+                          <input matInput formControlName="password" type="password" placeholder="Entrez votre mot de passe" />
+                          <mat-error *ngIf="passwordForm.get('password')?.hasError('required')">Mot de passe requis</mat-error>
+                        </mat-form-field>
+                    </form>
+                    <button mat-raised-button class="btn-submit" (click)="submitPassword()" [disabled]="!passwordForm.valid">Confirmer</button>
+                </div>
+            </mat-card-content>
+        </mat-card>
     </mat-card>
+    
 </div>
