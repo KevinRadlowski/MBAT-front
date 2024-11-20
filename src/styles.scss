@@ -3,11 +3,12 @@
 html,
 body {
     height: 100%;
+    font-family: 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans', 'Noto Sans Symbols 2', sans-serif;
 }
 
 body {
     margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+    // font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 
@@ -15,4 +16,8 @@ input {
     border: 0;
     box-shadow: none;
     /* You may want to include this as bootstrap applies these styles too */
+}
+
+::ng-deep .mat-typography, .mat-button, .mat-input-element, .mat-card {
+    font-family: 'Noto Sans', sans-serif !important;
 }

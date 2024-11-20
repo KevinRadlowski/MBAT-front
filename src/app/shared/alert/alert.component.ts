@@ -24,4 +24,8 @@ export class AlertComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  closeAlert(): void {
+    this.message = null; // Cache l'alerte
+}
+
 }

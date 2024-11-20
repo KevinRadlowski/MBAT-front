@@ -1,5 +1,51 @@
 <div class="container-fluid account-container" fxLayout="column" fxLayoutAlign="start center">
-    <h2>Informations personnelles</h2>
+    <h2 class="info-title">Informations personnelles</h2>
+    <!-- Card pour le prénom et le nom -->
+    <mat-card class="account-card">
+        <mat-card-header>
+            <mat-card-title>Nom et Prénom</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="name-display">
+                <span class="text-name">{{ currentLastName }} {{ currentFirstName }} </span>
+                <button *ngIf="!showNameForm" mat-stroked-button class="btn-modify" (click)="toggleNameForm()">
+                    <mat-icon>edit</mat-icon>
+                    Modifier</button>
+            </div>
+
+            <!-- Formulaire de modification du prénom et nom -->
+            <form *ngIf="showNameForm" [formGroup]="nameForm" (ngSubmit)="onNameSubmit()" fxLayout="column">
+                <mat-form-field appearance="outline" class="form-field-width first-form-input">
+                    <mat-label>Prénom</mat-label>
+                    <mat-icon matPrefix class="icon-color">person</mat-icon>
+                    <input matInput formControlName="firstName" required>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="form-field-width form-input">
+                    <mat-label>Nom</mat-label>
+                    <mat-icon matPrefix class="icon-color">person</mat-icon>
+                    <input matInput formControlName="lastName" required>
+                </mat-form-field>
+                <p class="description-text">Veuillez confirmer votre mot de passe pour changer vos informations.</p>
+                <!-- Champ pour le mot de passe actuel -->
+                <mat-form-field appearance="outline" class="form-field-width form-input">
+                    <mat-label>Mot de passe actuel</mat-label>
+                    <mat-icon matPrefix class="icon-color">lock</mat-icon>
+                    <mat-icon matSuffix (click)="hideCurrentPassword = !hideCurrentPassword">
+                        {{ hideCurrentPassword ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                    <input matInput [type]="hideCurrentPassword ? 'password' : 'text'" formControlName="currentPassword"
+                        required>
+                </mat-form-field>
+
+                <div fxLayout="row" class="bottom-buttons" fxLayoutAlign="start">
+                    <button mat-raised-button class="btn-submit" type="submit">Mettre à jour</button>
+                    <button mat-stroked-button color="warn" class="button-cancel"
+                        (click)="toggleNameForm()">Annuler</button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+
 
     <!-- Card pour l'adresse email -->
     <mat-card class="account-card">
@@ -8,28 +54,41 @@
         </mat-card-header>
         <mat-card-content>
             <div fxLayout="row" fxLayoutAlign="space-between center" class="email-display">
-                <span>{{ getMaskedEmail() }}</span>
-
-                <button *ngIf="!showEmailForm" mat-stroked-button class="btn-modify"
-                    (click)="toggleEmailForm()">Modifier</button>
-            </div>
-
-            <!-- Afficher si le compte est vérifié ou non -->
-            <div class="verification-status">
-                <ng-container *ngIf="isVerified; else notVerified">
-                    <div fxLayout="row" fxLayoutAlign="start center">
-                        <mat-icon matPrefix class="icon-color icon-verified">verified</mat-icon>
-                        <p class="verified-text">Compte vérifié</p>
+                <div fxLayout="column">
+                    <span>{{ getMaskedEmail() }}</span>
+                    <!-- Afficher si le compte est vérifié ou non -->
+                    <div class="verification-status">
+                        <ng-container *ngIf="isVerified; else notVerified">
+                            <div fxLayout="row" fxLayoutAlign="start center">
+                                <mat-icon matPrefix class="icon-color icon-verified">verified</mat-icon>
+                                <p class="verified-text">Compte vérifié</p>
+                            </div>
+                        </ng-container>
+                        <ng-template #notVerified>
+                            <p style="color: red;">Compte non vérifié. À la prochaine connexion, vous devrez vérifier
+                                votre
+                                compte.</p>
+                        </ng-template>
                     </div>
-                </ng-container>
-                <ng-template #notVerified>
-                    <p style="color: red;">Compte non vérifié. À la prochaine connexion, vous devrez vérifier votre
-                        compte.</p>
-                </ng-template>
+                </div>
+
+                <button *ngIf="!showEmailForm" mat-stroked-button class="btn-modify" (click)="toggleEmailForm()">
+                    <mat-icon>edit</mat-icon>
+                    Modifier</button>
             </div>
+
+
 
             <!-- Formulaire de modification de l'email -->
             <form *ngIf="showEmailForm" [formGroup]="emailForm" (ngSubmit)="onEmailSubmit()" fxLayout="column">
+
+                <!-- Note pour l'utilisateur -->
+                <p class="note-text">
+                    <u>Note</u>: En cas de changement d'adresse email, vous serez déconnecté. <br />
+                    Vous devrez activer votre compte via le
+                    lien reçu sur votre nouvelle adresse email avant de pouvoir vous reconnecter.
+                </p>
+
                 <mat-form-field appearance="outline" class="form-field-width first-form-input">
                     <mat-label>Nouvelle adresse email</mat-label>
                     <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
@@ -65,93 +124,25 @@
         </mat-card-content>
     </mat-card>
 
-    <!-- Card pour le mot de passe -->
-    <mat-card class="account-card">
-        <mat-card-header>
-            <mat-card-title>Mot de passe</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <div fxLayout="row" fxLayoutAlign="space-between center" class="password-display">
-                <h5>Nous vous recommandons de changer votre mot de passe régulièrement pour protéger votre compte contre
-                    tout accès non autorisé.</h5>
-                <button *ngIf="!showPasswordForm" mat-stroked-button class="btn-modify"
-                    (click)="togglePasswordForm()">Modifier</button>
-            </div>
-            <p>Dernière mise à jour le {{ lastUpdatePasswordDate | date:'dd MMM. y' }}</p>
-
-            <!-- Formulaire de modification du mot de passe -->
-            <form *ngIf="showPasswordForm" [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" fxLayout="column">
-                <mat-form-field appearance="outline" class="form-field-width first-form-input">
-                    <mat-label>Ancien mot de passe</mat-label>
-                    <mat-icon matPrefix class="icon-color">lock</mat-icon>
-                    <mat-icon matSuffix (click)="hidePasswordOld = !hidePasswordOld">{{hidePasswordOld ?
-                        'visibility_off' :
-                        'visibility'}}
-                    </mat-icon><input matInput [type]="hidePasswordOld ? 'password' : 'text'"
-                        formControlName="oldPassword" required>
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="form-field-width middle-input">
-                    <mat-label>Nouveau mot de passe</mat-label>
-                    <mat-icon matPrefix class="icon-color">lock</mat-icon>
-                    <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
-                        'visibility'}}
-                    </mat-icon><input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="newPassword"
-                        required>
-                </mat-form-field>
-
-                <!-- Barre de force du mot de passe -->
-                <div class="password-strength-container">
-
-                    <div class="password-strength-bar">
-                        <div class="strength" [ngClass]="{
-            'weak': passwordStrength === 1,
-            'fair': passwordStrength === 2,
-            'good': passwordStrength === 3,
-            'strong': passwordStrength === 4,
-            'very-strong': passwordStrength === 5
-        }" [style.width.%]="passwordStrength * 20"></div>
-                    </div>
-                    <p class="password-strength-text" *ngIf="passwordStrength < 1">FORCE DU MOT DE PASSE</p>
-                    <p class="password-strength-text" *ngIf="passwordStrength === 1">TRÈS FAIBLE</p>
-                    <p class="password-strength-text" *ngIf="passwordStrength === 2">FAIBLE</p>
-                    <p class="password-strength-text" *ngIf="passwordStrength === 3">MOYENNE</p>
-                    <p class="password-strength-text" *ngIf="passwordStrength === 4">FORTE</p>
-                    <p class="password-strength-text" *ngIf="passwordStrength === 5">TRÈS FORTE</p>
-                </div>
-
-                <mat-form-field appearance="outline" class="form-field-width form-input">
-                    <mat-label>Confirmez le nouveau mot de passe</mat-label>
-                    <mat-icon matPrefix class="icon-color">lock</mat-icon>
-                    <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
-                        'visibility'}}
-                    </mat-icon><input matInput [type]="hidePassword ? 'password' : 'text'"
-                        formControlName="confirmPassword" required onpaste="return false;" oncopy="return false;"
-                        oncut="return false;">
-                </mat-form-field>
-                <div fxLayout="row" class="bottom-buttons" fxLayoutAlign="start">
-                    <button mat-raised-button class="btn-submit" type="submit">Changer le mot de passe</button>
-                    <button mat-stroked-button color="warn" class="button-cancel"
-                        (click)="togglePasswordForm()">Annuler</button>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
-
     <!-- Card pour le numéro de téléphone -->
     <mat-card class="account-card">
         <mat-card-header>
             <mat-card-title>Numéro de téléphone</mat-card-title>
+            <mat-card-subtitle>
+                Utilisez votre numéro de téléphone comme identifiant pour vous connecter à votre compte. Vous
+                pouvez également activer les alertes relatives à la sécurité.
+            </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
             <div fxLayout="row" fxLayoutAlign="space-between center" class="phone-display">
                 <div fxLayout="column">
-                    <h5>Utilisez votre numéro de téléphone comme identifiant pour vous connecter à votre compte. Vous
-                        pouvez également activer les alertes relatives à la sécurité.</h5>
                     <span>{{ getMaskedPhone() }}</span>
                 </div>
 
-                <button *ngIf="!showPhoneForm" mat-stroked-button class="btn-modify"
-                    (click)="togglePhoneForm()">Modifier</button>
+                <button *ngIf="!showPhoneForm" mat-stroked-button class="btn-modify" (click)="togglePhoneForm()">
+                    <mat-icon>edit</mat-icon>
+                    Modifier
+                </button>
             </div>
 
 

@@ -49,14 +49,14 @@ h3 {
 }
 
 .btn {
-  background-color: var(--color-secondary);
+  background-color: var(--color-secondary) !important;
   width: 250px;
   height: 40px;
-  color: var(--color-primary-contrast);
+  color: var(--color-primary-contrast) !important;
 }
 
 .btn:hover {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary)  !important;
 }
 
 .social-divider {
@@ -73,11 +73,11 @@ h3 {
 }
 
 .btn-resend-verification {
-  background-color: var(--color-primary);
-  color: var(--color-primary-contrast);
+  background-color: var(--color-primary)  !important;
+  color: var(--color-primary-contrast)  !important;
   margin-top: 10px;
 }
 
 .btn-resend-verification:hover {
-  background-color: var(--color-secondary);
+  background-color: var(--color-secondary) !important;
 }

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { CustomValidators } from 'src/app/shared/services/custom-validators';
 import { UserService } from '../signup.service';
 import { User } from 'src/app/shared/model/user.model';
-import { debounceTime, map, switchMap, tap } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-signup-form',
@@ -19,147 +19,193 @@ export class SignupFormComponent implements OnInit {
   emailExists = false;
   hidePassword = true;
   passwordStrength: number = 0;
+  steps: number[] = [1, 2, 3, 4];
+  currentStep: number = 1;
+
+  securityQuestions: string[] = [
+    'Quel est le nom de votre premier animal de compagnie ?',
+    'Quel est le nom de la rue où vous avez grandi ?',
+    'Quel est le prénom de votre meilleur(e) ami(e) d’enfance ?',
+    'Quelle est votre destination de vacances favorite ?',
+    'Quel est votre plat préféré ?',
+    'Quel est le nom de votre premier enseignant(e) ?',
+    'Quelle est la couleur de votre première voiture ?',
+    'Dans quelle ville vos parents se sont-ils rencontrés ?',
+    'Quel est le nom de votre personnage de livre ou de film préféré ?',
+    'Quel est le métier que vous vouliez faire enfant ?'
+  ];
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private alertService: AlertService,
-    private router: Router,
+    private router: Router
   ) {
     this.userRegisterForm = this.createSignupForm();
-    this.userRegisterForm.get('password')?.valueChanges.subscribe(() => {
+    this.securityGroup.get('password')?.valueChanges.subscribe(() => {
       this.updatePasswordStrength();
     });
   }
 
   ngOnInit(): void {
     // Vérification de l'email en temps réel
-    this.userRegisterForm.get('username')?.valueChanges.pipe(
-      debounceTime(1500), // Évite de trop solliciter le backend
-      switchMap(value => this.userService.checkEmailExists(value)), // Appelle le backend pour vérifier l'email
-      map((exists: boolean) => {
+    this.basicInfoGroup.get('email')?.valueChanges.pipe(
+      debounceTime(1500),
+      switchMap(value => this.userService.checkEmailExists(value)),
+      tap((exists: boolean) => {
         this.emailExists = exists;
         if (exists) {
-          this.alertService.error('Cet email est déjà utilisé.'); // Affiche un message d'erreur via AlertService
-          this.userRegisterForm.get('username')?.setErrors({ emailExists: true });
+          this.alertService.error('Cet email est déjà utilisé.');
+          this.basicInfoGroup.get('email')?.setErrors({ emailExists: true });
         } else {
-          this.alertService.clear(); // Supprime les messages précédents si l'email est valide
-          this.userRegisterForm.get('username')?.setErrors(null);
+          this.alertService.clear();
+          this.basicInfoGroup.get('email')?.setErrors(null);
         }
       })
     ).subscribe();
   }
 
-  get f(): { [key: string]: AbstractControl } {
-    return this.userRegisterForm.controls;
-  }
-
   createSignupForm(): FormGroup {
-    return this.fb.group(
-      {
-        username: [
-          '',
-          [Validators.email, Validators.required]
-        ],
-        password: [
-          '',
-          [Validators.required,
-            // // Vérifie si le mot-de-passe entré contient un nombre
-            // CustomValidators.patternValidator(/\d/, {
-            //   hasNumber: true
-            // }),
-            // // Vérifie si le mot-de-passe entré contient une lettre majuscule
-            // CustomValidators.patternValidator(/[A-Z]/, {
-            //   hasCapitalCase: true
-            // }),
-            // // Vérifie si le mot-de-passe entré contient une lettre minuscule
-            // CustomValidators.patternValidator(/[a-z]/, {
-            //   hasSmallCase: true
-            // }),
-            // Validators.minLength(6)
-          ]
-
-        ],
-        confirmation_password: ['', [Validators.required]],
-        phone: [
-          '',
-          [Validators.pattern('^[0-9]{10}$')] // Validation pour un numéro de téléphone français à 10 chiffres
-        ]
-      },
-      {
-        validators: [CustomValidators.match('password', 'confirmation_password')]
-      }
-    );
+    return this.fb.group({
+      basicInfoGroup: this.fb.group({
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        phone: ['', Validators.pattern('^[0-9]{10}$')]
+      }),
+      securityGroup: this.fb.group({
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', Validators.required]
+      }, { validators: CustomValidators.match('password', 'confirmPassword') }),
+      securityQuestionGroup: this.fb.group({
+        securityQuestion: ['', Validators.required],
+        securityAnswer: ['', Validators.required]
+      }),
+      conditionsGroup: this.fb.group({
+        acceptTerms: [false, Validators.requiredTrue],
+        acceptPrivacy: [false, Validators.requiredTrue]
+      })
+    });
   }
 
-  submitFormulaireInscription() {
+  get basicInfoGroup(): FormGroup {
+    return this.userRegisterForm.get('basicInfoGroup') as FormGroup;
+  }
+
+  get securityGroup(): FormGroup {
+    return this.userRegisterForm.get('securityGroup') as FormGroup;
+  }
+
+  get securityQuestionGroup(): FormGroup {
+    return this.userRegisterForm.get('securityQuestionGroup') as FormGroup;
+  }
+
+  get conditionsGroup(): FormGroup {
+    return this.userRegisterForm.get('conditionsGroup') as FormGroup;
+  }
+
+
+  submitFormulaireInscription(): void {
     this.submitted = true;
     if (this.userRegisterForm.invalid) {
-      window.scroll({
-        top: 0,
-        left: 0,
-        behavior: 'smooth'
-      });
       this.alertService.errorAutoClear("Veuillez remplir les champs indiqués", true);
       return;
     }
-    this.isLoading = true;
-    const user: User = this.userRegisterForm.value;
-    this.userService.createUser(user).pipe(tap({
-      next: () => {
-        this.isLoading = false;
-        this.router.navigate(['../login']);
-        this.alertService
-          .success('Votre inscription à été prise en compte. Vous venez de recevoir un mail de confirmation. Confirmez votre compte avant de vous connecter.', true);
-      },
-      error: (error) => {
-        window.scroll({
-          top: 0,
-          left: 0,
-          behavior: 'smooth'
-        });
-        this.alertService.error(error.error.message, true);
-        this.isLoading = false;
-      }
-    }
 
-    ),
+    this.isLoading = true;
+    const user: User = this.userRegisterForm.getRawValue();
+    console.log(this.userRegisterForm.getRawValue());
+
+    const userPayload = {
+      username: this.basicInfoGroup.get('email')?.value,
+      phone: this.basicInfoGroup.get('phone')?.value,
+      firstName: this.basicInfoGroup.get('firstName')?.value,
+      lastName: this.basicInfoGroup.get('lastName')?.value,
+      password: this.securityGroup.get('password')?.value,
+      securityQuestion: this.securityQuestionGroup.get('securityQuestion')?.value,
+      securityAnswer: this.securityQuestionGroup.get('securityAnswer')?.value
+    };
+
+    this.userService.createUser(userPayload).pipe(
+      tap({
+        next: () => {
+          this.isLoading = false;
+          this.router.navigate(['../login']);
+          this.alertService.success('Inscription réussie. Un mail de confirmation a été envoyé.', true);
+        },
+        error: (error) => {
+          const errorMessage = error.error.message || 'Erreur lors de l\'inscription. Veuillez vérifier les informations et réessayer.';
+          this.alertService.error(errorMessage, true);
+          this.isLoading = false;
+        }
+      })
     ).subscribe();
   }
 
-  // Fonction de calcul de l'entropie pour évaluer la force du mot de passe
-  getPasswordStrength(password: string): number {
-    let poolSize = 0;
+  nextStep(): void {
+    switch (this.currentStep) {
+      case 1:
+        if (this.basicInfoGroup.valid) {
+          this.currentStep++;
+          this.alertService.clear();
+        } else {
+          this.basicInfoGroup.markAllAsTouched();
+          this.alertService.error('Veuillez remplir tous les champs de l’étape Informations de base.');
+        }
+        break;
+      case 2:
+        if (this.securityGroup.valid) {
+          this.currentStep++;
+          this.alertService.clear();
+        } else {
+          this.securityGroup.markAllAsTouched();
+          const passwordControl = this.securityGroup.get('password');
+          const confirmPasswordControl = this.securityGroup.get('confirmPassword');
 
-    if (/[a-z]/.test(password)) poolSize += 26;   // Minuscules
-    if (/[A-Z]/.test(password)) poolSize += 26;   // Majuscules
-    if (/\d/.test(password)) poolSize += 10;      // Chiffres
-    if (/[@$!%*?&#]/.test(password)) poolSize += 32; // Symboles spéciaux courants
+          if (!passwordControl?.value) {
+            this.alertService.error('Veuillez remplir les champs de l’étape Sécurité');
+          } else if (passwordControl.value !== confirmPasswordControl?.value) {
+            this.alertService.error('La confirmation du mot de passe ne correspond pas');
+          } else {
+            this.alertService.error('Veuillez remplir correctement les champs de l’étape Sécurité.');
+          }
+        }
+        break;
+      case 3:
+        if (this.securityQuestionGroup.valid) {
+          this.currentStep++;
+          this.alertService.clear();
+        } else {
+          this.securityQuestionGroup.markAllAsTouched();
+          this.alertService.error('Veuillez choisir la question de sécurité et indiquer votre réponse.');
+        }
+        break;
+    }
+  }
 
-    const length = password.length;
-    const entropy = length * Math.log2(poolSize);
-
-    // Classifier la force en fonction de l'entropie
-    if (entropy < 28) {
-      return 1; // Très faible
-    } else if (entropy < 36) {
-      return 2; // Faible
-    } else if (entropy < 60) {
-      return 3; // Moyenne
-    } else if (entropy < 128) {
-      return 4; // Forte
-    } else {
-      return 5; // Très forte
+  previousStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+      this.alertService.clear();
     }
   }
 
   updatePasswordStrength(): void {
-    const newPassword = this.userRegisterForm.get('password')?.value || '';
-    if (newPassword.length === 0) {
-      this.passwordStrength = 0;
-    } else {
-      this.passwordStrength = this.getPasswordStrength(newPassword);
-    }
+    const password = this.securityGroup.get('password')?.value || '';
+    this.passwordStrength = this.calculatePasswordStrength(password);
   }
 
+  calculatePasswordStrength(password: string): number {
+    let poolSize = 0;
+    if (/[a-z]/.test(password)) poolSize += 26;
+    if (/[A-Z]/.test(password)) poolSize += 26;
+    if (/\d/.test(password)) poolSize += 10;
+    if (/[@$!%*?&#]/.test(password)) poolSize += 32;
+    const entropy = password.length * Math.log2(poolSize);
+    return entropy < 28 ? 1 : entropy < 36 ? 2 : entropy < 60 ? 3 : entropy < 128 ? 4 : 5;
+  }
+
+  getPasswordStrengthLabel(strength: number): string {
+    return ['TRÈS FAIBLE', 'FAIBLE', 'MOYENNE', 'FORTE', 'TRÈS FORTE'][strength - 1];
+  }
 }

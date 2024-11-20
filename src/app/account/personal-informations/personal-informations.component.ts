@@ -18,22 +18,21 @@ export class PersonalInformationsComponent {
   isVerified: boolean = false;
 
   emailForm: FormGroup;
-  currentEmail: string = '';  // Email actuel de l'utilisateur
-  showEmailForm = false;
+  nameForm: FormGroup;
+  phoneForm: FormGroup;
 
-  passwordForm: FormGroup;
-  validationPasswordForm: FormGroup;
+  showEmailForm = false;
+  showPasswordForm = false;
+  showPhoneForm = false;
+  showNameForm = false;
+
+  currentEmail: string = '';  // Email actuel de l'utilisateur
+  currentPhone: string = '';  // Numéro de téléphone actuel de l'utilisateur
+  currentFirstName: string = ''; // Stockage du prénom actuel
+  currentLastName: string = ''; // Stockage du nom actuel
+
   hidePassword = true;
   hideCurrentPassword = true;
-  hidePasswordOld = true;
-  showPasswordForm = false;
-  showValidationPasswordForm = false;
-  lastUpdatePasswordDate: string = '';
-  passwordStrength: number = 0;
-
-  phoneForm: FormGroup;
-  currentPhone: string = '';  // Numéro de téléphone actuel de l'utilisateur
-  showPhoneForm = false;
 
 
   constructor(
@@ -59,40 +58,14 @@ export class PersonalInformationsComponent {
         validators: CustomValidators.match('email', 'confirmation_email')
       })
 
-    this.passwordForm = this.fb.group({
-      oldPassword: ['', [Validators.required]],
-      newPassword: [
-        '',
-        [Validators.required,
-          // Vérifie si le mot-de-passe entré contient un nombre
-          // CustomValidators.patternValidator(/\d/, {
-          //   hasNumber: true
-          // }),
-          // // Vérifie si le mot-de-passe entré contient une lettre majuscule
-          // CustomValidators.patternValidator(/[A-Z]/, {
-          //   hasCapitalCase: true
-          // }),
-          // // Vérifie si le mot-de-passe entré contient une lettre minuscule
-          // CustomValidators.patternValidator(/[a-z]/, {
-          //   hasSmallCase: true
-          // }),
-          // Validators.minLength(6)
-        ]
-
-      ],
-      confirmPassword: ['', [Validators.required]]
-    }, { validator: CustomValidators.match('password', 'confirmation_password') });
-
-    this.validationPasswordForm = this.fb.group({
-      password: ['', Validators.required]
-    });
-
-    this.passwordForm.get('newPassword')?.valueChanges.subscribe(() => {
-      this.updatePasswordStrength();
-    });
-
     this.phoneForm = this.fb.group({
       phone: ['', [Validators.required, Validators.pattern(/^(\+?\d{1,3}[- ]?)?\d{10}$/)]], // Regex pour le numéro de téléphone
+      currentPassword: ['', Validators.required]
+    });
+
+    this.nameForm = this.fb.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       currentPassword: ['', Validators.required]
     });
   }
@@ -110,7 +83,8 @@ export class PersonalInformationsComponent {
       this.userService.getUser(user.username).subscribe((userData: any) => {
         this.isVerified = userData.verified;  // Assigner l'état de vérification
         this.currentPhone = userData.phone || '';
-        this.lastUpdatePasswordDate = userData.passwordLastUpdated; // Récupère la date de mise à jour
+        this.currentFirstName = userData.firstName;
+        this.currentLastName = userData.lastName;
       });
     }
   }
@@ -121,14 +95,7 @@ export class PersonalInformationsComponent {
       this.emailForm.reset();
     }
     this.showEmailForm = !this.showEmailForm;
-  }
-
-  togglePasswordForm(): void {
-    if (this.showPasswordForm) {
-      // Si le formulaire est déjà ouvert, le fermer et réinitialiser les champs
-      this.passwordForm.reset();
-    }
-    this.showPasswordForm = !this.showPasswordForm;
+    this.alertService.clear();
   }
 
   togglePhoneForm(): void {
@@ -136,100 +103,95 @@ export class PersonalInformationsComponent {
       this.phoneForm.reset();
     }
     this.showPhoneForm = !this.showPhoneForm;
+    this.alertService.clear();
+  }
+
+  toggleNameForm(): void {
+    if (this.showNameForm) {
+      this.nameForm.reset();
+    }
+    this.showNameForm = !this.showNameForm;
+    this.alertService.clear();
   }
 
   // Soumission du formulaire de modification d'email
   onEmailSubmit(): void {
-    if (this.emailForm.valid && this.userId !== null) {
-      const newEmail = this.emailForm.value.email;
-      const currentPassword = this.emailForm.value.currentPassword;
+    // Vérification initiale de la validité du formulaire pour l'affichage des erreurs de champ
 
-      this.userService.checkEmailExists(newEmail).subscribe({
-        next: (emailExists: boolean) => {
-          if (emailExists) {
-            this.alertService.error("L'email est déjà utilisé.");
-          } else {
-            if (this.userId) {
-              // Vérification du mot de passe avant de procéder au changement d'email
-              this.userService.validateOldPassword(this.userId, currentPassword).subscribe({
-                next: (isPasswordValid) => {
-                  if (isPasswordValid && this.userId) {
-                    this.userService.updateUser(this.userId, { username: newEmail }).subscribe({
-                      next: (response: any) => {
-                        this.alertService.success('Adresse email mise à jour avec succès.');
-                        this.currentEmail = newEmail;
-                        this.tokenStorage.saveToken(response.jwt, 'Bearer', false); // Sauvegarde du nouveau JWT
-                        this.tokenStorage.saveUsername(this.currentEmail);
-                        this.isVerified = false;
-                        this.toggleEmailForm();
-                      },
-                      complete: () => {
-                        this.notificationService.sendNotificationEmail(newEmail, 'email-modified').subscribe();
-                      },
-                      error: (err) => {
-                        this.alertService.error('Erreur lors de la mise à jour de l\'email : ' + err.message);
-                      }
-                    });
-                  } else {
-                    this.alertService.error("Mot de passe incorrect.");
-                  }
-                },
-                error: () => this.alertService.error('Erreur de vérification du mot de passe.')
-              });
-            }
-          }
-        },
-        error: () => this.alertService.error('Erreur lors de la vérification de l\'email.')
-      });
 
+    if (!this.emailForm.controls['email'].valid && !this.emailForm.controls['confirmation_email'].valid) {
+      this.alertService.error('Veuillez remplir tous les champs et assurez-vous que la confirmation de l\'email est correcte.');
+      return;
     }
-  }
 
-  onPasswordSubmit(): void {
-    if (this.passwordForm.valid && this.userId !== null) {  // Vérification explicite que this.userId n'est pas null
-      const oldPassword = this.passwordForm.value.oldPassword;
-      const user = this.tokenStorage.getUser();
-
-      // Vérification du mot de passe actuel
-      this.userService.validateOldPassword(this.userId, oldPassword).subscribe({
-        next: (response) => {
-          // Si le mot de passe est correct, soumettre les nouvelles informations
-          const newPassword = this.passwordForm.value.newPassword;
-          this.userService.changeAuthenticatedUserPassword(oldPassword, newPassword).subscribe({
-            next: () => {
-              this.alertService.success('Mot de passe mis à jour avec succès.');
-              this.togglePasswordForm();
-            },
-            complete: () => {
-              if (user) {
-                this.notificationService.sendNotificationEmail(
-                  user.username,
-                  'password-modified',
-                ).subscribe();
-              }
-            },
-            error: (err) => {
-              this.alertService.error('Erreur lors de la mise à jour du mot de passe : ' + err.message);
-            }
-          });
-        },
-        error: (err) => {
-          this.alertService.error('Ancien mot de passe incorrect.');
-        }
-      });
-    } else {
+    if (!this.emailForm.controls['currentPassword'].valid) {
+      this.alertService.error('Veuillez saisir votre mot de passe.');
+      return;
+    }
+    // Vérification de l'identifiant utilisateur
+    if (this.userId === null) {
       this.alertService.error('Utilisateur non trouvé. Veuillez vous reconnecter.');
+      return;
     }
-  }
 
-  // Validation de correspondance des mots de passe
-  passwordMatchValidator(form: FormGroup): any {
-    const newPassword = form.get('newPassword')?.value;
-    const confirmPassword = form.get('confirmPassword')?.value;
-    return newPassword === confirmPassword ? null : { mismatch: true };
-  }
+    const newEmail = this.emailForm.value.email;
+    const currentPassword = this.emailForm.value.currentPassword;
 
+    this.userService.checkEmailExists(newEmail).subscribe({
+      next: (emailExists: boolean) => {
+        if (emailExists) {
+          this.alertService.error("L'email est déjà utilisé.");
+        } else {
+
+          if (!currentPassword) {
+            this.alertService.error("Veuillez entrer votre mot de passe actuel pour confirmer la modification.");
+            return;
+          }
+
+          if (this.userId) {
+            // Vérification du mot de passe avant de procéder au changement d'email
+            this.userService.validateOldPassword(this.userId, currentPassword).subscribe({
+              next: (isPasswordValid) => {
+                if (isPasswordValid && this.userId) {
+                  this.userService.updateUser(this.userId, { username: newEmail }).subscribe({
+                    next: (response: any) => {
+                      this.alertService.success('Adresse email mise à jour avec succès.');
+                      this.currentEmail = newEmail;
+                      this.tokenStorage.saveToken(response.jwt, 'Bearer', false); // Sauvegarde du nouveau JWT
+                      this.tokenStorage.saveUsername(this.currentEmail);
+                      this.isVerified = false;
+                      this.toggleEmailForm();
+                    },
+                    complete: () => {
+                      this.notificationService.sendNotificationEmail(newEmail, 'email-modified').subscribe();
+                    },
+                    error: (err) => {
+                      this.alertService.error('Erreur lors de la mise à jour de l\'email : ' + err.message);
+                    }
+                  });
+                } else {
+                  this.alertService.error("Mot de passe incorrect.");
+                }
+              },
+              error: () => this.alertService.error('Erreur de vérification du mot de passe.')
+            });
+          }
+        }
+      },
+      error: () => this.alertService.error('Erreur lors de la vérification de l\'email.')
+    });
+
+  }
   onPhoneSubmit(): void {
+    if (!this.phoneForm.controls['phone'].valid) {
+      this.alertService.error('Veuillez saisir un numéro de téléphone.');
+      return;
+    }
+    if (!this.phoneForm.controls['currentPassword'].valid) {
+      this.alertService.error('Veuillez saisir votre mot de passe.');
+      return;
+    }
+
     if (this.phoneForm.valid && this.userId !== null) {
       const newPhone = this.phoneForm.value.phone;
       const currentPassword = this.phoneForm.value.currentPassword;
@@ -256,42 +218,40 @@ export class PersonalInformationsComponent {
     }
   }
 
-  // Suppression du compte utilisateur
-  // onDeleteAccount(): void {
+  onNameSubmit(): void {
+    if (this.nameForm.invalid) {
+      this.alertService.error('Veuillez remplir tous les champs et fournir le mot de passe actuel.');
+      return;
+    }
 
-  //   const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-  //     width: '500px',
-  //     data: {
-  //       title: 'Confirmer la suppression',
-  //       message: 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.'
-  //     }
-  //   });
+    if (this.userId === null) {
+      this.alertService.error('Utilisateur non trouvé. Veuillez vous reconnecter.');
+      return;
+    }
 
-  //   dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-  //     if (confirmed && this.userId !== null) {
-  //       this.userService.deleteUser(this.userId).subscribe({
-  //         next: () => {
-  //           this.alertService.success('Compte supprimé avec succès.');
-  //           this.tokenStorage.signOut(); // Déconnexion après suppression
-  //           window.location.reload(); // Redirection vers la page d'accueil
-  //         },
-  //         complete: () => {
-  //           this.notificationService.sendNotificationEmail(
-  //             this.currentEmail,
-  //             'account-deleted'
-  //           ).subscribe();
-  //         },
-  //         error: (err) => {
-  //           this.alertService.error('Erreur lors de la suppression du compte : ' + err.message);
-  //         }
-  //       });
-  //     } else {
-  //       this.alertService.info("Suppression annulée.");
-  //     }
-  //   });
+    const { firstName, lastName, currentPassword } = this.nameForm.value;
 
-  // }
-
+    this.userService.validateOldPassword(this.userId, currentPassword).subscribe({
+      next: (isPasswordValid) => {
+        if (isPasswordValid && this.userId) {
+          this.userService.updateUser(this.userId, { firstName, lastName }).subscribe({
+            next: () => {
+              this.alertService.success('Prénom et nom mis à jour avec succès.');
+              this.currentFirstName = firstName;
+              this.currentLastName = lastName;
+              this.toggleNameForm();
+            },
+            error: (err) => {
+              this.alertService.error('Erreur lors de la mise à jour du nom et prénom : ' + err.message);
+            }
+          });
+        } else {
+          this.alertService.error("Mot de passe incorrect.");
+        }
+      },
+      error: () => this.alertService.error('Erreur de vérification du mot de passe.')
+    });
+  }
 
   onDeleteAccount(): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -305,7 +265,7 @@ export class PersonalInformationsComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log("result : " + result);
+        console.log('result :' + result)
         this.submitPasswordForAccountDeletion(result);
       } else {
         this.alertService.info("Suppression du compte annulée.");
@@ -321,8 +281,8 @@ export class PersonalInformationsComponent {
             this.userService.deleteUser(this.userId).subscribe({
               next: () => {
                 this.alertService.success('Compte supprimé avec succès.');
-                this.tokenStorage.signOut(); // Déconnexion après suppression
-                window.location.reload(); // Redirection vers la page d'accueil
+                this.tokenStorage.signOut();
+                window.location.reload();
               },
               complete: () => {
                 this.notificationService.sendNotificationEmail(this.currentEmail, 'account-deleted').subscribe();
@@ -340,40 +300,6 @@ export class PersonalInformationsComponent {
     }
   }
 
-  getPasswordStrength(password: string): number {
-    let poolSize = 0;
-
-    if (/[a-z]/.test(password)) poolSize += 26;   // Minuscules
-    if (/[A-Z]/.test(password)) poolSize += 26;   // Majuscules
-    if (/\d/.test(password)) poolSize += 10;      // Chiffres
-    if (/[@$!%*?&#]/.test(password)) poolSize += 32; // Symboles spéciaux courants
-
-    const length = password.length;
-    const entropy = length * Math.log2(poolSize);
-
-    // Classifier la force en fonction de l'entropie
-    if (entropy < 28) {
-      return 1; // Très faible
-    } else if (entropy < 36) {
-      return 2; // Faible
-    } else if (entropy < 60) {
-      return 3; // Moyenne
-    } else if (entropy < 128) {
-      return 4; // Forte
-    } else {
-      return 5; // Très forte
-    }
-  }
-
-  updatePasswordStrength(): void {
-    const newPassword = this.passwordForm.get('newPassword')?.value || '';
-    if (newPassword.length === 0) {
-      this.passwordStrength = 0;
-    } else {
-      this.passwordStrength = this.getPasswordStrength(newPassword);
-    }
-  }
-
   getMaskedEmail(): string {
     if (this.showEmailForm) {
       return this.currentEmail; // Affiche l'email en clair
@@ -388,9 +314,9 @@ export class PersonalInformationsComponent {
     if (this.showPhoneForm) {
       return this.currentPhone;
     } else {
-      return this.currentPhone.replace(/.(?=.{2})/g, '*'); // Remplace tous les caractères sauf les deux derniers par des étoiles
+      if (this.currentPhone) {
+        return this.currentPhone.replace(/.(?=.{2})/g, '*'); // Remplace tous les caractères sauf les deux derniers par des étoiles
+      } else return "Aucun numéro de téléphone enregistré"
     }
   }
-
-
 }

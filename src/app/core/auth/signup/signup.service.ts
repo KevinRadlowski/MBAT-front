@@ -169,6 +169,15 @@ export class UserService {
     );
   }
 
+  updateSecretQuestion(userId: number, question: string, answer: string): Observable<any> {
+    return this.http.put(`${this.baseUrlUser}/${userId}/secret-question`, { question, answer });
+  }
+
+  verifySecretAnswer(userId: number, secretAnswer: string): Observable<boolean> {
+    return this.http.post<boolean>(`${this.baseUrlUser}/${userId}/verify-secret-answer`, { answer: secretAnswer }).pipe(
+      catchError(this.handleError)
+    );
+  }
 
 
   // ----------- MÉTHODES DU PasswordController -----------
@@ -316,17 +325,17 @@ export class UserService {
   }
 
 
-    /**
-   * Vérifie le code envoyé soit par l'Authenticator App, soit par mail, soit par SMS pour la validation 2FA.
-   * @param {string} username - Le nom d'utilisateur.
-   * @param {string} code - Le code généré par l'Authenticator App.
-   * @returns {Observable<any>} - Un observable avec la réponse de l'API.
-   */
-    verify2FaCode(username: string, code: string): Observable<any> {
-      return this.http.post(`${this.baseUrlTwoFactor}/verify-2fa`, { username, code }, httpOptions).pipe(
-        catchError(this.handleError)
-      );
-    }
+  /**
+ * Vérifie le code envoyé soit par l'Authenticator App, soit par mail, soit par SMS pour la validation 2FA.
+ * @param {string} username - Le nom d'utilisateur.
+ * @param {string} code - Le code généré par l'Authenticator App.
+ * @returns {Observable<any>} - Un observable avec la réponse de l'API.
+ */
+  verify2FaCode(username: string, code: string): Observable<any> {
+    return this.http.post(`${this.baseUrlTwoFactor}/verify-2fa`, { username, code }, httpOptions).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   // ------------ 2FA BACKUP ------------
 

@@ -1,5 +1,5 @@
 <div class="container-fluid p-0" [class.is-mobile]="mobileQuery.matches">
-    <mat-toolbar class="toolbar" fxLayoutAlign="space-between center">
+    <!-- <mat-toolbar class="toolbar" fxLayoutAlign="space-between center">
         <div fxLayoutAlign="none center">
             <button *ngIf="isDesktopFormat && isLogged" mat-icon-button
                 (click)="isExpanded = !isExpanded"><mat-icon>menu</mat-icon></button>
@@ -21,7 +21,51 @@
                 <span>Déconnexion</span>
             </button>
         </div>
+    </mat-toolbar> -->
+
+    <mat-toolbar class="toolbar" fxLayoutAlign="space-between center">
+        <div fxLayoutAlign="none center">
+            <button *ngIf="isDesktopFormat && isLogged" mat-icon-button (click)="isExpanded = !isExpanded">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <button *ngIf="!isDesktopFormat && isLogged" mat-icon-button (click)="sidenav.toggle()">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <img src="/assets/images/Logo-MBAT-Transparent-Redimension-black.png" class="app-img" routerLink="/"
+                alt="MBAT">
+        </div>
+
+        <!-- Bouton Compte avec menu déroulant -->
+        <div fxLayoutAlign="none center">
+            <div class="account-menu" (mouseenter)="toggleMenu(true)" (mouseleave)="toggleMenu(false)">
+                <button class="account-button" #accountButton (mouseenter)="toggleMenu(true)">
+                    <mat-icon class="account-icon">account_circle</mat-icon>
+                    <span>{{firstName ? firstName : "Compte"}}</span>
+                    <mat-icon style="font-size: 14px; margin-top: 10px">expand_more</mat-icon>
+                </button>
+                <!-- Menu déroulant -->
+                <div class="dropdown-menu" fxLayout="column" fxLayoutAlign="center center" *ngIf="showAccountMenu"
+                    (mouseenter)="toggleMenu(true)" (mouseleave)="toggleMenu(false)">
+                    <button *ngIf="!isLogged" class="auth-button" mat-stroked-button routerLink="/login">
+                        <span>Connexion</span>
+                    </button>
+                    <a class="dropdown-item" [routerLink]="isLogged ? '/my-account' : '/login'">
+                        <mat-icon>manage_accounts</mat-icon>
+                        Paramètres du compte
+                    </a>
+                    <a *ngIf="!isLogged" class="dropdown-item" routerLink="/register">
+                        <mat-icon>person_add_alt</mat-icon>
+                        Créer un compte
+                    </a>
+                    <button *ngIf="isLogged" class="logout-button" mat-stroked-button (click)="logout()">
+                        <span class="material-icons">logout</span>
+                        <span>Déconnexion</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </mat-toolbar>
+
 
     <mat-sidenav-container class="sidenav-container" autosize [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
         <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" opened="true"

@@ -1,10 +1,85 @@
 <div class="container-fluid account-container" fxLayout="column" fxLayoutAlign="start center">
-    <h2>Authentification à deux facteurs (2FA)</h2>
+    <h2 class="info-title">Accès et confidentialité</h2>
+    <!-- Card pour le mot de passe -->
+    <mat-card class="account-card">
+        <mat-card-header>
+            <mat-card-title>Mot de passe</mat-card-title>
+            <mat-card-subtitle>
+                Nous vous recommandons de changer votre mot de passe régulièrement pour protéger votre compte contre
+                tout accès non autorisé.
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="password-display">
+                <p>Dernière mise à jour le {{ lastUpdatePasswordDate | date:'dd MMM. y' }}</p>
+                <button *ngIf="!showPasswordForm" mat-stroked-button class="btn-modify" (click)="togglePasswordForm()">
+                    <mat-icon>edit</mat-icon>
+                    Modifier</button>
+            </div>
+
+            <!-- Formulaire de modification du mot de passe -->
+            <form *ngIf="showPasswordForm" [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" fxLayout="column">
+                <mat-form-field appearance="outline" class="form-field-width first-form-input">
+                    <mat-label>Ancien mot de passe</mat-label>
+                    <mat-icon matPrefix class="icon-color">lock</mat-icon>
+                    <mat-icon matSuffix (click)="hidePasswordOld = !hidePasswordOld">{{hidePasswordOld ?
+                        'visibility_off' :
+                        'visibility'}}
+                    </mat-icon><input matInput [type]="hidePasswordOld ? 'password' : 'text'"
+                        formControlName="oldPassword" required>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="form-field-width middle-input">
+                    <mat-label>Nouveau mot de passe</mat-label>
+                    <mat-icon matPrefix class="icon-color">lock</mat-icon>
+                    <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
+                        'visibility'}}
+                    </mat-icon><input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="newPassword"
+                        required>
+                </mat-form-field>
+
+                <!-- Barre de force du mot de passe -->
+                <div class="password-strength-container">
+
+                    <div class="password-strength-bar">
+                        <div class="strength" [ngClass]="{
+            'weak': passwordStrength === 1,
+            'fair': passwordStrength === 2,
+            'good': passwordStrength === 3,
+            'strong': passwordStrength === 4,
+            'very-strong': passwordStrength === 5
+        }" [style.width.%]="passwordStrength * 20"></div>
+                    </div>
+                    <p class="password-strength-text" *ngIf="passwordStrength < 1">FORCE DU MOT DE PASSE</p>
+                    <p class="password-strength-text" *ngIf="passwordStrength === 1">TRÈS FAIBLE</p>
+                    <p class="password-strength-text" *ngIf="passwordStrength === 2">FAIBLE</p>
+                    <p class="password-strength-text" *ngIf="passwordStrength === 3">MOYENNE</p>
+                    <p class="password-strength-text" *ngIf="passwordStrength === 4">FORTE</p>
+                    <p class="password-strength-text" *ngIf="passwordStrength === 5">TRÈS FORTE</p>
+                </div>
+
+                <mat-form-field appearance="outline" class="form-field-width form-input">
+                    <mat-label>Confirmez le nouveau mot de passe</mat-label>
+                    <mat-icon matPrefix class="icon-color">lock</mat-icon>
+                    <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' :
+                        'visibility'}}
+                    </mat-icon><input matInput [type]="hidePassword ? 'password' : 'text'"
+                        formControlName="confirmPassword" required onpaste="return false;" oncopy="return false;"
+                        oncut="return false;">
+                </mat-form-field>
+                <div fxLayout="row" class="bottom-buttons" fxLayoutAlign="start">
+                    <button mat-raised-button class="btn-submit" type="submit">Changer le mot de passe</button>
+                    <button mat-stroked-button color="warn" class="button-cancel"
+                        (click)="togglePasswordForm()">Annuler</button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
 
     <!-- Card principale avec Stepper inclus -->
     <mat-card class="account-card">
         <mat-card-header>
-            <mat-card-title>Première méthode</mat-card-title>
+            <mat-card-title>Authentification à deux facteurs - Première méthode</mat-card-title>
+            <mat-card-subtitle>Configurer l'authentification à deux facteurs pour sécuriser votre compte.</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
             <div fxLayout="row" fxLayoutAlign="space-between center">
@@ -20,7 +95,12 @@
                         </div>
                     </ng-container>
                     <ng-template #notConfigured>
-                        <span>Configurer l'authentification à deux facteurs pour sécuriser votre compte.</span>
+                        <div fxLayout="row" fxLayoutAlign="start center">
+                            <mat-icon matPrefix class="icon-color icon-not-verified">cancel</mat-icon>
+                            <div>
+                                <p class="verified-text">Authentification à double facteur désactivée.</p>
+                            </div>
+                        </div>
                     </ng-template>
                 </div>
                 <button *ngIf="!firstMethodConfigured" mat-stroked-button class="btn-modify"
@@ -100,7 +180,7 @@
                                     <input matInput [value]="username" type="email" disabled>
                                 </mat-form-field>
                             </form>
-                            <button mat-raised-button class="btn-submit" (click)="sendVerificationCode('email')">Envoyer le code</button>
+                            <button mat-raised-button class="btn-send-code" (click)="sendVerificationCode('email')">Envoyer le code</button>
                         </div>
 
                         <!-- Méthode App : Pas de bouton supplémentaire -->
@@ -160,24 +240,56 @@
                 </mat-step>
             </mat-horizontal-stepper>
         </mat-card-content>
-        <mat-card *ngIf="showPasswordForm" >
-            <mat-card-header>
-              <h3>Confirmer la désactivation avec votre mot de passe</h3>
-            </mat-card-header>
-            <mat-card-content>
+        <div *ngIf="showPasswordConfirm2FAForm" >
+            <h3>Confirmer la désactivation avec votre mot de passe</h3>
+            <div fxLayout="row" fxLayoutAlign="space-between center" class="input-container">
+                <form [formGroup]="passwordForm" class="full-width-form">
+                    <mat-form-field appearance="outline" class="form-field-width large-input">
+                        <mat-label>Mot de passe</mat-label>
+                        <input matInput formControlName="password" type="password" placeholder="Entrez votre mot de passe" />
+                        <mat-error *ngIf="passwordForm.get('password')?.hasError('required')">Mot de passe requis</mat-error>
+                    </mat-form-field>
+                </form>
+                <button mat-raised-button class="btn-submit" (click)="submitPassword()" [disabled]="!passwordForm.valid">Confirmer</button>
+            </div>
+        </div>
+    </mat-card>
 
-                <div fxLayout="row" fxLayoutAlign="space-between center" class="input-container">
-                    <form [formGroup]="passwordForm" class="full-width-form">
-                        <mat-form-field appearance="outline" class="form-field-width large-input">
-                          <mat-label>Mot de passe</mat-label>
-                          <input matInput formControlName="password" type="password" placeholder="Entrez votre mot de passe" />
-                          <mat-error *ngIf="passwordForm.get('password')?.hasError('required')">Mot de passe requis</mat-error>
-                        </mat-form-field>
-                    </form>
-                    <button mat-raised-button class="btn-submit" (click)="submitPassword()" [disabled]="!passwordForm.valid">Confirmer</button>
+
+    <mat-card class="account-card">
+        <mat-card-header>
+            <mat-card-title>Question Secrète</mat-card-title>
+            <mat-card-subtitle>
+                Sélectionnez une question secrète et saisissez votre réponse pour améliorer la sécurité de votre compte.
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+                <p>Question actuelle : {{ securityQuestion }}</p>
+                <button *ngIf="!showSecretQuestionForm" mat-stroked-button class="btn-modify" (click)="toggleSecretQuestionForm()">
+                    <mat-icon>edit</mat-icon>
+                    Modifier
+                </button>
+            </div>
+    
+            <!-- Formulaire de modification de la question secrète -->
+            <form *ngIf="showSecretQuestionForm" [formGroup]="secretQuestionForm" (ngSubmit)="onSecretQuestionSubmit()" fxLayout="column">
+                <mat-form-field appearance="outline" class="form-field-width">
+                    <mat-label>Nouvelle question secrète</mat-label>
+                    <mat-select formControlName="newQuestion" required>
+                        <mat-option *ngFor="let question of secretQuestions" [value]="question">{{ question }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="form-field-width bottom-input">
+                    <mat-label>Réponse secrète</mat-label>
+                    <input matInput formControlName="answer" required>
+                </mat-form-field>
+                <div fxLayout="row" class="bottom-buttons" fxLayoutAlign="start">
+                    <button mat-raised-button class="btn-submit" type="submit">Mettre à jour</button>
+                    <button mat-stroked-button color="warn" class="button-cancel" (click)="toggleSecretQuestionForm()">Annuler</button>
                 </div>
-            </mat-card-content>
-        </mat-card>
+            </form>
+        </mat-card-content>
     </mat-card>
     
 </div>

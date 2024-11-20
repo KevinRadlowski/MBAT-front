@@ -5,6 +5,7 @@ import { TokenStorageService } from 'src/app/core/auth/services/token-storage.se
 import { UserService } from 'src/app/core/auth/signup/signup.service';
 import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { CustomValidators } from 'src/app/shared/services/custom-validators';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
@@ -26,7 +27,34 @@ export class ConfidentialityComponent implements OnInit {
   isCodeSent = false; // Indique si le code a été envoyé
   username: string = '';
   showPasswordForm = false;
+  showPasswordConfirm2FAForm = false;
   passwordForm!: FormGroup;
+  password2FAForm!: FormGroup;
+
+  userId: number | null = null;
+  lastUpdatePasswordDate: string = '';
+  passwordStrength: number = 0;
+  hidePasswordOld = true;
+  hidePassword = true;
+  securityQuestion: String = '';
+  securityAnswer: String = '';
+
+  showSecretQuestionForm = false;
+  secretQuestionForm!: FormGroup;
+
+  secretQuestions: string[] = [
+    'Quel est le nom de votre premier animal de compagnie ?',
+    'Quel est le nom de la rue où vous avez grandi ?',
+    'Quel est le prénom de votre meilleur(e) ami(e) d’enfance ?',
+    'Quelle est votre destination de vacances favorite ?',
+    'Quel est votre plat préféré ?',
+    'Quel est le nom de votre premier enseignant(e) ?',
+    'Quelle est la couleur de votre première voiture ?',
+    'Dans quelle ville vos parents se sont-ils rencontrés ?',
+    'Quel est le nom de votre personnage de livre ou de film préféré ?',
+    'Quel est le métier que vous vouliez faire enfant ?'
+  ];
+
 
   constructor(
     private fb: FormBuilder,
@@ -40,20 +68,8 @@ export class ConfidentialityComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const user = this.tokenStorage.getUser();
 
-    if (user && user.username) {
-      this.username = user.username;
-      this.userService.getUser(this.username).subscribe({
-        next: (response: any) => {
-          if (response && response.isTwoFactorEnabled) {
-            this.firstMethodConfigured = response.isTwoFactorEnabled;
-            this.twoFactorMethod = response.twoFactorMethod;
-          }
-        },
-        error: (err: any) => this.alertService.error('Erreur lors de la récupération des informations utilisateur.')
-      });
-    }
+    this.loadUserInfo();
 
     this.methodSelectionForm.get('method')?.valueChanges.subscribe((selectedMethod) => {
       this.resetFormValidators(selectedMethod);
@@ -66,11 +82,26 @@ export class ConfidentialityComponent implements OnInit {
     });
   }
 
-  // Initialize forms
+  // Charge les informations de l'utilisateur depuis le stockage du token
+  loadUserInfo(): void {
+    const user = this.tokenStorage.getUser();
+    if (user) {
+      this.userId = user.id;
+      this.userService.getUser(user.username).subscribe({
+        next: (userData: any) => {
+          console.log(userData)
+          this.firstMethodConfigured = userData.isTwoFactorEnabled;
+          this.twoFactorMethod = userData.twoFactorMethod;
+          this.securityQuestion = userData.securityQuestion;
+          this.lastUpdatePasswordDate = userData.passwordLastUpdated; // Récupère la date de mise à jour
+        },
+        error: (err: any) => this.alertService.error('Erreur lors de la récupération des informations utilisateur.')
+      });
+    }
+  }
+
   private initializeForms(): void {
-    this.methodSelectionForm = this.fb.group({
-      method: ['', Validators.required]
-    });
+    this.methodSelectionForm = this.fb.group({ method: ['', Validators.required] });
 
     // this.smsForm = this.fb.group({
     //   phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{10}$/)]],
@@ -86,8 +117,39 @@ export class ConfidentialityComponent implements OnInit {
     });
 
     this.passwordForm = this.fb.group({
-      password: ['', Validators.required]
+      oldPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validator: CustomValidators.match('newPassword', 'confirmPassword') });
+
+    this.password2FAForm = this.fb.group({
+      password: ['', [Validators.required]],
     });
+
+    this.passwordForm.get('newPassword')?.valueChanges.subscribe(() => {
+      this.updatePasswordStrength();
+    });
+
+    this.secretQuestionForm = this.fb.group({
+      newQuestion: ['', Validators.required],
+      answer: ['', Validators.required]
+    });
+  }
+
+  togglePasswordForm(): void {
+    if (this.showPasswordForm) {
+      // Si le formulaire est déjà ouvert, le fermer et réinitialiser les champs
+      this.passwordForm.reset();
+    }
+    this.showPasswordForm = !this.showPasswordForm;
+    this.alertService.clear();
+  }
+
+  toggleSecretQuestionForm(): void {
+    this.showSecretQuestionForm = !this.showSecretQuestionForm;
+    if (!this.showSecretQuestionForm) {
+      this.secretQuestionForm.reset();
+    }
   }
 
   private resetFormValidators(selectedMethod: string): void {
@@ -107,6 +169,157 @@ export class ConfidentialityComponent implements OnInit {
     this.emailForm.updateValueAndValidity();
     this.authenticatorForm.updateValueAndValidity();
   }
+
+  onPasswordSubmit(): void {
+    if (!this.passwordForm.valid) {
+      this.alertService.error('Veuillez remplir tous les champs et assurez-vous que la confirmation du mot de passe est correcte.');
+      return;
+    }
+
+    if (this.userId === null) {
+      this.alertService.error('Utilisateur non trouvé. Veuillez vous reconnecter.');
+      return;
+    }
+
+    // Ouvrir le dialog de confirmation pour demander la réponse à la question secrète
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirmer la modification du mot de passe',
+        message: 'Veuillez répondre à votre question secrète pour valider la modification du mot de passe.',
+        requireSecretAnswer: true,
+        secretQuestion: this.securityQuestion
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.secretAnswer) {
+        // Vérifier la réponse à la question secrète avec le backend
+        this.userService.verifySecretAnswer(this.userId!, result.secretAnswer).subscribe({
+          next: (isAnswerCorrect: boolean) => {
+            if (isAnswerCorrect) {
+              // Si la réponse est correcte, procéder à la modification du mot de passe
+              const oldPassword = this.passwordForm.value.oldPassword;
+              const newPassword = this.passwordForm.value.newPassword;
+              this.userService.changeAuthenticatedUserPassword(oldPassword, newPassword).subscribe({
+                next: () => {
+                  this.alertService.success('Mot de passe mis à jour avec succès.');
+                  this.togglePasswordForm();
+                },
+                complete: () => {
+                  const user = this.tokenStorage.getUser();
+                  if (user) {
+                    this.notificationService.sendNotificationEmail(user.username, 'password-modified').subscribe();
+                  }
+                },
+                error: (err) => {
+                  this.alertService.error('Erreur lors de la mise à jour du mot de passe : ' + err.message);
+                }
+              });
+            } else {
+              this.alertService.error('La réponse à la question secrète est incorrecte.');
+            }
+          },
+          error: (err: any) => this.alertService.error(`Erreur lors de la vérification de la réponse à la question secrète : ${err.message}`)
+        });
+      } else {
+        this.alertService.info("Modification du mot de passe annulée.");
+      }
+    });
+
+    // const oldPassword = this.passwordForm.value.oldPassword;
+    // const user = this.tokenStorage.getUser();
+    // const newPassword = this.passwordForm.value.newPassword;
+
+    // // Vérification du mot de passe actuel
+    // this.userService.validateOldPassword(this.userId, oldPassword).subscribe({
+    //   next: (response) => {
+    //     // Si le mot de passe est correct, soumettre les nouvelles informations
+    //     this.userService.changeAuthenticatedUserPassword(oldPassword, newPassword).subscribe({
+    //       next: () => {
+    //         this.alertService.success('Mot de passe mis à jour avec succès.');
+    //         this.togglePasswordForm();
+    //       },
+    //       complete: () => {
+    //         if (user) {
+    //           this.notificationService.sendNotificationEmail(
+    //             user.username,
+    //             'password-modified',
+    //           ).subscribe();
+    //         }
+    //       },
+    //       error: (err) => {
+    //         this.alertService.error('Erreur lors de la mise à jour du mot de passe : ' + err.message);
+    //       }
+    //     });
+    //   },
+    //   error: (err) => {
+    //     this.alertService.error('Ancien mot de passe incorrect.');
+    //   }
+    // });
+  }
+
+  updatePasswordStrength(): void {
+    const newPassword = this.passwordForm.get('newPassword')?.value || '';
+    if (newPassword.length === 0) {
+      this.passwordStrength = 0;
+    } else {
+      this.passwordStrength = this.getPasswordStrength(newPassword);
+    }
+  }
+
+  getPasswordStrength(password: string): number {
+    let poolSize = 0;
+
+    if (/[a-z]/.test(password)) poolSize += 26;   // Minuscules
+    if (/[A-Z]/.test(password)) poolSize += 26;   // Majuscules
+    if (/\d/.test(password)) poolSize += 10;      // Chiffres
+    if (/[@$!%*?&#]/.test(password)) poolSize += 32; // Symboles spéciaux courants
+
+    const entropy = password.length * Math.log2(poolSize);
+
+    // Classifier la force en fonction de l'entropie
+    if (entropy < 28) {
+      return 1; // Très faible
+    } else if (entropy < 36) {
+      return 2; // Faible
+    } else if (entropy < 60) {
+      return 3; // Moyenne
+    } else if (entropy < 128) {
+      return 4; // Forte
+    } else {
+      return 5; // Très forte
+    }
+  }
+
+  // Validation de correspondance des mots de passe
+  passwordMatchValidator(form: FormGroup): any {
+    const newPassword = form.get('newPassword')?.value;
+    const confirmPassword = form.get('confirmPassword')?.value;
+    return newPassword === confirmPassword ? null : { mismatch: true };
+  }
+
+  onSecretQuestionSubmit(): void {
+    if (!this.secretQuestionForm.valid) {
+      this.alertService.error('Veuillez sélectionner une question et entrer une réponse.');
+      return;
+    }
+
+    const updatedQuestion = this.secretQuestionForm.value.newQuestion;
+    const updatedAnswer = this.secretQuestionForm.value.answer;
+    if (this.userId) {
+      this.userService.updateSecretQuestion(this.userId, updatedQuestion, updatedAnswer).subscribe({
+        next: () => {
+          this.alertService.success('Question secrète mise à jour avec succès.');
+          this.securityQuestion = updatedQuestion;
+          this.toggleSecretQuestionForm();
+        },
+        error: (err: any) => this.alertService.error(`Erreur lors de la mise à jour de la question secrète : ${err.message}`)
+      });
+    }
+
+  }
+
 
   startFirstMethodSetup(): void {
     this.showFirstMethodSetup = !this.showFirstMethodSetup;
@@ -274,26 +487,22 @@ export class ConfidentialityComponent implements OnInit {
   }
 
   desactivateFirstMethod(): void {
-    if (!this.showPasswordForm) {
-      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '500px',
-        data: {
-          title: 'Confirmer la désactivation',
-          message: 'Êtes-vous sûr de vouloir désactiver cette méthode d\'authentification ?'
-        }
-      });
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '500px',
+      data: {
+        title: 'Confirmer la désactivation',
+        message: 'Êtes-vous sûr de vouloir désactiver cette méthode d\'authentification ?',
+        requirePassword: true // Demande le mot de passe pour la désactivation
+      }
+    });
 
-      dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-        if (confirmed) {
-          this.showPasswordForm = true; // Affiche le formulaire de mot de passe après la confirmation
-        } else {
-          this.alertService.error("Désactivation annulée.");
-        }
-      });
-    } else {
-      this.showPasswordForm = false;
-      this.passwordForm.reset(); // Réinitialise le champ de mot de passe
-    }
+    dialogRef.afterClosed().subscribe((password) => {
+      if (password) {
+        this.verifyPasswordAndDeactivate(password); // Passe le mot de passe directement
+      } else {
+        this.alertService.info("Désactivation annulée.");
+      }
+    });
 
   }
 
@@ -303,37 +512,6 @@ export class ConfidentialityComponent implements OnInit {
       this.verifyPasswordAndDeactivate(password);
     }
   }
-
-  // desactivateFirstMethod(): void {
-
-  //   const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-  //     width: '300px',
-  //     data: { message: 'Veuillez confirmer la désactivation en entrant votre mot de passe.' }
-  //   });
-
-  //   dialogRef.afterClosed().subscribe((password: string | null) => {
-  //     if (password !== null) {
-  //       // Vérifier le mot de passe avant de désactiver
-  //       this.verifyPasswordAndDeactivate(password);
-  //     } else {
-  //       this.alertService.error("Désactivation annulée.");
-  //     }
-  //   });
-
-  // const user = this.tokenStorage.getUser();
-  // if (user && user.id !== null) {
-  //   this.userService.disableUserTwoFactor(user.id).subscribe({
-  //     next: () => {
-  //       this.alertService.success('Authentification à deux facteurs désactivée avec succès.');
-  //       this.firstMethodConfigured = false;
-  //       this.showFirstMethodSetup = false; // Masquer le formulaire de configuration
-  //     },
-  //     error: (err: any) => this.alertService.error(`Erreur lors de la désactivation du 2FA : ${err.message}`)
-  //   });
-  // } else {
-  //   this.alertService.error("L'ID de l'utilisateur n'est pas valide.");
-  // }
-  // }
 
   private verifyPasswordAndDeactivate(password: string): void {
     const user = this.tokenStorage.getUser();

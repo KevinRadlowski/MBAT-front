@@ -1,80 +1,43 @@
-mat-form-field {
-  max-width: 100%;
-  margin: 20px 20px 00px 20px;
+.register-container {
+  width: 100%;
+  max-width: 600px;
+  min-height: 500px;
+  padding: 2% 10%;
+  background-color: #fff;
+  border-radius: 10px;
 }
 
-.form-header-title {
-  h3 {
-    font-weight: 500;
-  }
-
-  padding-top: 30px;
+.register-card {
+  width: 100%;
+  margin-bottom: 20px;
 }
 
-.icon-color {
-  color: var(--color-primary);
-}
-
-.invalid-password {
-  margin-top: 20px;
-  margin-bottom: 15px;
-}
-
-.btn {
-  margin: 20px;
-  background-color: var(--color-secondary);
-  width: 150px;
-  height: 40px;
-  color: var(--color-primary-contrast);
-}
-
-.btn:hover {
-  background-color: var(--color-primary);
-}
-
-::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
-  background-color: var(--color-light-shade);
-  border-radius: 5px;
-}
-
-.invalid-text {
-  color: red;
-  margin-top: -5px;
+.full-width-form {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-field-width {
   width: 100%;
+  margin-bottom: 15px;
 }
 
-::ng-deep .mat-checkbox-layout {
-  white-space: normal !important;
-  max-width: 800px;
-  margin-top: 15px;
+.large-input {
+  display: block;
 }
 
-.input-file {
-  width: 100%;
-  border: 1px solid rgb(190, 190, 190);
-  background-color: var(--color-light-shade);
-  border-radius: 7px;
-
-  &:hover {
-    border-color: 5px solid var(--color-dark);
-  }
-}
-
-.conditions {
-  font-size: smaller;
+.form-buttons {
+  margin-top: 20px;
 }
 
 .password-strength-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 6px;
-  max-width: 700px;
+  margin-top: -10px;
   width: 100%;
-  padding: 0px 20px;
 }
 
 .password-strength-bar {
@@ -124,11 +87,130 @@ mat-form-field {
   width: 100%;
 }
 
+.btn-modify {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  white-space: nowrap;
+  padding: 0 16px;
+}
+
+.btn-modify:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+
+h2 {
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 .info-icon {
-  color: var(--color-primary); /* Couleur bleue ou une couleur qui se démarque */
+  color: var(--color-primary);
   cursor: pointer;
 }
 
-.cursor {
-  cursor: pointer;
+
+.conditions-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.conditions-header h3 {
+  font-weight: 600;
+  font-size: 1.5em;
+  color: var(--color-primary);
+}
+
+.conditions-header p {
+  font-size: 1em;
+  color: #666;
+}
+
+.conditions-content {
+  margin-top: 20px;
+
+  .condition-checkbox {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 0.9em;
+    line-height: 1.4;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--color-secondary);
+    }
+  }
+}
+
+.additional-info {
+  margin-top: 20px;
+  font-size: 0.85em;
+  color: #555;
+  text-align: left;
+
+  p {
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.btn-submit {
+  width: 100%;
+  background-color: var(--color-secondary) !important;
+  color: var(--color-primary-contrast) !important;
+  padding: 8px 20px;
+  margin-bottom: 10px;
+}
+
+.btn-submit:disabled {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+  /* Couleur grisée */
+  color: rgba(0, 0, 0, 0.26) !important;
+  /* Couleur du texte grisée */
+  cursor: not-allowed;
+  /* Changer le curseur pour indiquer qu'il est désactivé */
+}
+
+.btn-submit:hover {
+  background-color: var(--color-primary);
+}
+
+.step-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.step-dot {
+  width: 5px;
+  height: 5px;
+  margin: 0 5px;
+  background-color: #ccc;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.step-dot.active {
+  background-color: var(--color-primary); /* Utilisez la couleur de votre thème */
+  width: 8px;
+  height: 8px;
+}
+
+.step-header {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: var(--color-primary);
+  /* Couleur principale de votre thème */
+  text-align: center;
+  margin-bottom: 20px;
 }

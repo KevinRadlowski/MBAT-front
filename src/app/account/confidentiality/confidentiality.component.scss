@@ -1,30 +1,75 @@
+.info-title {
+    width: 100%;
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--color-primary-light);
+}
+
 .account-container {
     width: 100%;
-    min-height: 500px;
     padding: 2% 10%;
     background-color: #f0f0f0;
-}
 
-.account-card {
-    width: 100%;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: var(--box-shadow);
-}
+    .account-card {
+        width: 100%;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
 
-.mat-card-title {
-    font-weight: 600;
-    color: var(--color-primary);
+        mat-card-header {
+            background-color: var(--color-primary); // Couleur sombre pour le header
+            color: var(--color-primary-contrast); // Couleur du texte en blanc
+            padding: 16px;
+            display: flex;
+            flex-direction: column; // Pour que le texte soit empilé sous le titre
+            justify-content: center;
+            min-height: 80px; // Fixe une hauteur uniforme
+            text-align: left;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        mat-card-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        mat-card-subtitle {
+            font-size: 12px;
+            color: var(--color-primary-contrast); // Couleur du texte de sous-titre en blanc
+        }
+
+        mat-card-content {
+            background-color: #ffffff; // Couleur claire pour le contenu
+            padding: 16px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+    }
+
 }
 
 .form-field-width {
     width: 100%;
+    max-width: 700px;
 }
+
+
+.password-display span {
+    font-weight: 500;
+}
+
 
 .large-input {
     margin: 0 auto;
     display: block;
 }
+
+.first-form-input {
+    padding: 10px 0px;
+}
+
 
 .full-width-form {
     width: 100%;
@@ -49,11 +94,18 @@
     width: 100%;
 }
 
+.button-cancel {
+    margin-left: 10px;
+}
+
+.bottom-buttons,
+.bottom-input {
+    margin-top: 10px;
+}
+
 .btn-submit {
-    background-color: var(--color-secondary);
-    color: var(--color-primary-contrast);
-    white-space: nowrap;
-    padding: 0 16px;
+    background-color: var(--color-secondary) !important;
+    color: var(--color-primary-contrast) !important;
 }
 
 .btn-submit:hover {
@@ -61,11 +113,14 @@
 }
 
 .btn-submit:disabled {
-    background-color: rgba(0, 0, 0, 0.12); /* Couleur grisée */
-    color: rgba(0, 0, 0, 0.26); /* Couleur du texte grisée */
-    cursor: not-allowed; /* Changer le curseur pour indiquer qu'il est désactivé */
-  }
-  
+    background-color: rgba(0, 0, 0, 0.12);
+    /* Couleur grisée */
+    color: rgba(0, 0, 0, 0.26);
+    /* Couleur du texte grisée */
+    cursor: not-allowed;
+    /* Changer le curseur pour indiquer qu'il est désactivé */
+}
+
 
 .btn-modify {
     color: var(--color-secondary);
@@ -89,9 +144,18 @@
     display: block;
 }
 
-button {
+.btn-send-code {
+    min-width: 150px !important;
+    height: 56px;
     margin-left: 10px;
+    background-color: var(--color-secondary) !important;
+    color: var(--color-primary-contrast) !important;
 }
+
+.btn-send-code:hover {
+    background-color: var(--color-primary);
+}
+
 
 .mat-card-content {
     padding: 0 !important;
@@ -166,4 +230,68 @@ button {
 .icon-verified {
     color: var(--color-success);
     margin-right: 5px;
+}
+
+
+.icon-not-verified {
+    color: var(--color-danger);
+    margin-right: 5px;
+}
+
+.password-strength-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 6px;
+    max-width: 700px;
+    width: 100%;
+}
+
+.password-strength-bar {
+    width: 100%;
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    position: relative;
+    margin-bottom: 5px; // Ajoute un espace entre la barre et le texte en dessous
+}
+
+.password-strength-bar .strength {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+// Texte de force de mot de passe
+.password-strength-text {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 10px;
+    color: #333; // Couleur du texte, à adapter selon votre thème
+}
+
+// Couleurs et largeurs en fonction du niveau de force
+.strength.weak {
+    background-color: #ff4d4d;
+    width: 20%;
+}
+
+.strength.fair {
+    background-color: #ff944d;
+    width: 40%;
+}
+
+.strength.good {
+    background-color: #ffd24d;
+    width: 60%;
+}
+
+.strength.strong {
+    background-color: #a6ff4d;
+    width: 80%;
+}
+
+.strength.very-strong {
+    background-color: #4dff4d;
+    width: 100%;
 }

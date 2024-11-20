@@ -1,12 +1,14 @@
 <div *ngIf="message" class="container alert text-center">
-    <div class="m-0" *ngIf="message" [ngClass]="{
+    <div class="m-0" [ngClass]="{
              'alert': message,
              'alert-success': message.type === 'success',
              'alert-warning': message.type === 'info',
              'alert-danger': message.type === 'error' }">
         
+        <!-- Bouton de fermeture -->
+        <button class="close-btn" (click)="closeAlert()">&times;</button>
+
         <!-- Affichage du message avec des sauts de ligne -->
         <p [innerHTML]="message.text"></p>
-
     </div>
 </div>

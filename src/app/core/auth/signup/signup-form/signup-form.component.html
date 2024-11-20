@@ -1,71 +1,150 @@
-<app-loader [isLoading]="isLoading"></app-loader> <!-- Ajouter le loader ici -->
-<div class="register-card">
-  <form class="register-form" fxLayout="column" [formGroup]="userRegisterForm"
-    (ngSubmit)="submitFormulaireInscription()">
-    <div class="form-header-title" fxLayoutAlign="center center">
-      <h3>Créer un compte</h3>
+<div class="container-fluid register-container" fxLayout="column" fxLayoutAlign="start center">
+  <h2>Inscription</h2>
+
+  <div class="register-card">
+    <!-- Étape 1 : Informations de base -->
+    <div *ngIf="currentStep === 1">
+      <form [formGroup]="basicInfoGroup" class="full-width-form">
+        <div class="step-header">Informations de base</div>
+
+        <mat-form-field appearance="outline" class="form-field-width large-input">
+          <mat-label>Prénom</mat-label>
+          <input matInput formControlName="firstName" required>
+          <mat-icon matSuffix class="info-icon"
+            matTooltip="Votre nom réel pourra être utilisé ultérieurement pour vérifier votre identité lorsque vous contacterez notre support.">info</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field-width large-input">
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="lastName" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field-width large-input">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field-width large-input">
+          <mat-label>(Facultatif) Numéro de téléphone</mat-label>
+          <input matInput formControlName="phone" type="tel">
+          <mat-icon matSuffix class="info-icon"
+            matTooltip="Ajouter un numéro de téléphone permet d'améliorer la sécurité de votre compte et de recevoir des alertes importantes.">info</mat-icon>
+        </mat-form-field>
+
+        <div fxLayout="row" fxLayoutAlign="end" class="form-buttons">
+          <button mat-raised-button (click)="nextStep()" class="btn-submit">Continuer</button>
+        </div>
+      </form>
     </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="username" type="email" class="form-control" id="username" email>
-      <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
-    </mat-form-field>
+    <!-- Étape 2 : Sécurité -->
+    <div *ngIf="currentStep === 2">
+      <form [formGroup]="securityGroup" class="full-width-form">
+        <div class="step-header">Sécurité</div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>(Facultatif) Numéro de téléphone</mat-label>
-      <input matInput formControlName="phone" type="tel" class="form-control" id="phone">
-      <mat-icon matPrefix class="icon-color">phone</mat-icon>
-      <mat-icon matSuffix matTooltip="Ajouter un numéro de téléphone à votre compte vous permet d'utiliser plus d'options de connexion et de récupération, de recevoir des alertes importantes et de renforcer la sécurité de votre compte." class="info-icon">info</mat-icon>
-    </mat-form-field>
+        <mat-form-field appearance="outline" class="form-field-width large-input">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+          <mat-icon matSuffix (click)="hidePassword = !hidePassword">
+            {{ hidePassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Mot de passe</mat-label>
-      <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" type="password"
-        class="form-control" id="motDePasse">
-      <mat-icon matPrefix class="icon-color">lock</mat-icon>
-      <mat-icon matSuffix class="cursor" (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
-      </mat-icon>
-    </mat-form-field>
-
-    <!-- Barre de force du mot de passe -->
-    <div class="password-strength-container">
-      <div class="password-strength-bar">
-        <div class="strength" [ngClass]="{
+        <!-- Barre de force du mot de passe -->
+        <div class="password-strength-container">
+          <div class="password-strength-bar">
+            <div class="strength" [ngClass]="{
             'weak': passwordStrength === 1,
             'fair': passwordStrength === 2,
             'good': passwordStrength === 3,
             'strong': passwordStrength === 4,
             'very-strong': passwordStrength === 5
         }" [style.width.%]="passwordStrength * 20"></div>
+          </div>
+          <p class="password-strength-text" *ngIf="passwordStrength === 0">FORCE DU MOT DE PASSE</p>
+          <p class="password-strength-text" *ngIf="passwordStrength === 1">TRÈS FAIBLE</p>
+          <p class="password-strength-text" *ngIf="passwordStrength === 2">FAIBLE</p>
+          <p class="password-strength-text" *ngIf="passwordStrength === 3">MOYENNE</p>
+          <p class="password-strength-text" *ngIf="passwordStrength === 4">FORTE</p>
+          <p class="password-strength-text" *ngIf="passwordStrength === 5">TRÈS FORTE</p>
+        </div>
+
+        <mat-form-field appearance="outline" class="form-field-width large-input">
+          <mat-label>Confirmation du mot de passe</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword" required>
+          <mat-icon matSuffix (click)="hidePassword = !hidePassword">
+            {{ hidePassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </mat-form-field>
+
+        <div fxLayout="column" fxLayoutAlign="space-between" class="form-buttons">
+          <button mat-raised-button (click)="nextStep()" class="btn-submit">Continuer</button>
+          <button mat-stroked-button (click)="previousStep()" class="btn-modify">Revenir en arrière</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Étape 3 : Question de sécurité -->
+    <div *ngIf="currentStep === 3">
+      <form [formGroup]="securityQuestionGroup" class="full-width-form">
+        <div class="step-header">Question de sécurité</div>
+
+        <mat-form-field appearance="outline" class="form-field-width large-input">
+          <mat-label>Choisissez une question</mat-label>
+          <mat-select formControlName="securityQuestion" required>
+            <mat-option *ngFor="let question of securityQuestions" [value]="question">
+              {{ question }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field-width large-input">
+          <mat-label>Réponse</mat-label>
+          <input matInput formControlName="securityAnswer" required>
+        </mat-form-field>
+
+        <div fxLayout="column" fxLayoutAlign="space-between" class="form-buttons">
+          <button mat-raised-button (click)="nextStep()" class="btn-submit">Continuer</button>
+          <button mat-stroked-button (click)="previousStep()" class="btn-modify">Revenir en arrière</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Étape 4 : Conditions d'utilisation et politique de confidentialité -->
+    <div *ngIf="currentStep === 4">
+      <div class="conditions-header">
+        <h3>Prenez connaissance des conditions</h3>
+        <p>Merci de prendre connaissance des conditions et des options ci-dessous.</p>
       </div>
-      <p class="password-strength-text" *ngIf="passwordStrength === 0">FORCE DU MOT DE PASSE</p>
-      <p class="password-strength-text" *ngIf="passwordStrength === 1">TRÈS FAIBLE</p>
-      <p class="password-strength-text" *ngIf="passwordStrength === 2">FAIBLE</p>
-      <p class="password-strength-text" *ngIf="passwordStrength === 3">MOYENNE</p>
-      <p class="password-strength-text" *ngIf="passwordStrength === 4">FORTE</p>
-      <p class="password-strength-text" *ngIf="passwordStrength === 5">TRÈS FORTE</p>
+
+      <div class="conditions-content" [formGroup]="conditionsGroup">
+        <mat-checkbox formControlName="acceptTerms" class="condition-checkbox">
+          En cochant cette case, vous acceptez nos <a routerLink="/terms" target="_blank">Conditions Générales</a>.
+        </mat-checkbox>
+
+        <mat-checkbox formControlName="acceptPrivacy" class="condition-checkbox">
+          J'ai lu et compris la <a routerLink="/privacy" target="_blank">Politique de confidentialité</a>.
+        </mat-checkbox>
+
+        <hr>
+        <div class="additional-info">
+          <p>En cliquant sur "Accepter", vous reconnaissez avoir lu, compris et accepté les documents suivants :
+            <a routerLink="/terms" target="_blank">Conditions Générales</a>,
+            <a routerLink="/privacy" target="_blank">Politique de confidentialité</a>.
+          </p>
+        </div>
+      </div>
+
+      <div fxLayout="column" fxLayoutAlign="space-between" class="form-buttons">
+        <button mat-raised-button (click)="submitFormulaireInscription()" class="btn-submit"
+          [disabled]="!conditionsGroup.valid">Accepter</button>
+        <button mat-stroked-button (click)="previousStep()" class="btn-modify">Revenir en arrière</button>
+      </div>
     </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Confirmation du mot de passe</mat-label>
-      <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmation_password"
-        type="password" class="form-control" id="confirmation_password"
-        [ngClass]="{ 'is-invalid': submitted && f['confirmation_password'].errors }">
-      <mat-icon matPrefix class="icon-color">lock</mat-icon>
-      <mat-icon matSuffix class="cursor" (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
-      </mat-icon>
-    </mat-form-field>
-
-    <div class="column" fxLayout="column" fxLayoutAlign="none center">
-      <button mat-flat-button type="submit" class="btn">S'inscrire</button>
+    <!-- Points de navigation pour les étapes -->
+    <div class="step-indicators">
+      <div *ngFor="let step of steps; let i = index" class="step-dot" [class.active]="currentStep === i + 1"></div>
     </div>
-  </form>
-  <div class="conditions">
-    <p>En cliquant sur S’inscrire, vous acceptez nos <a routerLink="">Conditions Générales</a>.</p>
-    <p>Découvrez comment nous recueillons, utilisons et partageons vos données en lisant notre <a
-        routerLink="">Politique de confidentialité</a><br /> et comment nous utilisons les cookies et autres
-      technologies similaires en consultant notre <a routerLink="">Politique d’utilisation des cookies</a>.</p>
   </div>
-
 </div>
