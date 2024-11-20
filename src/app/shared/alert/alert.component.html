@@ -1,7 +1,8 @@
-<div *ngIf="message" class="container alert text-center mt-4 p-0">
+<div *ngIf="message" class="container alert text-center">
     <div class="m-0" *ngIf="message" [ngClass]="{
              'alert': message,
              'alert-success': message.type === 'success',
+             'alert-warning': message.type === 'info',
              'alert-danger': message.type === 'error' }">
         
         <!-- Affichage du message avec des sauts de ligne -->

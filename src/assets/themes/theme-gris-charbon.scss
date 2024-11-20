@@ -6,7 +6,8 @@
     --color-primary-light: #6F6F6B;
     --color-primary-darker: #3B3B35;
     --color-primary-dark: #2A2A25;
-  
+    --color-primary-filter: brightness(0) saturate(100%) invert(28%) sepia(0%) saturate(541%) hue-rotate(134deg) brightness(88%) contrast(80%);
+    
     /** secondary **/
     --color-secondary: #8C746A; /* Brun chaud, professionnel et apaisant */
     --color-secondary-contrast: #FFFFFF;

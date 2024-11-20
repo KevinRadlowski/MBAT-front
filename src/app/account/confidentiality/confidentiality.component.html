@@ -1,4 +1,4 @@
-<div class="container-fluid account-container" fxLayout="column" fxLayoutAlign="center center">
+<div class="container-fluid account-container" fxLayout="column" fxLayoutAlign="start center">
     <h2>Authentification à deux facteurs (2FA)</h2>
 
     <!-- Card principale avec Stepper inclus -->
@@ -29,7 +29,7 @@
                 </button>
                 <button *ngIf="firstMethodConfigured" mat-stroked-button class="btn-modify"
                     (click)="desactivateFirstMethod()">
-                    Désactiver
+                    {{ showPasswordForm ? 'Annuler' : 'Désactiver' }}
                 </button>
             </div>
 
@@ -50,7 +50,7 @@
                                     <span class="radio-text">SMS</span>
                                 </mat-radio-button>
                             </mat-card> -->
-                            <mat-card class="radio-card" (click)="methodSelectionForm.get('method')?.setValue('email')"
+                            <mat-card class="radio-card" (click)="methodSelectionForm.get('method')?.setValue('email'); forceFormValidation()"
                                 [class.active]="methodSelectionForm.get('method')?.value === 'email'">
                                 <mat-radio-button class="custom-radio" value="email"
                                     [checked]="methodSelectionForm.get('method')?.value === 'email'">
@@ -74,7 +74,7 @@
                 </mat-step>
 
                 <!-- Étape 2 : Configurer la méthode -->
-                <mat-step [stepControl]="getCurrentForm()">
+                <mat-step  [completed]="isStep2Valid()" [stepControl]="getCurrentForm()">
                     <ng-template matStepLabel>Configurer la méthode</ng-template>
 
                     <ng-container [ngSwitch]="methodSelectionForm.get('method')?.value">
@@ -87,21 +87,20 @@
                                     <input matInput formControlName="phoneNumber" placeholder="+33...">
                                 </mat-form-field>
                             </form>
-                            <button mat-raised-button class="btn-submit" (click)="sendVerificationCode()">Envoyer le
+                            <button mat-raised-button class="btn-submit" (click)="sendVerificationCode('sms')">Envoyer le
                                 code</button>
                         </div> -->
 
                         <!-- Formulaire Email -->
                         <div *ngSwitchCase="'email'" fxLayout="row" fxLayoutAlign="space-between center"
-                            class="input-container">
+                        class="input-container">
                             <form [formGroup]="emailForm" class="full-width-form">
-                                <mat-form-field appearance="outline" class="form-field-width large-input">
-                                    <mat-label>Adresse email</mat-label>
-                                    <input matInput formControlName="email" type="email">
+                                <mat-form-field appearance="outline" class="form-field-width large-input" disabled>
+                                    <mat-label>Adresse email enregistrée</mat-label>
+                                    <input matInput [value]="username" type="email" disabled>
                                 </mat-form-field>
                             </form>
-                            <button mat-raised-button class="btn-submit" (click)="sendVerificationCode()">Envoyer le
-                                code</button>
+                            <button mat-raised-button class="btn-submit" (click)="sendVerificationCode('email')">Envoyer le code</button>
                         </div>
 
                         <!-- Méthode App : Pas de bouton supplémentaire -->
@@ -134,7 +133,7 @@
                         </div> -->
 
                         <!-- Validation pour Email -->
-                        <div *ngSwitchCase="'email'" fxLayout="column" fxLayoutAlign="center center">
+                        <div *ngSwitchCase="'email'" fxLayout="column" fxLayoutAlign="center center" class="input-container">
                             <form [formGroup]="emailForm" class="full-width-form">
                                 <mat-form-field appearance="outline" class="form-field-width large-input">
                                     <mat-label>Code reçu par Email</mat-label>
@@ -161,5 +160,24 @@
                 </mat-step>
             </mat-horizontal-stepper>
         </mat-card-content>
+        <mat-card *ngIf="showPasswordForm" >
+            <mat-card-header>
+              <h3>Confirmer la désactivation avec votre mot de passe</h3>
+            </mat-card-header>
+            <mat-card-content>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" class="input-container">
+                    <form [formGroup]="passwordForm" class="full-width-form">
+                        <mat-form-field appearance="outline" class="form-field-width large-input">
+                          <mat-label>Mot de passe</mat-label>
+                          <input matInput formControlName="password" type="password" placeholder="Entrez votre mot de passe" />
+                          <mat-error *ngIf="passwordForm.get('password')?.hasError('required')">Mot de passe requis</mat-error>
+                        </mat-form-field>
+                    </form>
+                    <button mat-raised-button class="btn-submit" (click)="submitPassword()" [disabled]="!passwordForm.valid">Confirmer</button>
+                </div>
+            </mat-card-content>
+        </mat-card>
     </mat-card>
+    
 </div>

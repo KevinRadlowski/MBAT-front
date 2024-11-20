@@ -5,7 +5,8 @@
     --color-primary-light: #A08A75;
     --color-primary-darker: #705948;
     --color-primary-dark: #60493A;
-  
+    --color-primary-filter: brightness(0) saturate(100%) invert(45%) sepia(15%) saturate(721%) hue-rotate(349deg) brightness(91%) contrast(89%);
+
     --color-secondary: #5E4A3A; /* Ombre de nuage */
     --color-secondary-contrast: #FFFFFF;
     --color-secondary-lighter: #70595B;

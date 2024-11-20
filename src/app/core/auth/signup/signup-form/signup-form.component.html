@@ -13,10 +13,10 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Confirmation de l'Email</mat-label>
-      <input matInput formControlName="confirmation_username" type="email" class="form-control"
-        id="confirmation_username" email>
-      <mat-icon matPrefix class="icon-color">alternate_email</mat-icon>
+      <mat-label>(Facultatif) Numéro de téléphone</mat-label>
+      <input matInput formControlName="phone" type="tel" class="form-control" id="phone">
+      <mat-icon matPrefix class="icon-color">phone</mat-icon>
+      <mat-icon matSuffix matTooltip="Ajouter un numéro de téléphone à votre compte vous permet d'utiliser plus d'options de connexion et de récupération, de recevoir des alertes importantes et de renforcer la sécurité de votre compte." class="info-icon">info</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -24,10 +24,28 @@
       <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" type="password"
         class="form-control" id="motDePasse">
       <mat-icon matPrefix class="icon-color">lock</mat-icon>
-      <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
+      <mat-icon matSuffix class="cursor" (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
       </mat-icon>
-      <mat-hint>Doit contenir au minimum 6 caractères, dont 1 minuscule et 1 majuscule.</mat-hint>
     </mat-form-field>
+
+    <!-- Barre de force du mot de passe -->
+    <div class="password-strength-container">
+      <div class="password-strength-bar">
+        <div class="strength" [ngClass]="{
+            'weak': passwordStrength === 1,
+            'fair': passwordStrength === 2,
+            'good': passwordStrength === 3,
+            'strong': passwordStrength === 4,
+            'very-strong': passwordStrength === 5
+        }" [style.width.%]="passwordStrength * 20"></div>
+      </div>
+      <p class="password-strength-text" *ngIf="passwordStrength === 0">FORCE DU MOT DE PASSE</p>
+      <p class="password-strength-text" *ngIf="passwordStrength === 1">TRÈS FAIBLE</p>
+      <p class="password-strength-text" *ngIf="passwordStrength === 2">FAIBLE</p>
+      <p class="password-strength-text" *ngIf="passwordStrength === 3">MOYENNE</p>
+      <p class="password-strength-text" *ngIf="passwordStrength === 4">FORTE</p>
+      <p class="password-strength-text" *ngIf="passwordStrength === 5">TRÈS FORTE</p>
+    </div>
 
     <mat-form-field appearance="outline">
       <mat-label>Confirmation du mot de passe</mat-label>
@@ -35,7 +53,7 @@
         type="password" class="form-control" id="confirmation_password"
         [ngClass]="{ 'is-invalid': submitted && f['confirmation_password'].errors }">
       <mat-icon matPrefix class="icon-color">lock</mat-icon>
-      <mat-icon matSuffix (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
+      <mat-icon matSuffix class="cursor" (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}
       </mat-icon>
     </mat-form-field>
 

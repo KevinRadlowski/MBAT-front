@@ -1,4 +1,4 @@
-<div class="container-fluid application-container" fxLayout="column" fxLayoutAlign="center center">
+<div class="container-fluid application-container" fxLayout="column" fxLayoutAlign="start center">
   <h2>Paramètres de l'application</h2>
 
   <!-- Card pour le choix du thème -->
@@ -10,10 +10,9 @@
       <p>Choisissez un thème pour personnaliser l'apparence de l'application.</p>
 
       <mat-form-field appearance="outline" class="form-field-width">
-        <mat-label>Thème</mat-label>
-        <mat-select [(value)]="selectedTheme" (selectionChange)="onThemeChange($event.value)">
-          <mat-option *ngFor="let theme of themes" [value]="theme.value">
-            <div class="theme-option" [ngStyle]="{'background-color': theme.color}">
+        <mat-select [(value)]="selectedTheme" (selectionChange)="onThemeChange($event.value)" style="color: #fff" >
+          <mat-option *ngFor="let theme of themes" [value]="theme.value" [ngStyle]="{'background-color': theme.color}">
+            <div class="theme-option">
               {{ theme.name }}
             </div>
           </mat-option>

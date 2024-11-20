@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { TokenStorageService } from 'src/app/core/auth/services/token-storage.service';
 import { UserService } from 'src/app/core/auth/signup/signup.service';
+import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-confidentiality',
@@ -21,14 +24,17 @@ export class ConfidentialityComponent implements OnInit {
   qrCodeImage: string = '';
   currentStep: number = 0;
   isCodeSent = false; // Indique si le code a été envoyé
-
   username: string = '';
+  showPasswordForm = false;
+  passwordForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private alertService: AlertService,
-    private tokenStorage: TokenStorageService
+    private tokenStorage: TokenStorageService,
+    private dialog: MatDialog,
+    private notificationService: NotificationService
   ) {
     this.initializeForms();
   }
@@ -72,12 +78,15 @@ export class ConfidentialityComponent implements OnInit {
     // });
 
     this.emailForm = this.fb.group({
-      email: ['', [Validators.email, Validators.required]],
-      verificationCode: ['']
+      verificationCode: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
     });
 
     this.authenticatorForm = this.fb.group({
       authenticatorCode: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
+    });
+
+    this.passwordForm = this.fb.group({
+      password: ['', Validators.required]
     });
   }
 
@@ -89,9 +98,6 @@ export class ConfidentialityComponent implements OnInit {
     // if (selectedMethod === 'sms') {
     //   this.smsForm.get('phoneNumber')?.setValidators([Validators.required, Validators.pattern(/^\+?[0-9]{10}$/)]);
     // } else
-    if (selectedMethod === 'email') {
-      this.emailForm.get('email')?.setValidators([Validators.required, Validators.email]);
-    }
 
     this.updateAllFormsValidity();
   }
@@ -112,9 +118,7 @@ export class ConfidentialityComponent implements OnInit {
     this.currentStep = 0;
   }
 
-  sendVerificationCode(): void {
-    const method = this.methodSelectionForm.get('method')?.value;
-    this.isCodeSent = false; // Réinitialise avant d'envoyer le code
+  sendVerificationCode(method: String): void {
 
     // if (method === 'sms' && this.smsForm.valid) {
     //   const phoneNumber = this.smsForm.value.phoneNumber;
@@ -126,9 +130,8 @@ export class ConfidentialityComponent implements OnInit {
     //     error: (err: any) => this.alertService.error(`Erreur lors de l'envoi du SMS : ${err.message}`)
     //   });
     // } else 
-    if (method === 'email' && this.emailForm.valid) {
-      const email = this.emailForm.value.email;
-      this.userService.sendEmailCode(email).subscribe({
+    if (method === 'email') {
+      this.userService.generateEmailCode(this.username,).subscribe({
         next: () => {
           this.alertService.success('Code envoyé par Email.');
           this.isCodeSent = true; // Active l'étape suivante
@@ -138,29 +141,18 @@ export class ConfidentialityComponent implements OnInit {
     }
   }
 
-  // private sendSmsCode(): void {
-  //   if (this.smsForm.valid) {
-  //     const phoneNumber = this.smsForm.value.phoneNumber;
-  //     this.userService.sendSmsCode(phoneNumber).subscribe({
-  //       next: () => this.alertService.success('Code envoyé par SMS.'),
-  //       error: (err: any) => this.alertService.error(`Erreur lors de l'envoi du SMS : ${err.message}`)
-  //     });
-  //   }
-  // }
 
-  private sendEmailCode(): void {
-    if (this.emailForm.valid) {
-      const email = this.emailForm.value.email;
-      this.userService.sendEmailCode(email).subscribe({
-        next: () => this.alertService.success('Code envoyé par Email.'),
-        error: (err: any) => this.alertService.error(`Erreur lors de l'envoi de l'email : ${err.message}`)
-      });
+  isStep2Valid(): boolean {
+    const method = this.methodSelectionForm.get('method')?.value;
+    if (method === 'email') {
+      return this.isCodeSent; // L'étape 2 est validée si le code a été envoyé pour l'email
+    } else if (method === 'app') {
+      return !!this.qrCodeImage; // L'étape 2 est validée si le QR code est chargé pour l'app
     }
+    return false;
   }
 
   loadQrCode(): void {
-
-    console.log("load qr code")
     const user = this.tokenStorage.getUser();
 
     if (user) {
@@ -202,23 +194,51 @@ export class ConfidentialityComponent implements OnInit {
 
   private verifyEmailCode(): void {
     const verificationCode = this.emailForm.value.verificationCode;
-    this.userService.verifyEmailCode(verificationCode).subscribe({
-      next: () => this.alertService.success('Email vérifié avec succès.'),
+    this.userService.enable2FaEmail(this.username, verificationCode).subscribe({
+      next: () => {
+        // this.updateUserTwoFactor('email');
+        this.alertService.success('Email vérifié avec succès.')
+        this.completeSetup('email');
+
+      },
       error: (err: any) => this.alertService.error(`Erreur lors de la vérification de l'email : ${err.message}`)
     });
   }
 
   private verifyAuthenticatorCode(): void {
     const authenticatorCode = this.authenticatorForm.value.authenticatorCode;
-    this.userService.verifyAuthenticatorCode(this.username, authenticatorCode).subscribe({
+    this.userService.enable2FaApp(this.username, authenticatorCode).subscribe({
       next: () => {
-        this.updateUserTwoFactor('app');
         this.alertService.success('Code Authenticator vérifié avec succès.');
-        this.firstMethodConfigured = true; // Pour indiquer que la méthode est configurée
-        this.showFirstMethodSetup = false; // Cache le formulaire après la configuration
+        this.completeSetup('app');
       },
       error: (err: any) => this.alertService.error(`Erreur lors de la vérification du code Authenticator : ${err.message}`)
     });
+    // this.userService.verifyAuthenticatorCode(this.username, authenticatorCode).subscribe({
+    //   next: () => {
+    //     this.alertService.success('Code Authenticator vérifié avec succès.');
+    //     this.completeSetup('app');
+    //   },
+    //   error: (err: any) => this.alertService.error(`Erreur lors de la vérification du code Authenticator : ${err.message}`)
+    // });
+  }
+
+  private completeSetup(method: string): void {
+    // this.updateUserTwoFactor(method);
+
+    if (method == "app") {
+      this.notificationService.sendNotificationEmail(
+        this.username,
+        '2fa-app-enabled',
+      ).subscribe();
+    } else if (method == "email") {
+      this.notificationService.sendNotificationEmail(
+        this.username,
+        '2fa-email-enabled',
+      ).subscribe();
+    }
+    this.firstMethodConfigured = true; // Pour indiquer que la méthode est configurée
+    this.showFirstMethodSetup = false; // Cache le formulaire après la configuration
   }
 
   getCurrentForm(): FormGroup {
@@ -254,15 +274,92 @@ export class ConfidentialityComponent implements OnInit {
   }
 
   desactivateFirstMethod(): void {
+    if (!this.showPasswordForm) {
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        width: '500px',
+        data: {
+          title: 'Confirmer la désactivation',
+          message: 'Êtes-vous sûr de vouloir désactiver cette méthode d\'authentification ?'
+        }
+      });
+
+      dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.showPasswordForm = true; // Affiche le formulaire de mot de passe après la confirmation
+        } else {
+          this.alertService.error("Désactivation annulée.");
+        }
+      });
+    } else {
+      this.showPasswordForm = false;
+      this.passwordForm.reset(); // Réinitialise le champ de mot de passe
+    }
+
+  }
+
+  submitPassword(): void {
+    if (this.passwordForm.valid) {
+      const password = this.passwordForm.value.password;
+      this.verifyPasswordAndDeactivate(password);
+    }
+  }
+
+  // desactivateFirstMethod(): void {
+
+  //   const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+  //     width: '300px',
+  //     data: { message: 'Veuillez confirmer la désactivation en entrant votre mot de passe.' }
+  //   });
+
+  //   dialogRef.afterClosed().subscribe((password: string | null) => {
+  //     if (password !== null) {
+  //       // Vérifier le mot de passe avant de désactiver
+  //       this.verifyPasswordAndDeactivate(password);
+  //     } else {
+  //       this.alertService.error("Désactivation annulée.");
+  //     }
+  //   });
+
+  // const user = this.tokenStorage.getUser();
+  // if (user && user.id !== null) {
+  //   this.userService.disableUserTwoFactor(user.id).subscribe({
+  //     next: () => {
+  //       this.alertService.success('Authentification à deux facteurs désactivée avec succès.');
+  //       this.firstMethodConfigured = false;
+  //       this.showFirstMethodSetup = false; // Masquer le formulaire de configuration
+  //     },
+  //     error: (err: any) => this.alertService.error(`Erreur lors de la désactivation du 2FA : ${err.message}`)
+  //   });
+  // } else {
+  //   this.alertService.error("L'ID de l'utilisateur n'est pas valide.");
+  // }
+  // }
+
+  private verifyPasswordAndDeactivate(password: string): void {
     const user = this.tokenStorage.getUser();
     if (user && user.id !== null) {
-      this.userService.disableUserTwoFactor(user.id).subscribe({
-        next: () => {
-          this.alertService.success('Authentification à deux facteurs désactivée avec succès.');
-          this.firstMethodConfigured = false;
-          this.showFirstMethodSetup = false; // Masquer le formulaire de configuration
+      this.userService.validateOldPassword(user.id, password).subscribe({
+        next: (isPasswordValid: boolean) => {
+          if (isPasswordValid && user.id) {
+            this.userService.disableUserTwoFactor(user.id).subscribe({
+              next: () => {
+                this.alertService.success('Authentification à deux facteurs désactivée avec succès.');
+                this.firstMethodConfigured = false;
+                this.showPasswordForm = false; // Cache le formulaire après la désactivation
+              },
+              error: (err: any) => this.alertService.error(`Erreur lors de la désactivation du 2FA : ${err.message}`)
+            });
+          } else {
+            this.alertService.error("Mot de passe incorrect.");
+          }
         },
-        error: (err: any) => this.alertService.error(`Erreur lors de la désactivation du 2FA : ${err.message}`)
+        complete: () => {
+          this.notificationService.sendNotificationEmail(
+            this.username,
+            '2fa-email-desactivated'
+          ).subscribe();
+        },
+        error: (err: any) => this.alertService.error(`Erreur de vérification du mot de passe : ${err.message}`)
       });
     } else {
       this.alertService.error("L'ID de l'utilisateur n'est pas valide.");

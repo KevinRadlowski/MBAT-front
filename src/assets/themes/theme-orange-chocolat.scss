@@ -6,7 +6,8 @@
     --color-primary-light: #F39C12;
     --color-primary-darker: #A04000;
     --color-primary-dark: #6E2C00;
-  
+    --color-primary-filter: brightness(0) saturate(100%) invert(45%) sepia(97%) saturate(4698%) hue-rotate(15deg) brightness(95%) contrast(101%);
+
     /** secondary **/
     --color-secondary: #5D4037;
     --color-secondary-contrast: #fff;

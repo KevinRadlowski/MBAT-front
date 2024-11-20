@@ -14,10 +14,11 @@ import { debounceTime, map, switchMap, tap } from 'rxjs';
 })
 export class SignupFormComponent implements OnInit {
   userRegisterForm: FormGroup;
-  hidePassword = true;
   submitted = false;
   isLoading = false;
   emailExists = false;
+  hidePassword = true;
+  passwordStrength: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -26,6 +27,9 @@ export class SignupFormComponent implements OnInit {
     private router: Router,
   ) {
     this.userRegisterForm = this.createSignupForm();
+    this.userRegisterForm.get('password')?.valueChanges.subscribe(() => {
+      this.updatePasswordStrength();
+    });
   }
 
   ngOnInit(): void {
@@ -60,29 +64,30 @@ export class SignupFormComponent implements OnInit {
         password: [
           '',
           [Validators.required,
-          // Vérifie si le mot-de-passe entré contient un nombre
-          CustomValidators.patternValidator(/\d/, {
-            hasNumber: true
-          }),
-          // Vérifie si le mot-de-passe entré contient une lettre majuscule
-          CustomValidators.patternValidator(/[A-Z]/, {
-            hasCapitalCase: true
-          }),
-          // Vérifie si le mot-de-passe entré contient une lettre minuscule
-          CustomValidators.patternValidator(/[a-z]/, {
-            hasSmallCase: true
-          }),
-          Validators.minLength(6)]
+            // // Vérifie si le mot-de-passe entré contient un nombre
+            // CustomValidators.patternValidator(/\d/, {
+            //   hasNumber: true
+            // }),
+            // // Vérifie si le mot-de-passe entré contient une lettre majuscule
+            // CustomValidators.patternValidator(/[A-Z]/, {
+            //   hasCapitalCase: true
+            // }),
+            // // Vérifie si le mot-de-passe entré contient une lettre minuscule
+            // CustomValidators.patternValidator(/[a-z]/, {
+            //   hasSmallCase: true
+            // }),
+            // Validators.minLength(6)
+          ]
 
         ],
         confirmation_password: ['', [Validators.required]],
-        confirmation_username: [
+        phone: [
           '',
-          [Validators.email, Validators.required]
+          [Validators.pattern('^[0-9]{10}$')] // Validation pour un numéro de téléphone français à 10 chiffres
         ]
       },
       {
-        validators: [CustomValidators.match('password', 'confirmation_password'), CustomValidators.match('username', 'confirmation_username'),]
+        validators: [CustomValidators.match('password', 'confirmation_password')]
       }
     );
   }
@@ -120,6 +125,41 @@ export class SignupFormComponent implements OnInit {
 
     ),
     ).subscribe();
+  }
+
+  // Fonction de calcul de l'entropie pour évaluer la force du mot de passe
+  getPasswordStrength(password: string): number {
+    let poolSize = 0;
+
+    if (/[a-z]/.test(password)) poolSize += 26;   // Minuscules
+    if (/[A-Z]/.test(password)) poolSize += 26;   // Majuscules
+    if (/\d/.test(password)) poolSize += 10;      // Chiffres
+    if (/[@$!%*?&#]/.test(password)) poolSize += 32; // Symboles spéciaux courants
+
+    const length = password.length;
+    const entropy = length * Math.log2(poolSize);
+
+    // Classifier la force en fonction de l'entropie
+    if (entropy < 28) {
+      return 1; // Très faible
+    } else if (entropy < 36) {
+      return 2; // Faible
+    } else if (entropy < 60) {
+      return 3; // Moyenne
+    } else if (entropy < 128) {
+      return 4; // Forte
+    } else {
+      return 5; // Très forte
+    }
+  }
+
+  updatePasswordStrength(): void {
+    const newPassword = this.userRegisterForm.get('password')?.value || '';
+    if (newPassword.length === 0) {
+      this.passwordStrength = 0;
+    } else {
+      this.passwordStrength = this.getPasswordStrength(newPassword);
+    }
   }
 
 }

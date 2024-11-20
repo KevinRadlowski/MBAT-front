@@ -1,22 +1,23 @@
 :root {
-    --color-primary: #4CAF50;
     /* Pin bleu */
+    --color-primary: #4CAF50;
     --color-primary-contrast: #FFFFFF;
     --color-primary-lighter: #66BB6A;
     --color-primary-light: #81C784;
     --color-primary-darker: #388E3C;
     --color-primary-dark: #2E7D32;
+    --color-primary-filter: brightness(0) saturate(100%) invert(60%) sepia(20%) saturate(1264%) hue-rotate(73deg) brightness(95%) contrast(86%);
 
-    --color-secondary: #2196F3;
     /* Herbe nouvelle */
+    --color-secondary: #2196F3;
     --color-secondary-contrast: #FFFFFF;
     --color-secondary-lighter: #42A5F5;
     --color-secondary-light: #64B5F6;
     --color-secondary-darker: #1976D2;
     --color-secondary-dark: #1565C0;
 
-    --color-tertiary: #00BCD4;
     /* Reflet */
+    --color-tertiary: #00BCD4;
     --color-tertiary-contrast: #FFFFFF;
     --color-tertiary-lighter: #26C6DA;
     --color-tertiary-light: #4DD0E1;

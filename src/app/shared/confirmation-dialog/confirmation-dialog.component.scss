@@ -1,0 +1,53 @@
+mat-card {
+    width: 100%;
+    max-width: 800px !important;
+    padding: 0;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+/* Header avec couleur primaire */
+.confirmation-header {
+    background-color: var(--color-primary);
+    color: var(--color-primary-contrast);
+    padding: 16px;
+    margin-bottom: 10px;
+}
+
+.mat-card-title {
+    font-weight: 600;
+    color: white;
+}
+
+.form-field-width {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+mat-card-content p {
+    padding: 10px;
+}
+
+.mat-card-actions {
+    padding-top: 10px;
+}
+
+/* Style du bouton Annuler aligné avec "Configurer" */
+.btn-cancel {
+    color: var(--color-secondary);
+    border: 1px solid var(--color-secondary);
+}
+
+.btn-cancel:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-confirm {
+    background-color: var(--color-secondary);
+    color: var(--color-primary-contrast);
+}
+
+.btn-confirm:hover {
+    background-color: var(--color-primary);
+}
